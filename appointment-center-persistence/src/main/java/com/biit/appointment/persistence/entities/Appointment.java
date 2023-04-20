@@ -18,8 +18,8 @@ public class Appointment extends Element implements Comparable<Appointment> {
     public static final int CONCLUSION_MAX_LENGTH = 10000;
     public static final int FLOWABLE_ID_LENGTH = 64;
 
-    @Column(name = "doctor_id")
-    private Long doctorId;
+    @Column(name = "organizer_id")
+    private Long organizerId;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -87,12 +87,12 @@ public class Appointment extends Element implements Comparable<Appointment> {
         this.endTime = endTime;
     }
 
-    public Long getDoctorId() {
-        return doctorId;
+    public Long getOrganizerId() {
+        return organizerId;
     }
 
-    public void setDoctorId(Long physiotherapistId) {
-        this.doctorId = physiotherapistId;
+    public void setOrganizerId(Long physiotherapistId) {
+        this.organizerId = physiotherapistId;
     }
 
     public Long getOrganizationId() {
@@ -143,7 +143,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
     @Override
     public String toString() {
         return "{Appointment Id '" + getId() + "', examination '" + getExaminationType() + "', organizationId '"
-                + getOrganizationId() + "', physioterapistId '" + getDoctorId() + "', startTime '"
+                + getOrganizationId() + "', physioterapistId '" + getOrganizerId() + "', startTime '"
                 + getStartTime() + "', endTime '" + getEndTime() + "', finished '" + isExaminationClosed()
                 + "', reportSent '" + isReportClosed() + "', status '" + status + "'}";
     }
@@ -201,7 +201,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
     }
 
     public boolean isRejected() {
-        return doctorId == null;
+        return organizerId == null;
 
     }
 

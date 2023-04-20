@@ -31,7 +31,7 @@ public class ExaminationType extends Element implements Comparable<ExaminationTy
 
     private boolean deleted;
 
-    @Column(name = "appointment_overlaps_allowed", nullable = true)
+    @Column(name = "appointment_overlaps_allowed")
     private boolean appointmentOverlapsAllowed = false;
 
     public ExaminationType() {

@@ -7,11 +7,13 @@
     <test name="AppointmentCenter" enabled="true" preserve-order="true">
         <groups>
             <run>
-<!--                <include name=""/> -->
+                <include name="appointmentRepository"/>
+                <include name="examinationTypeRepository"/>
             </run>
         </groups>
         <classes>
-<!--            <class name="com.biit.appointment.persistence."/> -->
+            <class name="com.biit.appointment.persistence.repositories.AppointmentRepositoryTests"/>
+            <class name="com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests"/>
         </classes>
     </test>
 </suite>
