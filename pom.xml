@@ -20,6 +20,12 @@
         <module>appointment-center-rest</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:git.biit-solutions.com:BiiT/AppointmentCenter.git</connection>
+        <developerConnection>scm:git:git.biit-solutions.com:BiiT/AppointmentCenter.git</developerConnection>
+        <tag>Appointment Center</tag>
+    </scm>
+
     <distributionManagement>
         <repository>
             <id>central</id>
