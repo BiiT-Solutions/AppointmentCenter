@@ -5,7 +5,9 @@ import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.server.controller.converters.ElementConverter;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AppointmentConverter extends ElementConverter<Appointment, AppointmentDTO, AppointmentConverterRequest> {
     @Override
     protected AppointmentDTO convertElement(AppointmentConverterRequest from) {
