@@ -4,6 +4,7 @@ import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -12,12 +13,11 @@ import org.testng.annotations.Test;
 import javax.persistence.NoResultException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 @SpringBootTest
 @Test(groups = {"examinationTypeRepository"})
-public class ExaminationTypeRepositoryTests {
+public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextTests {
 
     private static final String TEST_NAME = "normal";
     private static final String TEST_TRANSLATION = "none";
@@ -44,7 +44,7 @@ public class ExaminationTypeRepositoryTests {
     @Test
     public void storeEntity() {
         Assert.assertTrue(examinationTypeRepository.findAll().isEmpty());
-        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow(NoSuchElementException::new);
+        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow();
         ExaminationType type = generateExaminationType(TEST_NAME, appointmentType);
         examinationTypeRepository.save(type);
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
@@ -53,14 +53,14 @@ public class ExaminationTypeRepositoryTests {
     @Test(dependsOnMethods = {"storeEntity"})
     public void searchEntity() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow(NoSuchElementException::new);
+        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow();
         Assert.assertEquals(type.getName(), TEST_NAME);
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void searchEntityWithSpecialty() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow(NoSuchElementException::new);
+        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow();
         List<ExaminationType> types = examinationTypeRepository.findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(ORGANIZATION_ID,
                 appointmentType, false);
         Assert.assertEquals(types.size(), 1);
@@ -70,7 +70,7 @@ public class ExaminationTypeRepositoryTests {
     @Test(dependsOnMethods = {"storeEntity"})
     public void searchEntityWithSpecialties() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow(NoSuchElementException::new);
+        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow();
 
         Set<AppointmentType> appointmentTypes = new HashSet<>();
         List<ExaminationType> types = examinationTypeRepository.findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(ORGANIZATION_ID,
@@ -85,7 +85,7 @@ public class ExaminationTypeRepositoryTests {
 
     @Test(dependsOnMethods = {"searchEntity"}, expectedExceptions = {NoResultException.class})
     public void searchInactiveEntity() {
-        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow(NoSuchElementException::new);
+        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow();
         type.setDeleted(true);
         examinationTypeRepository.save(type);
         examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow(NoResultException::new);
@@ -94,7 +94,7 @@ public class ExaminationTypeRepositoryTests {
     @Test(dependsOnMethods = {"searchInactiveEntity"})
     public void removeEntity() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationId(TEST_NAME, null).orElseThrow(NoSuchElementException::new);
+        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationId(TEST_NAME, ORGANIZATION_ID).orElseThrow();
         examinationTypeRepository.delete(type);
         Assert.assertTrue(examinationTypeRepository.findAll().isEmpty());
     }

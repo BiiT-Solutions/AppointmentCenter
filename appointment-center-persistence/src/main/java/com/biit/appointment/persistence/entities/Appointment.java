@@ -18,7 +18,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
     public static final int CONCLUSION_MAX_LENGTH = 10000;
     public static final int FLOWABLE_ID_LENGTH = 64;
 
-    @Column(name = "organizer_id")
+    @Column(name = "organizer_id", nullable = false)
     private Long organizerId;
 
     @Column(name = "start_time")
@@ -34,6 +34,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
     @JoinColumn(name = "examination_type")
     private ExaminationType examinationType;
 
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
     @Enumerated(EnumType.STRING)
@@ -246,6 +247,13 @@ public class Appointment extends Element implements Comparable<Appointment> {
 
     public void setConclusion(String conclusion) {
         this.conclusion = conclusion;
+    }
+
+    public boolean isUpdated() {
+        if (getUpdatedAt() == null) {
+            return false;
+        }
+        return getUpdatedAt().isAfter(getCreatedAt());
     }
 
 }
