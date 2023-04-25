@@ -9,6 +9,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "appointments")
@@ -144,7 +145,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
     @Override
     public String toString() {
         return "{Appointment Id '" + getId() + "', examination '" + getExaminationType() + "', organizationId '"
-                + getOrganizationId() + "', physioterapistId '" + getOrganizerId() + "', startTime '"
+                + getOrganizationId() + "', organizerId '" + getOrganizerId() + "', startTime '"
                 + getStartTime() + "', endTime '" + getEndTime() + "', finished '" + isExaminationClosed()
                 + "', reportSent '" + isReportClosed() + "', status '" + status + "'}";
     }
@@ -253,7 +254,7 @@ public class Appointment extends Element implements Comparable<Appointment> {
         if (getUpdatedAt() == null) {
             return false;
         }
-        return getUpdatedAt().isAfter(getCreatedAt());
+        return getUpdatedAt().truncatedTo(ChronoUnit.SECONDS).isAfter(getCreatedAt().truncatedTo(ChronoUnit.SECONDS));
     }
 
 }

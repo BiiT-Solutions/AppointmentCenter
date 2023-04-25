@@ -195,63 +195,70 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByStartTime() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, OVERLAP_START_TIME_2,
                         OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByStartTimeDifferentDoctor() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
         // Different organizers, then false.
         Assert.assertFalse(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID + 1, ORGANIZATION_ID, OVERLAP_START_TIME_2,
                         OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByEndTime() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, NO_OVERLAP_START_TIME_2,
                         NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkNoOverlaps() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_3, type, patientId));
         Assert.assertFalse(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, NO_OVERLAP_START_TIME_2,
                         NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButAllowed() {
-        appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_5,
+        Appointment appointment = appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_5,
                 typeAllowsOverlaps, patientId));
         Assert.assertFalse(appointmentRepository.overlaps(AppointmentTestUtils.createAppointment(ORGANIZER_ID,
                 ORGANIZATION_ID, START_TIME_5, typeAllowsOverlaps, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButOnlyOneAllowed() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_6, type, patientId));
         Assert.assertTrue(appointmentRepository.overlaps(AppointmentTestUtils.createAppointment(ORGANIZER_ID,
                 ORGANIZATION_ID, START_TIME_6, typeAllowsOverlaps, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButOtherOneAllowed() {
-        appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7,
+        Appointment appointment = appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7,
                 typeAllowsOverlaps, patientId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7, type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
@@ -268,6 +275,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertFalse(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_CANCELLED,
                         OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
@@ -293,15 +301,18 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
         Assert.assertEquals(appointmentRepository.getNext(ORGANIZATION_ID, workshopType).get(0), workshop1);
 
+        appointmentRepository.delete(workshop1);
+        appointmentRepository.delete(workshop2);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void checkBigAppointment() {
-        appointmentRepository
+        Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2.minusMinutes(END_TIME_MINUTES_INCREMENT),
                         START_TIME_2.plusMinutes(2 * END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+        appointmentRepository.delete(appointment);
     }
 
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"checkBigAppointment",
@@ -325,6 +336,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
                 patientId);
         appointment = appointmentRepository.save(appointment);
         Assert.assertFalse(appointmentRepository.overlaps(appointment) > 0);
+        appointmentRepository.delete(appointment);
     }
 
 //    @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
@@ -350,13 +362,15 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
                 patientId);
 
         appointment = appointmentRepository.save(appointment);
-        Appointment dbAppointment = appointmentRepository.getById(appointment.getId());
-        Appointment dbAppointment2 = appointmentRepository.getById(appointment.getId());
+        Appointment dbAppointment = appointmentRepository.findById(appointment.getId()).orElseThrow();
+        Appointment dbAppointment2 = appointmentRepository.findById(appointment.getId()).orElseThrow();
 
         Assert.assertEquals(dbAppointment.getUpdatedAt(), dbAppointment2.getUpdatedAt());
         Assert.assertFalse(dbAppointment.isUpdated());
 
         Thread.sleep(1000);
+        //Force a change on the update.
+        dbAppointment2.setCustomerId(11L);
         dbAppointment2 = appointmentRepository.save(dbAppointment2);
 
         Assert.assertTrue(dbAppointment2.getUpdatedAt().isAfter(dbAppointment.getUpdatedAt()));
@@ -397,8 +411,8 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     @AfterClass(alwaysRun = true)
     public void clearDatabase() {
         appointmentRepository.deleteAll();
-        appointmentTypeRepository.deleteAll();
         examinationTypeRepository.deleteAll();
+        appointmentTypeRepository.deleteAll();
     }
 
 }

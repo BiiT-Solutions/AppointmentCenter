@@ -23,8 +23,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
             (:examinationType IS NULL OR a.examinationType = :examinationType) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (:startTime IS NULL OR a.startTime = :startTime) AND 
-            (:endTime IS NULL OR a.endTime = :endTime) AND 
+            (((:startTime IS NULL OR a.endTime >= :startTime) AND 
+            (:endTime IS NULL OR a.startTime <= :endTime)) OR 
+            a.startTime IS NULL AND a.endTime IS NULL) AND 
             (:deleted IS NULL OR a.deleted = :deleted) 
             """)
     List<Appointment> findAll(
@@ -38,8 +39,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
             (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (:startTime IS NULL OR a.startTime = :startTime) AND 
-            (:endTime IS NULL OR a.endTime = :endTime) AND 
+            (((:startTime IS NULL OR a.endTime >= :startTime) AND 
+            (:endTime IS NULL OR a.startTime <= :endTime)) OR 
+            a.startTime IS NULL AND a.endTime IS NULL) AND 
             (:deleted IS NULL OR a.deleted = :deleted) 
             """)
     Optional<Appointment> findBy(
@@ -53,8 +55,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
             (:examinationType IS NULL OR a.examinationType = :examinationType) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (:startTime IS NULL OR a.startTime = :startTime) AND 
-            (:endTime IS NULL OR a.endTime = :endTime) AND 
+            (((:startTime IS NULL OR a.endTime >= :startTime) AND 
+            (:endTime IS NULL OR a.startTime <= :endTime)) OR 
+            a.startTime IS NULL AND a.endTime IS NULL) AND 
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long count(
@@ -68,8 +71,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
             (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (:startTime IS NULL OR a.startTime = :startTime) AND 
-            (:endTime IS NULL OR a.endTime = :endTime) AND 
+            (((:startTime IS NULL OR a.endTime >= :startTime) AND 
+            (:endTime IS NULL OR a.startTime <= :endTime)) OR 
+            a.startTime IS NULL AND a.endTime IS NULL) AND 
             (:deleted IS NULL OR a.deleted = :deleted) 
             """)
     long count(
