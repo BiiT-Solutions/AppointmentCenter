@@ -16,7 +16,7 @@ public class AppointmentDTO extends ElementDTO {
 
     private Long organizationId;
 
-    private ExaminationType examinationType;
+    private ExaminationTypeDTO examinationType;
 
     private Long customerId;
 
@@ -72,11 +72,11 @@ public class AppointmentDTO extends ElementDTO {
         this.organizationId = organizationId;
     }
 
-    public ExaminationType getExaminationType() {
+    public ExaminationTypeDTO getExaminationType() {
         return examinationType;
     }
 
-    public void setExaminationType(ExaminationType examinationType) {
+    public void setExaminationType(ExaminationTypeDTO examinationType) {
         this.examinationType = examinationType;
     }
 

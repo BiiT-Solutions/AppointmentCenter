@@ -10,7 +10,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.persistence.NoResultException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +52,7 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
     @Test(dependsOnMethods = {"storeEntity"})
     public void searchEntity() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow();
+        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).get(0);
         Assert.assertEquals(type.getName(), TEST_NAME);
     }
 
@@ -83,12 +82,12 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
         Assert.assertEquals(types.iterator().next().getName(), TEST_NAME);
     }
 
-    @Test(dependsOnMethods = {"searchEntity"}, expectedExceptions = {NoResultException.class})
+    @Test(dependsOnMethods = {"searchEntity"})
     public void searchInactiveEntity() {
-        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow();
+        ExaminationType type = examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).get(0);
         type.setDeleted(true);
         examinationTypeRepository.save(type);
-        examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).orElseThrow(NoResultException::new);
+        Assert.assertTrue(examinationTypeRepository.findByNameAndDeleted(TEST_NAME, false).isEmpty());
     }
 
     @Test(dependsOnMethods = {"searchInactiveEntity"})

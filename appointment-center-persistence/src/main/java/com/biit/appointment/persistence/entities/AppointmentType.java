@@ -7,7 +7,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "appointment_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})})
+@Table(name = "appointment_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
+        indexes = {
+                @Index(name = "ind_name", columnList = "name"),
+                @Index(name = "ind_organization", columnList = "organization_id"),
+        })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AppointmentType extends Element implements Comparable<AppointmentType> {

@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests.generateExaminationType;
@@ -170,7 +170,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
                         null, null, (ExaminationType) null, null, null, null, false),
                 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, Arrays.asList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
@@ -180,11 +180,11 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertEquals(appointmentRepository.count(
                 null, null, (ExaminationType) null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, Arrays.asList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, Arrays.asList(type), AppointmentStatus.NOT_STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, Collections.singletonList(type), AppointmentStatus.NOT_STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, Arrays.asList(type), AppointmentStatus.STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
+                ORGANIZATION_ID, null, Collections.singletonList(type), AppointmentStatus.STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
         Assert.assertEquals(appointmentRepository.count(
                 ORGANIZATION_ID, null, (List<ExaminationType>) null, AppointmentStatus.STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
 
@@ -281,7 +281,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     @Test(groups = {"appointmentRepository"}, dependsOnMethods = {"retrieveAllEntities"})
     public void searchNextWorkshop() {
         AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow();
-        ExaminationType workshopType = generateExaminationType(TEST_NAME, appointmentType);
+        ExaminationType workshopType = generateExaminationType(TEST_NAME + "_2", appointmentType);
         workshopType.setAppointmentOverlapsAllowed(true);
         workshopType = examinationTypeRepository.save(workshopType);
 
@@ -299,7 +299,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
                 workshopType, patientId);
         appointmentRepository.save(workshop2);
 
-        Assert.assertEquals(appointmentRepository.getNext(ORGANIZATION_ID, workshopType).get(0), workshop1);
+        Assert.assertEquals(appointmentRepository.getNext(ORGANIZATION_ID, workshopType, LocalDateTime.now()).get(0), workshop1);
 
         appointmentRepository.delete(workshop1);
         appointmentRepository.delete(workshop2);
