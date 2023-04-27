@@ -16,7 +16,9 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class AppointmentController extends BasicInsertableController<Appointment, AppointmentDTO, AppointmentRepository,
@@ -70,6 +72,34 @@ public class AppointmentController extends BasicInsertableController<Appointment
         return convertAll(provider.findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted));
     }
 
+    /**
+     * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
+     *
+     * @param organizationId        the organization of the parameters (can be null for any organization).
+     * @param organizerId           who must resolve the appointment (can be null for any organizer).
+     * @param customerId            the customer if you want to filter by customer.
+     * @param examinationTypesNames a collection of names for types of the appointment (can be null for any type).
+     * @param appointmentStatus     the status of the appointment (can be null for any status).
+     * @param lowerTimeBoundary     the lower limit on time for searching an appointment  (can be null for no limit).
+     * @param upperTimeBoundary     the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param deleted               the appointment is deleted or not.
+     * @return a list of appointments.
+     */
+
+    public List<AppointmentDTO> findByUsingNames(Long organizationId, Long organizerId, Long customerId, Collection<String> examinationTypesNames,
+                                                 AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
+                                                 LocalDateTime upperTimeBoundary, Boolean deleted) {
+        if (examinationTypesNames != null) {
+            final Set<ExaminationType> examinationTypes = new HashSet<>();
+            for (final String examinationTypeName : examinationTypesNames) {
+                examinationTypes.add(examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName, organizationId, false));
+            }
+            return findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        } else {
+            return findBy(organizationId, organizerId, customerId, null, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        }
+    }
+
 
     /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
@@ -106,6 +136,34 @@ public class AppointmentController extends BasicInsertableController<Appointment
                AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                LocalDateTime upperTimeBoundary, Boolean deleted) {
         return provider.count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+
+    }
+
+    /**
+     * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
+     *
+     * @param organizationId        the organization of the parameters (can be null for any organization).
+     * @param organizerId           who must resolve the appointment (can be null for any organizer).
+     * @param customerId            the customer if you want to filter by customer.
+     * @param examinationTypesNames a collection of names for types of the appointment (can be null for any type).
+     * @param appointmentStatus     the status of the appointment (can be null for any status).
+     * @param lowerTimeBoundary     the lower limit on time for searching an appointment  (can be null for no limit).
+     * @param upperTimeBoundary     the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param deleted               the appointment is deleted or not.
+     * @return the total number of appointments.
+     */
+    public long countUsingNames(Long organizationId, Long organizerId, Long customerId, Collection<String> examinationTypesNames,
+                                AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
+                                LocalDateTime upperTimeBoundary, Boolean deleted) {
+        if (examinationTypesNames != null) {
+            final Set<ExaminationType> examinationTypes = new HashSet<>();
+            for (final String examinationTypeName : examinationTypesNames) {
+                examinationTypes.add(examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName, organizationId, false));
+            }
+            return count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        } else {
+            return count(organizationId, organizerId, customerId, null, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        }
 
     }
 

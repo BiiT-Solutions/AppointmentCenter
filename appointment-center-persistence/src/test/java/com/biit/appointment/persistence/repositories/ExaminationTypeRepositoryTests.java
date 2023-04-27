@@ -93,15 +93,16 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
     @Test(dependsOnMethods = {"searchInactiveEntity"})
     public void removeEntity() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationIdAndDeleted(TEST_NAME, ORGANIZATION_ID, false).orElseThrow();
+        //It is already marked as deleted on the previous test.
+        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationIdAndDeleted(TEST_NAME, ORGANIZATION_ID, true).orElseThrow();
         examinationTypeRepository.delete(type);
         Assert.assertTrue(examinationTypeRepository.findAll().isEmpty());
     }
 
     @AfterClass
     public void cleanUp() {
-        appointmentTypeRepository.deleteAll();
         examinationTypeRepository.deleteAll();
+        appointmentTypeRepository.deleteAll();
     }
 
 }

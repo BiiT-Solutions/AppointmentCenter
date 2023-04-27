@@ -323,7 +323,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         long totalAppointments = appointmentRepository.count();
         appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, null, type, patientId));
         Assert.assertEquals(appointmentRepository.count(), totalAppointments + 1);
-        Assert.assertEquals(appointmentRepository.count(ORGANIZATION_ID, ORGANIZER_ID, null, (List<ExaminationType>) null, null,
+        Assert.assertEquals(appointmentRepository.count(ORGANIZATION_ID, ORGANIZER_ID, null, null, null,
                 START_TIME_1, LONG_TIME_4, false), previousAppointments + 1);
 
         Assert.assertEquals(appointmentRepository.findAll(ORGANIZATION_ID, ORGANIZER_ID, null, null,

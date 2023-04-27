@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,27 +29,59 @@ public class ExaminationTypeServices extends BasicServices<ExaminationType, Exam
         super(controller);
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/names/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ExaminationTypeDTO> getPrevious(@Parameter(description = "Name of the examination type")
-                                                @PathVariable(name = "name") String name,
-                                                @Parameter(description = "If it is deleted or not")
-                                                @RequestParam(name = "deleted") Optional<Boolean> deleted,
-                                                HttpServletRequest request) {
+    public List<ExaminationTypeDTO> getByName(@Parameter(description = "Name of the examination type")
+                                              @PathVariable(name = "name") String name,
+                                              @Parameter(description = "If it is deleted or not")
+                                              @RequestParam(name = "deleted") Optional<Boolean> deleted,
+                                              HttpServletRequest request) {
         return controller.findByNameAndDeleted(name, deleted.orElse(false));
     }
+
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/names/{name}/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ExaminationTypeDTO getPrevious(@Parameter(description = "Name of the examination type")
-                                          @PathVariable(name = "name") String name,
-                                          @Parameter(description = "Id of an existing organization")
-                                          @PathVariable(name = "organizationId") Long organizationId,
-                                          @Parameter(description = "If it is deleted or not")
-                                          @RequestParam(name = "deleted") Optional<Boolean> deleted,
-                                          HttpServletRequest request) {
+    public ExaminationTypeDTO getByNameAndOrganization(@Parameter(description = "Name of the examination type")
+                                                       @PathVariable(name = "name") String name,
+                                                       @Parameter(description = "Id of an existing organization")
+                                                       @PathVariable(name = "organizationId") Long organizationId,
+                                                       @Parameter(description = "If it is deleted or not")
+                                                       @RequestParam(name = "deleted") Optional<Boolean> deleted,
+                                                       HttpServletRequest request) {
         return controller.findByNameAndOrganizationId(name, organizationId, deleted.orElse(false));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/organizations/{organizationId}/appointment-type/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ExaminationTypeDTO> getByOrganizationAndAppointmentType(
+            @Parameter(description = "Id of an existing organization")
+            @PathVariable(name = "organizationId") Long organizationId,
+            @Parameter(description = "Name of the appointment type")
+            @PathVariable(name = "appointmentTypeName") String appointmentTypeName,
+            @Parameter(description = "If it is deleted or not")
+            @RequestParam(name = "deleted") Optional<Boolean> deleted,
+            HttpServletRequest request) {
+        return controller.findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentTypeName, deleted.orElse(false));
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/past/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ExaminationTypeDTO> getByOrganizationAndAppointmentTypes(
+            @Parameter(description = "Id of an existing organization")
+            @PathVariable(name = "organizationId") Long organizationId,
+            @Parameter(description = "Name of the appointment types")
+            @RequestParam(name = "appointmentTypeNames") Optional<Collection<String>> appointmentTypeNames,
+            @Parameter(description = "If it is deleted or not")
+            @RequestParam(name = "deleted") Optional<Boolean> deleted,
+            HttpServletRequest request) {
+        return controller.findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(organizationId, appointmentTypeNames.orElse(null),
+                deleted.orElse(false));
     }
 }

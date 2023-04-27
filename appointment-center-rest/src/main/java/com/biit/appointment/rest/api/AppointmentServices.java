@@ -52,7 +52,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                                         @Parameter(description = "Id of an existing customer")
                                         @RequestParam(name = "customerId") Optional<Long> customerId,
                                         @Parameter(description = "Filter by different examinations types")
-                                        @RequestParam(name = "examinationType") Optional<Collection<ExaminationType>> examinationTypes,
+                                        @RequestParam(name = "examinationType") Optional<Collection<String>> examinationTypesNames,
                                         @Parameter(description = "Filter by appointment status")
                                         @RequestParam(name = "appointmentStatus") Optional<AppointmentStatus> appointmentStatus,
                                         @Parameter(description = "Minimum time for the appointment")
@@ -62,8 +62,8 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                                         @Parameter(description = "If it is marked as deleted")
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {
-        return controller.findBy(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
-                examinationTypes.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
+        return controller.findByUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
+                examinationTypesNames.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
 
@@ -78,7 +78,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                          @Parameter(description = "Id of an existing customer")
                          @RequestParam(name = "customerId") Optional<Long> customerId,
                          @Parameter(description = "Filter by different examinations types")
-                         @RequestParam(name = "examinationType") Optional<Collection<ExaminationType>> examinationTypes,
+                         @RequestParam(name = "examinationTypes") Optional<Collection<String>> examinationTypesNames,
                          @Parameter(description = "Filter by appointment status")
                          @RequestParam(name = "appointmentStatus") Optional<AppointmentStatus> appointmentStatus,
                          @Parameter(description = "Minimum time for the appointment")
@@ -88,8 +88,8 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                          @Parameter(description = "If it is marked as deleted")
                          @RequestParam(name = "deleted") Optional<Boolean> deleted,
                          HttpServletRequest request) {
-        return controller.count(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
-                examinationTypes.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
+        return controller.countUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
+                examinationTypesNames.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
 
