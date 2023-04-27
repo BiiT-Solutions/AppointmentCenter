@@ -30,8 +30,8 @@ public class ExaminationTypeController extends BasicInsertableController<Examina
         return convertAll(provider.findByNameAndDeleted(name, deleted));
     }
 
-    public ExaminationTypeDTO findByNameAndOrganizationId(String name, Long organizationId) {
-        return convert(provider.findByNameAndOrganizationId(name, organizationId));
+    public ExaminationTypeDTO findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
+        return convert(provider.findByNameAndOrganizationId(name, organizationId, deleted));
     }
 
     public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, AppointmentType appointmentType, boolean deleted) {

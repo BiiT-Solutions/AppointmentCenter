@@ -21,8 +21,8 @@ public class ExaminationTypeProvider extends CrudProvider<ExaminationType, Long,
         return repository.findByNameAndDeleted(name, deleted);
     }
 
-    public ExaminationType findByNameAndOrganizationId(String name, Long organizationId) {
-        return repository.findByNameAndOrganizationId(name, organizationId).orElseThrow(() ->
+    public ExaminationType findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
+        return repository.findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
                 new ExaminationTypeNotFoundException(this.getClass(), "No examination defined with name '" + name + "' and organization '" + organizationId + "'"));
     }
 

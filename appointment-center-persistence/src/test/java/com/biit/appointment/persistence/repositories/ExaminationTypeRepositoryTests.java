@@ -93,7 +93,7 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
     @Test(dependsOnMethods = {"searchInactiveEntity"})
     public void removeEntity() {
         Assert.assertFalse(examinationTypeRepository.findAll().isEmpty());
-        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationId(TEST_NAME, ORGANIZATION_ID).orElseThrow();
+        ExaminationType type = examinationTypeRepository.findByNameAndOrganizationIdAndDeleted(TEST_NAME, ORGANIZATION_ID, false).orElseThrow();
         examinationTypeRepository.delete(type);
         Assert.assertTrue(examinationTypeRepository.findAll().isEmpty());
     }

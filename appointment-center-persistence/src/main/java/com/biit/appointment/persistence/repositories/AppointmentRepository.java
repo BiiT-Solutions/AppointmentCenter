@@ -68,6 +68,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             SELECT a FROM Appointment a WHERE 
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
+            (:customerId IS NULL OR a.customerId = :customerId) AND 
             (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
@@ -76,7 +77,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:deleted IS NULL OR a.deleted = :deleted) 
             """)
     List<Appointment> findBy(
-            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
+            @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
 
@@ -126,6 +128,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             SELECT COUNT(a) FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
+            (:customerId IS NULL OR a.customerId = :customerId) AND 
             (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
@@ -134,7 +137,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:deleted IS NULL OR a.deleted = :deleted) 
             """)
     long count(
-            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
+            @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
 
@@ -186,6 +190,26 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             ORDER BY a.startTime DESC
             """)
     List<Appointment> getPrevious(@Param("appointment") Appointment appointment);
+
+    /**
+     * Gets the appointments from an organization that are set on time after a specific selected time.
+     *
+     * @param organizationId    the organization of the parameters (can be null for any organization).
+     * @param examinationType   the type of the appointment (can be null for any type).
+     * @param lowerTimeBoundary the minimum time when the appointments must start.
+     * @return a list of appointments ordered ascendant by start time.
+     */
+    @Query("""
+            SELECT a FROM Appointment a WHERE
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:examinationType IS NULL OR a.examinationType = :examinationType) AND
+            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (:lowerTimeBoundary IS NULL OR a.startTime < :lowerTimeBoundary) AND
+            (a.deleted = false)
+            ORDER BY a.startTime ASC
+            """)
+    List<Appointment> getPrevious(@Param("organizationId") Long organizationId, @Param("examinationType") ExaminationType examinationType,
+                              @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary);
 
 
     /**

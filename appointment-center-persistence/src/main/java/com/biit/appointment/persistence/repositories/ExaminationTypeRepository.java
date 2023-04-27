@@ -15,7 +15,7 @@ public interface ExaminationTypeRepository extends JpaRepository<ExaminationType
 
     List<ExaminationType> findByNameAndDeleted(String name, boolean deleted);
 
-    Optional<ExaminationType> findByNameAndOrganizationId(String name, Long organizationId);
+    Optional<ExaminationType> findByNameAndOrganizationIdAndDeleted(String name, Long organizationId, boolean deleted);
 
     List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, AppointmentType appointmentType, boolean deleted);
 

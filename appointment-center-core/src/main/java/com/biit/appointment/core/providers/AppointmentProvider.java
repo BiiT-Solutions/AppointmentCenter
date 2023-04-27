@@ -65,10 +65,10 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @param deleted           the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<Appointment> findBy(Long organizationId, Long organizerId, Collection<ExaminationType> examinationTypes,
+    public List<Appointment> findBy(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                                     AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.findBy(organizationId, organizerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return repository.findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
     /**
@@ -102,10 +102,10 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @param deleted           the appointment is deleted or not.
      * @return the total number of appointments.
      */
-    public long count(Long organizationId, Long organizerId, Collection<ExaminationType> examinationTypes,
+    public long count(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                       AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                       LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.count(organizationId, organizerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return repository.count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
 
@@ -139,6 +139,17 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      */
     public List<Appointment> getPrevious(Appointment appointment) {
         return repository.getPrevious(appointment);
+    }
+
+    /**
+     * Gets the appointments from an organization that are planned on the past.
+     *
+     * @param organizationId  the organization of the parameters (can be null for any organization).
+     * @param examinationType the type of the appointment (can be null for any type).
+     * @return a list of appointments ordered ascendant by start time.
+     */
+    public List<Appointment> getPrevious(Long organizationId, ExaminationType examinationType) {
+        return repository.getPrevious(organizationId, examinationType, LocalDateTime.now());
     }
 
 
