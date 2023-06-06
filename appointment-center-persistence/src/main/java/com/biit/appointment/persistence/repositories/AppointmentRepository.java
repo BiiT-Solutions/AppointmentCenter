@@ -36,15 +36,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @return a list of appointments.
      */
     @Query("""
-            SELECT a FROM Appointment a WHERE 
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
-            (:examinationType IS NULL OR a.examinationType = :examinationType) AND 
-            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR 
-            a.startTime IS NULL AND a.endTime IS NULL) AND 
-            (:deleted IS NULL OR a.deleted = :deleted) 
+            SELECT a FROM Appointment a WHERE
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:examinationType IS NULL OR a.examinationType = :examinationType) AND
+            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
+            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
+            a.startTime IS NULL AND a.endTime IS NULL) AND
+            (:deleted IS NULL OR a.deleted = :deleted)
             """)
     List<Appointment> findAll(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("examinationType") ExaminationType examinationType,
@@ -65,16 +65,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @return a list of appointments.
      */
     @Query("""
-            SELECT a FROM Appointment a WHERE 
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
-            (:customerId IS NULL OR a.customerId = :customerId) AND 
-            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
-            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR 
-            a.startTime IS NULL AND a.endTime IS NULL) AND 
-            (:deleted IS NULL OR a.deleted = :deleted) 
+            SELECT a FROM Appointment a WHERE
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND
+            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
+            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
+            a.startTime IS NULL AND a.endTime IS NULL) AND
+            (:deleted IS NULL OR a.deleted = :deleted)
             """)
     List<Appointment> findBy(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
@@ -96,14 +96,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @return the total number of appointments
      */
     @Query("""
-            SELECT COUNT(a) FROM Appointment a WHERE 
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
-            (:examinationType IS NULL OR a.examinationType = :examinationType) AND 
-            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR 
-            a.startTime IS NULL AND a.endTime IS NULL) AND 
+            SELECT COUNT(a) FROM Appointment a WHERE
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:examinationType IS NULL OR a.examinationType = :examinationType) AND
+            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
+            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
+            a.startTime IS NULL AND a.endTime IS NULL) AND
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long count(
@@ -126,15 +126,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @Query("""
             SELECT COUNT(a) FROM Appointment a WHERE
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND 
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND 
-            (:customerId IS NULL OR a.customerId = :customerId) AND 
-            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND 
-            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND 
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND 
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR 
-            a.startTime IS NULL AND a.endTime IS NULL) AND 
-            (:deleted IS NULL OR a.deleted = :deleted) 
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND
+            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
+            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
+            a.startTime IS NULL AND a.endTime IS NULL) AND
+            (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long count(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
@@ -151,17 +151,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @Query("""
             SELECT COUNT(a) FROM Appointment a WHERE
-            (:#{#appointment.id} IS NULL OR a.id != :#{#appointment.id}) AND 
-            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND 
-            (:#{#appointment.organizerId} IS NULL OR a.organizerId = :#{#appointment.organizerId}) AND 
-            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
-            (:#{#appointment.examinationType.appointmentOverlapsAllowed} IS false OR a.examinationType.appointmentOverlapsAllowed IS false) AND 
+            (:#{#appointment.id} IS NULL OR a.id <> :#{#appointment.id}) AND
+            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
+            (:#{#appointment.organizerId} IS NULL OR a.organizerId = :#{#appointment.organizerId}) AND
+            (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (:#{#appointment.examinationType.appointmentOverlapsAllowed} = false OR a.examinationType.appointmentOverlapsAllowed = false) AND
             (
                 (a.startTime >= :#{#appointment.startTime} AND a.startTime < :#{#appointment.endTime}) OR
                 (a.endTime > :#{#appointment.startTime} AND a.endTime < :#{#appointment.endTime}) OR
                 (a.startTime <= :#{#appointment.startTime} AND a.endTime >= :#{#appointment.endTime})
-            ) AND  
-            (a.deleted = false) 
+            ) AND
+            (a.deleted = false)
             """)
     long overlaps(@Param("appointment") Appointment appointment);
 
@@ -182,11 +182,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @Query("""
             SELECT a FROM Appointment a WHERE
-            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND 
-            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND 
-            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
+            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND
+            (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (a.startTime < :#{#appointment.startTime}) AND
-            (a.deleted = false) 
+            (a.deleted = false)
             ORDER BY a.startTime DESC
             """)
     List<Appointment> getPrevious(@Param("appointment") Appointment appointment);
@@ -203,7 +203,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             SELECT a FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:examinationType IS NULL OR a.examinationType = :examinationType) AND
-            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (:lowerTimeBoundary IS NULL OR a.startTime < :lowerTimeBoundary) AND
             (a.deleted = false)
             ORDER BY a.startTime ASC
@@ -220,11 +220,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      */
     @Query("""
             SELECT a FROM Appointment a WHERE
-            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND 
-            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND 
-            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
+            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND
+            (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (a.startTime > :#{#appointment.startTime}) AND
-            (a.deleted = false) 
+            (a.deleted = false)
             ORDER BY a.startTime ASC
             """)
     List<Appointment> getNext(@Param("appointment") Appointment appointment);
@@ -242,13 +242,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             SELECT a FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:examinationType IS NULL OR a.examinationType = :examinationType) AND
-            (a.status != com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
-            (:lowerTimeBoundary IS NULL OR a.startTime >= :lowerTimeBoundary) AND 
-            (a.deleted = false) 
+            (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
+            (:lowerTimeBoundary IS NULL OR a.startTime >= :lowerTimeBoundary) AND
+            (a.deleted = false)
             ORDER BY a.startTime ASC
             """)
     List<Appointment> getNext(@Param("organizationId") Long organizationId, @Param("examinationType") ExaminationType examinationType,
                               @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary);
 
-//    Appointment findTop1ByCustomerIdAndStartTimeLessThanAndStatusNotAndDeletedOrderByStartTimeDesc(Long customerId, LocalDateTime startTime, AppointmentStatus status, Boolean deleted);
+//    Appointment findTop1ByCustomerIdAndStartTimeLessThanAndStatusNotAndDeletedOrderByStartTimeDesc(
+//    Long customerId, LocalDateTime startTime, AppointmentStatus status, Boolean deleted);
 }

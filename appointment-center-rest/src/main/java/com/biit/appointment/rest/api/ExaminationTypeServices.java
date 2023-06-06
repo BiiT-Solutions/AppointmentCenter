@@ -11,11 +11,15 @@ import com.biit.server.rest.BasicServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +42,7 @@ public class ExaminationTypeServices extends BasicServices<ExaminationType, Exam
                                               @Parameter(description = "If it is deleted or not")
                                               @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                               HttpServletRequest request) {
-        return controller.findByNameAndDeleted(name, deleted.orElse(false));
+        return getController().findByNameAndDeleted(name, deleted.orElse(false));
     }
 
 
@@ -52,7 +56,7 @@ public class ExaminationTypeServices extends BasicServices<ExaminationType, Exam
                                                        @Parameter(description = "If it is deleted or not")
                                                        @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                                        HttpServletRequest request) {
-        return controller.findByNameAndOrganizationId(name, organizationId, deleted.orElse(false));
+        return getController().findByNameAndOrganizationId(name, organizationId, deleted.orElse(false));
     }
 
 
@@ -67,7 +71,7 @@ public class ExaminationTypeServices extends BasicServices<ExaminationType, Exam
             @Parameter(description = "If it is deleted or not")
             @RequestParam(name = "deleted") Optional<Boolean> deleted,
             HttpServletRequest request) {
-        return controller.findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentTypeName, deleted.orElse(false));
+        return getController().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentTypeName, deleted.orElse(false));
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -81,7 +85,7 @@ public class ExaminationTypeServices extends BasicServices<ExaminationType, Exam
             @Parameter(description = "If it is deleted or not")
             @RequestParam(name = "deleted") Optional<Boolean> deleted,
             HttpServletRequest request) {
-        return controller.findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(organizationId, appointmentTypeNames.orElse(null),
+        return getController().findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(organizationId, appointmentTypeNames.orElse(null),
                 deleted.orElse(false));
     }
 }

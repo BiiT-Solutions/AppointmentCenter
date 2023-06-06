@@ -1,10 +1,16 @@
 package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+
 
 @Entity
 @Table(name = "appointment_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
@@ -15,6 +21,7 @@ import javax.persistence.*;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AppointmentType extends Element implements Comparable<AppointmentType> {
+    private static final int HASH_SEED = 31;
 
     @Column(nullable = false)
     private String name;
@@ -55,10 +62,10 @@ public class AppointmentType extends Element implements Comparable<AppointmentTy
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        final int prime = HASH_SEED;
         int result = super.hashCode();
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (int) (organizationId ^ (organizationId >>> 32));
+        result = prime * result + (int) (organizationId ^ (organizationId >>> (HASH_SEED + 1)));
         return result;
     }
 

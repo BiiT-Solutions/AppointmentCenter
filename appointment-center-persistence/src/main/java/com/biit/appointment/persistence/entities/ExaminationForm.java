@@ -1,9 +1,13 @@
 package com.biit.appointment.persistence.entities;
 
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "examination_form", uniqueConstraints = {@UniqueConstraint(columnNames = {"file_name", "version", "organization_id"})})

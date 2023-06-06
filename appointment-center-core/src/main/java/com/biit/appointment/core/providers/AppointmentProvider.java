@@ -30,7 +30,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
         if (organizerId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
-        return repository.findByOrganizerId(organizerId);
+        return  getRepository().findByOrganizerId(organizerId);
     }
 
 
@@ -49,7 +49,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public List<Appointment> findAll(Long organizationId, Long organizerId, ExaminationType examinationType,
                                      AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                      LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return  getRepository().findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
 
@@ -68,7 +68,8 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public List<Appointment> findBy(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                                     AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return  getRepository().findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
+                upperTimeBoundary, deleted);
     }
 
     /**
@@ -86,7 +87,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public long count(Long organizationId, Long organizerId, ExaminationType examinationType,
                AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return getRepository().count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
 
@@ -105,7 +106,8 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public long count(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                       AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                       LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return repository.count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return getRepository().count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
+                upperTimeBoundary, deleted);
     }
 
 
@@ -116,7 +118,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return if overlaps with any other appointment apart from the input.
      */
     public boolean overlaps(Appointment appointment) {
-        return repository.overlaps(appointment) > 0;
+        return getRepository().overlaps(appointment) > 0;
     }
 
 
@@ -127,7 +129,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return the total number of appointments.
      */
     public long countByCustomerId(Long customerId) {
-        return repository.countByCustomerId(customerId);
+        return getRepository().countByCustomerId(customerId);
     }
 
 
@@ -138,7 +140,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return the list of appointments that are before the parameters on a descendent order of start time.
      */
     public List<Appointment> getPrevious(Appointment appointment) {
-        return repository.getPrevious(appointment);
+        return getRepository().getPrevious(appointment);
     }
 
     /**
@@ -149,7 +151,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<Appointment> getPrevious(Long organizationId, ExaminationType examinationType) {
-        return repository.getPrevious(organizationId, examinationType, LocalDateTime.now());
+        return getRepository().getPrevious(organizationId, examinationType, LocalDateTime.now());
     }
 
 
@@ -160,7 +162,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return the list of appointments that are before the parameters on an ascendant order of the starting time.
      */
     public List<Appointment> getNext(Appointment appointment) {
-        return repository.getNext(appointment);
+        return getRepository().getNext(appointment);
     }
 
 
@@ -172,6 +174,6 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<Appointment> getNext(Long organizationId, ExaminationType examinationType) {
-        return repository.getNext(organizationId, examinationType, LocalDateTime.now());
+        return getRepository().getNext(organizationId, examinationType, LocalDateTime.now());
     }
 }

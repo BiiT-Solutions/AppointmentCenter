@@ -2,10 +2,19 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.server.persistence.entities.Element;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "examination_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
@@ -17,10 +26,10 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ExaminationType extends Element implements Comparable<ExaminationType> {
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String name;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String translation;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

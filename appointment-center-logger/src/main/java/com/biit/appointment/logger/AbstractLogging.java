@@ -18,7 +18,7 @@ import java.util.Calendar;
 @Aspect
 public abstract class AbstractLogging {
     // Logger specialized for each subclass.
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected String logMessage(JoinPoint joinPoint, Object... args) {
         final StringBuilder logMessage = new StringBuilder();

@@ -14,7 +14,7 @@ public class AppointmentTypeProvider extends CrudProvider<AppointmentType, Long,
     }
 
     public AppointmentType findByNameAndOrganizationId(String name, Long organizationId) {
-        return repository.findByNameAndOrganizationId(name, organizationId).orElseThrow(() ->
+        return  getRepository().findByNameAndOrganizationId(name, organizationId).orElseThrow(() ->
                 new AppointmentTypeNotFoundException(this.getClass(), "No appointment type found"));
     }
 }

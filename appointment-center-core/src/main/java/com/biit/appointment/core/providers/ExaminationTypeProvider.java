@@ -18,19 +18,22 @@ public class ExaminationTypeProvider extends CrudProvider<ExaminationType, Long,
     }
 
     public List<ExaminationType> findByNameAndDeleted(String name, boolean deleted) {
-        return repository.findByNameAndDeleted(name, deleted);
+        return getRepository().findByNameAndDeleted(name, deleted);
     }
 
     public ExaminationType findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
-        return repository.findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
-                new ExaminationTypeNotFoundException(this.getClass(), "No examination defined with name '" + name + "' and organization '" + organizationId + "'"));
+        return  getRepository().findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
+                new ExaminationTypeNotFoundException(this.getClass(), "No examination defined with name '" + name + "' and organization '"
+                        + organizationId + "'"));
     }
 
-    public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, AppointmentType appointmentType, boolean deleted) {
-        return repository.findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted);
+    public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
+            Long organizationId, AppointmentType appointmentType, boolean deleted) {
+        return  getRepository().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted);
     }
 
-    public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(Long organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
-        return repository.findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted);
+    public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
+            Long organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
+        return  getRepository().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted);
     }
 }

@@ -41,7 +41,10 @@
     <logger name="com.biit.appointment.server.logger.RestServerLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.biit.appointment.usermanager.logger.UserManagerClientLogger" additivity="false" level="INFO">
+    <logger name="com.biit.server.client.logger.RestServerClientLogger" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.biit.appointment.usermanager.logger.UserManagerClientLogger" additivity="false" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>

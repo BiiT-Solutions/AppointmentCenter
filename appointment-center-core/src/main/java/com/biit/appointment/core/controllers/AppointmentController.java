@@ -50,7 +50,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
         if (organizerId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
-        return convertAll(provider.findByOrganizerId(organizerId));
+        return convertAll(getProvider().findByOrganizerId(organizerId));
     }
 
 
@@ -69,7 +69,8 @@ public class AppointmentController extends BasicInsertableController<Appointment
     public List<AppointmentDTO> findAll(Long organizationId, Long organizerId, ExaminationType examinationType,
                                         AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                         LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return convertAll(provider.findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted));
+        return convertAll(getProvider().findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary,
+                upperTimeBoundary, deleted));
     }
 
     /**
@@ -117,7 +118,8 @@ public class AppointmentController extends BasicInsertableController<Appointment
     public List<AppointmentDTO> findBy(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                                        AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                        LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return convertAll(provider.findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted));
+        return convertAll(getProvider().findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus,
+                lowerTimeBoundary, upperTimeBoundary, deleted));
     }
 
     /**
@@ -135,7 +137,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
     long count(Long organizationId, Long organizerId, ExaminationType examinationType,
                AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return provider.count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return getProvider().count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
 
     }
 
@@ -184,7 +186,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
     public long count(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                       AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                       LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return provider.count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return getProvider().count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
 
@@ -195,7 +197,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return if overlaps with any other appointment apart from the input.
      */
     public boolean overlaps(AppointmentDTO appointment) {
-        return provider.overlaps(reverse(appointment));
+        return getProvider().overlaps(reverse(appointment));
     }
 
 
@@ -206,7 +208,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return the total number of appointments.
      */
     public long countByCustomerId(Long customerId) {
-        return provider.countByCustomerId(customerId);
+        return getProvider().countByCustomerId(customerId);
     }
 
 
@@ -214,10 +216,10 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * Gets the appointment that are previously set on time from an appointment.
      *
      * @param appointment the appointment as a reference for the search.
-     * @return the list of appointments that are before the parameters on a descendent order of start time.
+     * @return the list of appointments that are before the parameters on a descendant order of start time.
      */
     public List<AppointmentDTO> getPrevious(AppointmentDTO appointment) {
-        return convertAll(provider.getPrevious(reverse(appointment)));
+        return convertAll(getProvider().getPrevious(reverse(appointment)));
     }
 
     /**
@@ -228,7 +230,8 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<AppointmentDTO> getPrevious(Long organizationId, String examinationTypeName) {
-        return getPrevious(organizationId, examinationTypeName != null ? examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName, organizationId, false) : null);
+        return getPrevious(organizationId, examinationTypeName != null ? examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName,
+                organizationId, false) : null);
     }
 
     /**
@@ -239,7 +242,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<AppointmentDTO> getPrevious(Long organizationId, ExaminationType examinationType) {
-        return convertAll(provider.getPrevious(organizationId, examinationType));
+        return convertAll(getProvider().getPrevious(organizationId, examinationType));
     }
 
 
@@ -250,7 +253,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return the list of appointments that are before the parameters on an ascendant order of the starting time.
      */
     public List<AppointmentDTO> getNext(AppointmentDTO appointment) {
-        return convertAll(provider.getNext(reverse(appointment)));
+        return convertAll(getProvider().getNext(reverse(appointment)));
     }
 
     /**
@@ -261,7 +264,8 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<AppointmentDTO> getNext(Long organizationId, String examinationTypeName) {
-        return getNext(organizationId, examinationTypeName != null ? examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName, organizationId, false) : null);
+        return getNext(organizationId, examinationTypeName != null ? examinationTypeProvider.findByNameAndOrganizationId(examinationTypeName,
+                organizationId, false) : null);
     }
 
 
@@ -273,7 +277,7 @@ public class AppointmentController extends BasicInsertableController<Appointment
      * @return a list of appointments ordered ascendant by start time.
      */
     public List<AppointmentDTO> getNext(Long organizationId, ExaminationType examinationType) {
-        return convertAll(provider.getNext(organizationId, examinationType));
+        return convertAll(getProvider().getNext(organizationId, examinationType));
     }
 }
 

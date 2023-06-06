@@ -12,7 +12,7 @@ public class LoggedException extends RuntimeException {
         final String className = clazz.getName();
         switch (type) {
             case INFO:
-               AppointmentCenterLogger.info(className, message);
+                AppointmentCenterLogger.info(className, message);
                 break;
             case WARNING:
                 AppointmentCenterLogger.warning(className, message);
@@ -26,7 +26,7 @@ public class LoggedException extends RuntimeException {
         }
     }
 
-    protected LoggedException(Class<?> clazz,Throwable e, HttpStatus status) {
+    protected LoggedException(Class<?> clazz, Throwable e, HttpStatus status) {
         this(clazz, e);
         this.status = status;
     }

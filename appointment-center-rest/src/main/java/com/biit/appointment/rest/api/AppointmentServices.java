@@ -7,17 +7,22 @@ import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
-import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.server.rest.BasicServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +43,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
     @GetMapping(value = "/organizer/{organizerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> findByOrganizerId(@Parameter(description = "Id of an existing organizer", required = true)
                                                   @PathVariable("organizerId") Long organizerId, HttpServletRequest request) {
-        return controller.findByOrganizerId(organizerId);
+        return getController().findByOrganizerId(organizerId);
     }
 
 
@@ -62,7 +67,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                                         @Parameter(description = "If it is marked as deleted")
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {
-        return controller.findByUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
+        return getController().findByUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
                 examinationTypesNames.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
@@ -88,17 +93,18 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                          @Parameter(description = "If it is marked as deleted")
                          @RequestParam(name = "deleted") Optional<Boolean> deleted,
                          HttpServletRequest request) {
-        return controller.countUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
+        return getController().countUsingNames(organizationId.orElse(null), organizerId.orElse(null), customerId.orElse(null),
                 examinationTypesNames.orElse(new ArrayList<>()), appointmentStatus.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Checks if the provided appointment collides with any other appointment. An appointment collides if is defined for the same organizer at the same time.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Checks if the provided appointment collides with any other appointment. An appointment collides if is defined for "
+            + "the same organizer at the same time.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/overlaps", produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public boolean overlaps(@RequestBody AppointmentDTO appointment, HttpServletRequest request) {
-        return controller.overlaps(appointment);
+        return getController().overlaps(appointment);
     }
 
 
@@ -106,7 +112,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
     @Operation(summary = "Gets a list of appointments that are defined before the provided appointment.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/past", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getPrevious(@RequestBody AppointmentDTO appointment, HttpServletRequest request) {
-        return controller.getPrevious(appointment);
+        return getController().getPrevious(appointment);
     }
 
 
@@ -118,7 +124,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                                             @Parameter(description = "Filter by examination type")
                                             @RequestParam(name = "examinationTypeName") Optional<String> examinationTypeName,
                                             HttpServletRequest request) {
-        return controller.getPrevious(organizationId, examinationTypeName.orElse(null));
+        return getController().getPrevious(organizationId, examinationTypeName.orElse(null));
     }
 
 
@@ -126,7 +132,7 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
     @Operation(summary = "Gets a list of appointments that are defined after the provided appointment.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/future", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getNext(@RequestBody AppointmentDTO appointment, HttpServletRequest request) {
-        return controller.getNext(appointment);
+        return getController().getNext(appointment);
     }
 
 
@@ -138,6 +144,6 @@ public class AppointmentServices extends BasicServices<Appointment, AppointmentD
                                         @Parameter(description = "Filter by examination type")
                                         @RequestParam(name = "examinationTypeName") Optional<String> examinationTypeName,
                                         HttpServletRequest request) {
-        return controller.getNext(organizationId, examinationTypeName.orElse(null));
+        return getController().getNext(organizationId, examinationTypeName.orElse(null));
     }
 }

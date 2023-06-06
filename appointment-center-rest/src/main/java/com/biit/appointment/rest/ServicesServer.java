@@ -1,7 +1,6 @@
 package com.biit.appointment.rest;
 
 import com.biit.appointment.logger.AppointmentCenterLogger;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,6 +26,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 @ConfigurationPropertiesScan({"com.biit.appointment.rest"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 public class ServicesServer {
+    private static final int POOL_SIZE = 20;
+    private static final int MAX_POOL_SIZE = 100;
 
     public static void main(String[] args) {
         SpringApplication.run(ServicesServer.class, args);
@@ -41,8 +42,8 @@ public class ServicesServer {
     @Bean("threadPoolExecutor")
     public TaskExecutor getAsyncExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(100);
+        executor.setCorePoolSize(POOL_SIZE);
+        executor.setMaxPoolSize(MAX_POOL_SIZE);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setThreadNamePrefix("Rest_Async-");
         return executor;

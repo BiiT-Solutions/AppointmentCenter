@@ -1,11 +1,11 @@
 package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
+import jakarta.persistence.Column;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MappedSuperclass;
 
-import javax.persistence.Column;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 
 /**
@@ -14,12 +14,11 @@ import java.util.Objects;
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class ImportedForm extends Element {
-    private static final long serialVersionUID = -7235473414679474757L;
 
-    @Column(name = "file_name", nullable = false, length = 150)
+    @Column(name = "file_name", nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String fileName;
 
-    @Column(name = "display_name", nullable = false, length = 150)
+    @Column(name = "display_name", nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String displayName;
 
     @Column(name = "version", nullable = false)

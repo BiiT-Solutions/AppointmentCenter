@@ -34,11 +34,11 @@ public class ExaminationTypeController extends BasicInsertableController<Examina
     }
 
     public List<ExaminationTypeDTO> findByNameAndDeleted(String name, boolean deleted) {
-        return convertAll(provider.findByNameAndDeleted(name, deleted));
+        return convertAll(getProvider().findByNameAndDeleted(name, deleted));
     }
 
     public ExaminationTypeDTO findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
-        return convert(provider.findByNameAndOrganizationId(name, organizationId, deleted));
+        return convert(getProvider().findByNameAndOrganizationId(name, organizationId, deleted));
     }
 
     public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, String appointmentTypeName, boolean deleted) {
@@ -46,11 +46,13 @@ public class ExaminationTypeController extends BasicInsertableController<Examina
                 appointmentTypeProvider.findByNameAndOrganizationId(appointmentTypeName, organizationId), deleted);
     }
 
-    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, AppointmentType appointmentType, boolean deleted) {
-        return convertAll(provider.findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted));
+    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
+            Long organizationId, AppointmentType appointmentType, boolean deleted) {
+        return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted));
     }
 
-    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(Long organizationId, Collection<String> appointmentTypeNames, boolean deleted) {
+    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(
+            Long organizationId, Collection<String> appointmentTypeNames, boolean deleted) {
         if (appointmentTypeNames != null) {
             final Set<AppointmentType> appointmentTypes = new HashSet<>();
             for (final String appointmentTypeName : appointmentTypeNames) {
@@ -62,7 +64,8 @@ public class ExaminationTypeController extends BasicInsertableController<Examina
         }
     }
 
-    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(Long organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
-        return convertAll(provider.findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted));
+    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
+            Long organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
+        return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted));
     }
 }

@@ -23,6 +23,6 @@ public class AppointmentTypeController extends BasicInsertableController<Appoint
     }
 
     public AppointmentTypeDTO findByNameAndOrganizationId(String name, Long organizationId) {
-        return convert(provider.findByNameAndOrganizationId(name, organizationId));
+        return convert(getProvider().findByNameAndOrganizationId(name, organizationId));
     }
 }

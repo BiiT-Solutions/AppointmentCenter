@@ -1,5 +1,6 @@
 package com.biit.appointment.rest;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 
@@ -45,7 +45,8 @@ public class DatabaseConfiguration {
 
     @Bean
     @Primary
-    public PlatformTransactionManager appointmentCenterTransactionManager(@Qualifier ("appointmentCenterFactory") EntityManagerFactory appointmentCenterFactory) {
+    public PlatformTransactionManager appointmentCenterTransactionManager(@Qualifier ("appointmentCenterFactory")
+                                                                              EntityManagerFactory appointmentCenterFactory) {
         return new JpaTransactionManager(appointmentCenterFactory);
     }
 }
