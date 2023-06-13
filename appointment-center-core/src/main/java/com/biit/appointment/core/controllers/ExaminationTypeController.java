@@ -8,7 +8,7 @@ import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.ExaminationTypeRepository;
-import com.biit.server.controller.BasicInsertableController;
+import com.biit.server.controller.BasicElementController;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-public class ExaminationTypeController extends BasicInsertableController<ExaminationType, ExaminationTypeDTO, ExaminationTypeRepository,
+public class ExaminationTypeController extends BasicElementController<ExaminationType, ExaminationTypeDTO, ExaminationTypeRepository,
         ExaminationTypeProvider, ExaminationTypeConverterRequest, ExaminationTypeConverter> {
 
     private final AppointmentTypeProvider appointmentTypeProvider;

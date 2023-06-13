@@ -136,7 +136,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             a.startTime IS NULL AND a.endTime IS NULL) AND
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
-    long count(
+    long countExaminationTypesIn(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,

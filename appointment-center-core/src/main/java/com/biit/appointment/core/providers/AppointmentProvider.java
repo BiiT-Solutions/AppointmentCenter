@@ -106,7 +106,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public long count(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                       AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                       LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return getRepository().count(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
+        return getRepository().countExaminationTypesIn(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }
 

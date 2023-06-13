@@ -11,7 +11,7 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
-import com.biit.server.controller.BasicInsertableController;
+import com.biit.server.controller.BasicElementController;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-public class AppointmentController extends BasicInsertableController<Appointment, AppointmentDTO, AppointmentRepository,
+public class AppointmentController extends BasicElementController<Appointment, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter> {
 
     private final ExaminationTypeProvider examinationTypeProvider;
