@@ -69,7 +69,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND
             (:customerId IS NULL OR a.customerId = :customerId) AND
-            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND
+            (a.examinationType IN :examinationTypes) AND
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
@@ -124,12 +124,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      * @param deleted           the appointment is deleted or not.
      * @return the total number of appointments.
      */
-    @Query("""
+    @Query(value = """
             SELECT COUNT(a) FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND
             (:customerId IS NULL OR a.customerId = :customerId) AND
-            (:examinationTypes IS NULL OR a.examinationType IN :examinationTypes) AND
+            (a.examinationType IN :examinationTypes) AND
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
@@ -139,6 +139,33 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     long countExaminationTypesIn(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
+            @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
+            @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
+
+    /**
+     * Counts the total appointments that matches the search parameters without examination types.
+     *
+     * @param organizationId    the organization of the parameters (can be null for any organization).
+     * @param organizerId       who must resolve the appointment (can be null for any organizer).
+     * @param appointmentStatus the status of the appointment (can be null for any status).
+     * @param lowerTimeBoundary the lower limit on time for searching an appointment  (can be null for no limit).
+     * @param upperTimeBoundary the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param deleted           the appointment is deleted or not.
+     * @return the total number of appointments.
+     */
+    @Query(value = """
+            SELECT COUNT(a) FROM Appointment a WHERE
+            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
+            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
+            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
+            a.startTime IS NULL AND a.endTime IS NULL) AND
+            (:deleted IS NULL OR a.deleted = :deleted)
+            """)
+    long count(
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
 
@@ -209,7 +236,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             ORDER BY a.startTime ASC
             """)
     List<Appointment> getPrevious(@Param("organizationId") Long organizationId, @Param("examinationType") ExaminationType examinationType,
-                              @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary);
+                                  @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary);
 
 
     /**

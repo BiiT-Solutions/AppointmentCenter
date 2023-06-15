@@ -30,7 +30,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
         if (organizerId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
-        return  getRepository().findByOrganizerId(organizerId);
+        return getRepository().findByOrganizerId(organizerId);
     }
 
 
@@ -49,7 +49,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public List<Appointment> findAll(Long organizationId, Long organizerId, ExaminationType examinationType,
                                      AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                      LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return  getRepository().findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
+        return getRepository().findAll(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
 
@@ -68,7 +68,7 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public List<Appointment> findBy(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                                     AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return  getRepository().findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
+        return getRepository().findBy(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }
 
@@ -85,8 +85,8 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
      * @return the total number of appointments
      */
     public long count(Long organizationId, Long organizerId, ExaminationType examinationType,
-               AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
-               LocalDateTime upperTimeBoundary, Boolean deleted) {
+                      AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
+                      LocalDateTime upperTimeBoundary, Boolean deleted) {
         return getRepository().count(organizationId, organizerId, examinationType, appointmentStatus, lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
@@ -106,6 +106,10 @@ public class AppointmentProvider extends CrudProvider<Appointment, Long, Appoint
     public long count(Long organizationId, Long organizerId, Long customerId, Collection<ExaminationType> examinationTypes,
                       AppointmentStatus appointmentStatus, LocalDateTime lowerTimeBoundary,
                       LocalDateTime upperTimeBoundary, Boolean deleted) {
+        if (examinationTypes == null || examinationTypes.isEmpty()) {
+            return getRepository().count(organizationId, organizerId, customerId, appointmentStatus, lowerTimeBoundary,
+                    upperTimeBoundary, deleted);
+        }
         return getRepository().countExaminationTypesIn(organizationId, organizerId, customerId, examinationTypes, appointmentStatus, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }

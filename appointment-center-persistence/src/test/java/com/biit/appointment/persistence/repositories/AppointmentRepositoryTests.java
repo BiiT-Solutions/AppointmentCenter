@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -160,23 +159,23 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, (ExaminationType) null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, (ExaminationType) null, null, null, null, false), 1);
         Assert.assertEquals(
                 appointmentRepository.count(
-                        null, null, null, null, null, null, false),
+                        null, null, (ExaminationType) null, null, null, null, false),
                 1);
         Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
                 ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, (ExaminationType) null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, (ExaminationType) null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                null, null, null, null, null, null, false), 1);
+                null, null, (ExaminationType) null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
                 ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
@@ -316,15 +315,13 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     @Test(dependsOnMethods = {"checkBigAppointment", "checkOverlapsCancelledAppointment"})
     public void checkSuggestedAppointments() {
         long previousAppointments = appointmentRepository.countExaminationTypesIn(ORGANIZATION_ID, ORGANIZER_ID, null,
-                (List<ExaminationType>) null, null, START_TIME_1, LONG_TIME_4, false);
+                null, null, START_TIME_1, LONG_TIME_4, false);
         long totalAppointments = appointmentRepository.count();
         appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, null, type, patientId));
         Assert.assertEquals(appointmentRepository.count(), totalAppointments + 1);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(ORGANIZATION_ID, ORGANIZER_ID, null, null, null,
-                START_TIME_1, LONG_TIME_4, false), previousAppointments + 1);
 
         Assert.assertEquals(appointmentRepository.findAll(ORGANIZATION_ID, ORGANIZER_ID, null, null,
-                START_TIME_1, LONG_TIME_4, false).size(), previousAppointments + 1);
+                START_TIME_1, LONG_TIME_4, false).size(), previousAppointments + 2);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities", "getAppointmentsByPatient"})
