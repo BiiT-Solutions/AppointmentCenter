@@ -34,17 +34,37 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
+    <logger name="com.biit.database.encryption.logger.EncryptorLogger" additivity="false" level="ERROR">
+        <appender-ref ref="DAILY"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
     <logger name="com.biit.appointment.logger.LoggedException" additivity="false" level="ERROR">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
-    <logger name="com.biit.appointment.server.logger.RestServerLogger" additivity="false" level="INFO">
+    <logger name="com.biit.appointment.persistence.logger.CacheEventLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="com.biit.server.logger.RestServerLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.biit.server.client.logger.RestServerClientLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.biit.appointment.usermanager.logger.UserManagerClientLogger" additivity="false" level="DEBUG">
+    <logger name="com.biit.usermanager.logger.UserManagerClientLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="com.biit.messagebird.logger.MessageBirdLogger" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="com.biit.logger.BiitCommonLogger" additivity="false" level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="com.biit.server.logger.JwtFilterLogger" additivity="false" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
