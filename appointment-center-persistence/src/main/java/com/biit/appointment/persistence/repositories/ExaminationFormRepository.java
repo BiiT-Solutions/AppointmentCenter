@@ -1,9 +1,9 @@
 package com.biit.appointment.persistence.repositories;
 
 import com.biit.appointment.persistence.entities.ExaminationForm;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.biit.server.persistence.repositories.ElementRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExaminationFormRepository extends JpaRepository<ExaminationForm, Long> {
+public interface ExaminationFormRepository extends ElementRepository<ExaminationForm, Long> {
 }

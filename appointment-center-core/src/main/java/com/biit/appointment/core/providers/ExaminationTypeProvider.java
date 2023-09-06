@@ -4,14 +4,14 @@ import com.biit.appointment.core.exceptions.ExaminationTypeNotFoundException;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.ExaminationTypeRepository;
-import com.biit.server.providers.CrudProvider;
+import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
 @Service
-public class ExaminationTypeProvider extends CrudProvider<ExaminationType, Long, ExaminationTypeRepository> {
+public class ExaminationTypeProvider extends ElementProvider<ExaminationType, Long, ExaminationTypeRepository> {
 
     public ExaminationTypeProvider(ExaminationTypeRepository repository) {
         super(repository);

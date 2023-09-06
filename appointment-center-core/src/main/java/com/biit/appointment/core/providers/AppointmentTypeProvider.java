@@ -3,11 +3,11 @@ package com.biit.appointment.core.providers;
 import com.biit.appointment.core.exceptions.AppointmentTypeNotFoundException;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.repositories.AppointmentTypeRepository;
-import com.biit.server.providers.CrudProvider;
+import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AppointmentTypeProvider extends CrudProvider<AppointmentType, Long, AppointmentTypeRepository> {
+public class AppointmentTypeProvider extends ElementProvider<AppointmentType, Long, AppointmentTypeRepository> {
 
     public AppointmentTypeProvider(AppointmentTypeRepository repository) {
         super(repository);

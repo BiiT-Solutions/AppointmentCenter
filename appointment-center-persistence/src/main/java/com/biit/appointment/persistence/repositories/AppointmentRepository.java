@@ -3,7 +3,7 @@ package com.biit.appointment.persistence.repositories;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.biit.server.persistence.repositories.ElementRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+public interface AppointmentRepository extends ElementRepository<Appointment, Long> {
 
     /**
      * Finds all appointments from an organization.

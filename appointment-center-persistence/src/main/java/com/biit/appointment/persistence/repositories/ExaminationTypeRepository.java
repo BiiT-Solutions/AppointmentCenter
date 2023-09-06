@@ -2,7 +2,7 @@ package com.biit.appointment.persistence.repositories;
 
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.biit.server.persistence.repositories.ElementRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ExaminationTypeRepository extends JpaRepository<ExaminationType, Long> {
+public interface ExaminationTypeRepository extends ElementRepository<ExaminationType, Long> {
 
 
     List<ExaminationType> findByNameAndDeleted(String name, boolean deleted);

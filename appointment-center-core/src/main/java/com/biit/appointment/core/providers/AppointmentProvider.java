@@ -5,7 +5,7 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
-import com.biit.server.providers.CrudProvider;
+import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class AppointmentProvider extends CrudProvider<Appointment, Long, AppointmentRepository> {
+public class AppointmentProvider extends ElementProvider<Appointment, Long, AppointmentRepository> {
 
 
     public AppointmentProvider(AppointmentRepository repository) {
