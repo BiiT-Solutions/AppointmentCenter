@@ -21,8 +21,8 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git.biit-solutions.com:BiiT/AppointmentCenter.git</connection>
-        <developerConnection>scm:git:git.biit-solutions.com:BiiT/AppointmentCenter.git</developerConnection>
+        <connection>scm:git:git.biit-solutions.com:Java/AppointmentCenter.git</connection>
+        <developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenter.git</developerConnection>
         <tag>Appointment Center</tag>
     </scm>
 
