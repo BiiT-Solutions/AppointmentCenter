@@ -25,7 +25,7 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "appointments")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Appointment extends Element implements Comparable<Appointment> {
+public class Appointment extends Element<Long> implements Comparable<Appointment> {
     public static final int CONCLUSION_MAX_LENGTH = 10000;
     public static final int FLOWABLE_ID_LENGTH = 64;
 

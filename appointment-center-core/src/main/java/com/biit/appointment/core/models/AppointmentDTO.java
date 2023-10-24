@@ -5,7 +5,7 @@ import com.biit.server.controllers.models.ElementDTO;
 
 import java.time.LocalDateTime;
 
-public class AppointmentDTO extends ElementDTO {
+public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long doctorId;
 

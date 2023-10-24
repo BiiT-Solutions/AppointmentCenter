@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/appointments-types")
-public class AppointmentTypeServices extends BasicServices<AppointmentType, AppointmentTypeDTO, AppointmentTypeRepository,
+public class AppointmentTypeServices extends BasicServices<AppointmentType, Long, AppointmentTypeDTO, AppointmentTypeRepository,
         AppointmentTypeProvider, AppointmentTypeConverterRequest, AppointmentTypeConverter, AppointmentTypeController> {
 
     protected AppointmentTypeServices(AppointmentTypeController controller) {

@@ -23,7 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         @UniqueConstraint(columnNames = {"appointment", "examination_form"})})
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ExaminationResult extends Element implements PoolElement<Long> {
+public class ExaminationResult extends Element<Long> implements PoolElement<Long> {
     private static final long serialVersionUID = 2547976709523176154L;
     private static final int MAX_JSON_LENGTH = 100000;
 

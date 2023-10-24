@@ -10,7 +10,7 @@ import com.biit.appointment.persistence.repositories.AppointmentTypeRepository;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class AppointmentTypeController extends BasicElementController<AppointmentType, AppointmentTypeDTO, AppointmentTypeRepository,
+public class AppointmentTypeController extends BasicElementController<AppointmentType, Long, AppointmentTypeDTO, AppointmentTypeRepository,
         AppointmentTypeProvider, AppointmentTypeConverterRequest, AppointmentTypeConverter> {
 
     protected AppointmentTypeController(AppointmentTypeProvider provider, AppointmentTypeConverter converter) {

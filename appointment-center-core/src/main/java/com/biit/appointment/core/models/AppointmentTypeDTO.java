@@ -2,7 +2,7 @@ package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 
-public class AppointmentTypeDTO extends ElementDTO {
+public class AppointmentTypeDTO extends ElementDTO<Long> {
 
 
     private String name;

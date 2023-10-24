@@ -24,7 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ExaminationType extends Element implements Comparable<ExaminationType> {
+public class ExaminationType extends Element<Long> implements Comparable<ExaminationType> {
 
     @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String name;

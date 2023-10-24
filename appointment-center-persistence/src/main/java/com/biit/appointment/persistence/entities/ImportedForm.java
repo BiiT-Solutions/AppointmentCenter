@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class ImportedForm extends Element {
+public abstract class ImportedForm extends Element<Long> {
 
     @Column(name = "file_name", nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String fileName;

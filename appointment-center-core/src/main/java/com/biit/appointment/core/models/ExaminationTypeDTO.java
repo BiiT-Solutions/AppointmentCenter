@@ -2,7 +2,7 @@ package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 
-public class ExaminationTypeDTO extends ElementDTO {
+public class ExaminationTypeDTO extends ElementDTO<Long> {
 
 
     private String name;

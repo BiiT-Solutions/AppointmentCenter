@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-public class ExaminationTypeController extends BasicElementController<ExaminationType, ExaminationTypeDTO, ExaminationTypeRepository,
+public class ExaminationTypeController extends BasicElementController<ExaminationType, Long, ExaminationTypeDTO, ExaminationTypeRepository,
         ExaminationTypeProvider, ExaminationTypeConverterRequest, ExaminationTypeConverter> {
 
     private final AppointmentTypeProvider appointmentTypeProvider;

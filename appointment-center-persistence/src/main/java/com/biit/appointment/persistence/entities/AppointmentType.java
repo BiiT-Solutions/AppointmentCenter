@@ -20,7 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class AppointmentType extends Element implements Comparable<AppointmentType> {
+public class AppointmentType extends Element<Long> implements Comparable<AppointmentType> {
     private static final int HASH_SEED = 31;
 
     @Column(nullable = false)

@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/appointments")
-public class AppointmentServices extends BasicServices<Appointment, AppointmentDTO, AppointmentRepository,
+public class AppointmentServices extends BasicServices<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
     public AppointmentServices(AppointmentController controller) {

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-public class AppointmentController extends BasicElementController<Appointment, AppointmentDTO, AppointmentRepository,
+public class AppointmentController extends BasicElementController<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter> {
 
     private final ExaminationTypeProvider examinationTypeProvider;
