@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public class AppointmentDTO extends ElementDTO<Long> {
 
+    private Long id;
+
     private Long doctorId;
 
     private LocalDateTime startTime;
@@ -38,6 +40,16 @@ public class AppointmentDTO extends ElementDTO<Long> {
     private LocalDateTime finishedTime = null;
 
     private String conclusion;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getDoctorId() {
         return doctorId;

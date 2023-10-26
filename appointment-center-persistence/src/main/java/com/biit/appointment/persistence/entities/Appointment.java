@@ -10,6 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
@@ -28,6 +31,10 @@ import java.time.temporal.ChronoUnit;
 public class Appointment extends Element<Long> implements Comparable<Appointment> {
     public static final int CONCLUSION_MAX_LENGTH = 10000;
     public static final int FLOWABLE_ID_LENGTH = 64;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "organizer_id", nullable = false)
     private Long organizerId;
@@ -78,6 +85,16 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(length = CONCLUSION_MAX_LENGTH)
     @Convert(converter = StringCryptoConverter.class)
     private String conclusion;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Appointment() {
         super();

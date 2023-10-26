@@ -2,6 +2,9 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.MappedSuperclass;
@@ -14,6 +17,10 @@ import java.util.Objects;
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class ImportedForm extends Element<Long> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "file_name", nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String fileName;
@@ -37,6 +44,16 @@ public abstract class ImportedForm extends Element<Long> {
         setDisplayName(displayName);
         setVersion(version);
         setOrganizationId(organization);
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFileName() {

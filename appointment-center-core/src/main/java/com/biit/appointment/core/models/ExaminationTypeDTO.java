@@ -4,6 +4,7 @@ import com.biit.server.controllers.models.ElementDTO;
 
 public class ExaminationTypeDTO extends ElementDTO<Long> {
 
+    private Long id;
 
     private String name;
 
@@ -18,6 +19,16 @@ public class ExaminationTypeDTO extends ElementDTO<Long> {
     private boolean deleted;
 
     private boolean appointmentOverlapsAllowed = false;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

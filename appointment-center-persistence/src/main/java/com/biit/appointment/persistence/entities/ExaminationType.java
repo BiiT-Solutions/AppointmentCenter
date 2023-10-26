@@ -7,6 +7,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -25,6 +28,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ExaminationType extends Element<Long> implements Comparable<ExaminationType> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String name;
@@ -46,6 +53,16 @@ public class ExaminationType extends Element<Long> implements Comparable<Examina
 
     @Column(name = "appointment_overlaps_allowed")
     private boolean appointmentOverlapsAllowed = false;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public ExaminationType() {
         super();

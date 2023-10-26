@@ -7,7 +7,7 @@ import com.biit.appointment.core.models.ExaminationTypeDTO;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.ExaminationTypeRepository;
-import com.biit.server.rest.BasicServices;
+import com.biit.server.rest.ElementServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/examinations-types")
-public class ExaminationTypeServices extends BasicServices<ExaminationType, Long, ExaminationTypeDTO, ExaminationTypeRepository,
+public class ExaminationTypeServices extends ElementServices<ExaminationType, Long, ExaminationTypeDTO, ExaminationTypeRepository,
         ExaminationTypeProvider, ExaminationTypeConverterRequest, ExaminationTypeConverter, ExaminationTypeController> {
 
     protected ExaminationTypeServices(ExaminationTypeController controller) {

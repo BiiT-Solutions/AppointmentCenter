@@ -8,7 +8,7 @@ import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
-import com.biit.server.rest.BasicServices;
+import com.biit.server.rest.ElementServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/appointments")
-public class AppointmentServices extends BasicServices<Appointment, Long, AppointmentDTO, AppointmentRepository,
+public class AppointmentServices extends ElementServices<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
     public AppointmentServices(AppointmentController controller) {

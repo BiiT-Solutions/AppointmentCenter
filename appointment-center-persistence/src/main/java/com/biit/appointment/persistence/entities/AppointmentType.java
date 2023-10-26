@@ -4,6 +4,9 @@ import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -23,6 +26,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class AppointmentType extends Element<Long> implements Comparable<AppointmentType> {
     private static final int HASH_SEED = 31;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(nullable = false)
     private String name;
 
@@ -37,6 +44,16 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
         this();
         setName(name);
         setOrganizationId(organizationId);
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

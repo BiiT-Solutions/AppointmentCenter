@@ -8,6 +8,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
@@ -27,6 +30,10 @@ public class ExaminationResult extends Element<Long> implements PoolElement<Long
     private static final long serialVersionUID = 2547976709523176154L;
     private static final int MAX_JSON_LENGTH = 100000;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Lob
     @Column(name = "json", length = MAX_JSON_LENGTH)
     @Convert(converter = StringCryptoConverter.class)
@@ -39,6 +46,16 @@ public class ExaminationResult extends Element<Long> implements PoolElement<Long
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "examination_form")
     private ExaminationForm examinationForm;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Appointment getAppointment() {
         return appointment;

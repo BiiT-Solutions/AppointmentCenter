@@ -7,7 +7,7 @@ import com.biit.appointment.core.models.AppointmentTypeDTO;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.repositories.AppointmentTypeRepository;
-import com.biit.server.rest.BasicServices;
+import com.biit.server.rest.ElementServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/appointments-types")
-public class AppointmentTypeServices extends BasicServices<AppointmentType, Long, AppointmentTypeDTO, AppointmentTypeRepository,
+public class AppointmentTypeServices extends ElementServices<AppointmentType, Long, AppointmentTypeDTO, AppointmentTypeRepository,
         AppointmentTypeProvider, AppointmentTypeConverterRequest, AppointmentTypeConverter, AppointmentTypeController> {
 
     protected AppointmentTypeServices(AppointmentTypeController controller) {
