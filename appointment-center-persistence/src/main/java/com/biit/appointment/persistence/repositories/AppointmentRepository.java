@@ -65,10 +65,10 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @return a list of appointments.
      */
     @Query("""
-            SELECT a FROM Appointment a WHERE
+            SELECT a FROM Appointment  a JOIN a.attendees aa WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND
-            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:attendee IS NULL OR aa = :attendee) AND
             (a.examinationType IN :examinationTypes) AND
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
@@ -77,7 +77,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     List<Appointment> findBy(
-            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("attendee") Long attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
@@ -125,10 +125,10 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @return the total number of appointments.
      */
     @Query(value = """
-            SELECT COUNT(a) FROM Appointment a WHERE
+            SELECT COUNT(a) FROM Appointment a JOIN a.attendees aa WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND
-            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:attendee IS NULL OR aa = :attendee) AND
             (a.examinationType IN :examinationTypes) AND
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
@@ -137,7 +137,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long countExaminationTypesIn(
-            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("attendee") Long attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
@@ -154,10 +154,10 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @return the total number of appointments.
      */
     @Query(value = """
-            SELECT COUNT(a) FROM Appointment a WHERE
+            SELECT COUNT(a) FROM Appointment a JOIN a.attendees aa WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
             (:organizerId IS NULL OR a.organizerId = :organizerId) AND
-            (:customerId IS NULL OR a.customerId = :customerId) AND
+            (:attendee IS NULL OR aa = :attendee) AND
             (:appointmentStatus IS NULL OR a.status = :appointmentStatus) AND
             (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
@@ -165,7 +165,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long count(
-            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("customerId") Long customerId,
+            @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId, @Param("attendee") Long attendee,
             @Param("appointmentStatus") AppointmentStatus appointmentStatus, @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary, @Param("deleted") Boolean deleted);
 
@@ -193,12 +193,16 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     long overlaps(@Param("appointment") Appointment appointment);
 
     /**
-     * Counts how many appointments has a customer.
+     * Counts how many appointments has an attendee.
      *
-     * @param customerId the customer id card.
+     * @param attendee the attendee id card.
      * @return the total number of appointments.
      */
-    long countByCustomerId(Long customerId);
+    @Query(value = """
+            SELECT COUNT(a) FROM Appointment a JOIN a.attendees aa WHERE
+            aa = :attendee
+            """)
+    long countByAttendeeIdIn(Long attendee);
 
 
     /**
@@ -210,7 +214,6 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     @Query("""
             SELECT a FROM Appointment a WHERE
             (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
-            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND
             (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (a.startTime < :#{#appointment.startTime}) AND
             (a.deleted = false)
@@ -248,7 +251,6 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     @Query("""
             SELECT a FROM Appointment a WHERE
             (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
-            (:#{#appointment.customerId} IS NULL OR a.customerId = :#{#appointment.customerId}) AND
             (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (a.startTime > :#{#appointment.startTime}) AND
             (a.deleted = false)

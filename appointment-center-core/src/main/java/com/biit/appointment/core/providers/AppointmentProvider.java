@@ -133,7 +133,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * @return the total number of appointments.
      */
     public long countByCustomerId(Long customerId) {
-        return getRepository().countByCustomerId(customerId);
+        return getRepository().countByAttendeeIdIn(customerId);
     }
 
 

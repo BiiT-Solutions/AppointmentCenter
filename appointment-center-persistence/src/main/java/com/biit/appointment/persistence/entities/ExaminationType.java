@@ -7,8 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -27,17 +25,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ExaminationType extends Element<Long> implements Comparable<ExaminationType> {
+public class ExaminationType extends Element<String> implements Comparable<ExaminationType> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
     private String name;
-
-    @Column(nullable = false, length = MAX_UNIQUE_COLUMN_LENGTH)
-    private String translation;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "appointment_type")
@@ -55,13 +47,13 @@ public class ExaminationType extends Element<Long> implements Comparable<Examina
     private boolean appointmentOverlapsAllowed = false;
 
     @Override
-    public Long getId() {
-        return id;
+    public String getId() {
+        return name;
     }
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String name) {
+        this.name = name;
     }
 
     public ExaminationType() {
@@ -69,10 +61,9 @@ public class ExaminationType extends Element<Long> implements Comparable<Examina
         setDeleted(false);
     }
 
-    public ExaminationType(String name, String translation, Long organizationId, AppointmentType appointmentType) {
+    public ExaminationType(String name, Long organizationId, AppointmentType appointmentType) {
         this();
         setName(name);
-        setTranslation(translation);
         setAppointmentType(appointmentType);
         setOrganizationId(organizationId);
     }
@@ -83,14 +74,6 @@ public class ExaminationType extends Element<Long> implements Comparable<Examina
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getTranslation() {
-        return translation;
-    }
-
-    public void setTranslation(String translation) {
-        this.translation = translation;
     }
 
     public boolean isDeleted() {
@@ -108,7 +91,7 @@ public class ExaminationType extends Element<Long> implements Comparable<Examina
 
     @Override
     public int compareTo(ExaminationType arg0) {
-        return getTranslation().compareTo(arg0.getTranslation());
+        return getName().compareTo(arg0.name);
     }
 
     public Double getPrice() {

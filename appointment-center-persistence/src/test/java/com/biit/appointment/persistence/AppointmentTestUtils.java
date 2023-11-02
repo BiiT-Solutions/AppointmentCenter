@@ -23,7 +23,7 @@ public class AppointmentTestUtils {
     }
 
     public static Appointment createAppointment(long organizerId, long organizationId, LocalDateTime startAt, LocalDateTime endsAt,
-                                                ExaminationType examinationType, Long customerId) {
+                                                ExaminationType examinationType, Long attendeeId) {
         Appointment appointment = new Appointment();
 
         appointment.setOrganizerId(organizerId);
@@ -31,7 +31,7 @@ public class AppointmentTestUtils {
         appointment.setStartTime(startAt);
         appointment.setEndTime(endsAt);
         appointment.setExaminationType(examinationType);
-        appointment.setCustomerId(customerId);
+        appointment.addAttendee(attendeeId);
         return appointment;
     }
 }

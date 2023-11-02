@@ -15,15 +15,7 @@ public enum AppointmentStatus {
 
     STARTED(4),
 
-    EDITION_STARTED(4),
-
-    EXAMINATION_CLOSED(5),
-
-    EXAMINATION_EDITIONS_CLOSED(5),
-
-    REPORT_CLOSED(6),
-
-    EDITION_CLOSED(6);
+    FINISHED(6);
 
     private final int order;
 
@@ -39,10 +31,6 @@ public enum AppointmentStatus {
      */
     public boolean isStatusPassed(AppointmentStatus status) {
         return order >= status.order;
-    }
-
-    public boolean arePendingActions() {
-        return order < REPORT_CLOSED.order;
     }
 
     public static AppointmentStatus getStatus(String name) {

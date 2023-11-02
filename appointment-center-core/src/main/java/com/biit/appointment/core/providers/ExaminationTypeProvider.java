@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class ExaminationTypeProvider extends ElementProvider<ExaminationType, Long, ExaminationTypeRepository> {
+public class ExaminationTypeProvider extends ElementProvider<ExaminationType, String, ExaminationTypeRepository> {
 
     public ExaminationTypeProvider(ExaminationTypeRepository repository) {
         super(repository);

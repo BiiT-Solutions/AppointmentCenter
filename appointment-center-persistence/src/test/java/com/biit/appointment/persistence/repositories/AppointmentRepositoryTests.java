@@ -115,8 +115,8 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void getAppointmentsByPatient() {
-        Assert.assertEquals(appointmentRepository.countByCustomerId(patientId), 1);
-        Assert.assertEquals(appointmentRepository.countByCustomerId(-1L), 0);
+        Assert.assertEquals(appointmentRepository.countByAttendeeIdIn(patientId), 1);
+        Assert.assertEquals(appointmentRepository.countByAttendeeIdIn(-1L), 0);
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
@@ -129,7 +129,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertNotNull(appointment);
         Assert.assertEquals(appointment.getStartTime(), START_TIME_1);
         Assert.assertEquals(appointment.getEndTime(), START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT));
-        Assert.assertEquals(appointment.getCustomerId(), patientId);
+        Assert.assertTrue(appointment.getAttendees().contains(patientId));
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
@@ -149,7 +149,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertEquals(appointmentRepository.findAll(
                 ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, null, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.REPORT_CLOSED, null, null, null).size(), 0);
+                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.FINISHED, null, null, null).size(), 0);
         Assert.assertEquals(appointmentRepository.findAll(
                 ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, START_TIME_1, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findAll(
@@ -364,7 +364,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
         Thread.sleep(1000);
         //Force a change on the update.
-        dbAppointment2.setCustomerId(11L);
+        dbAppointment2.setCost(50D);
         dbAppointment2 = appointmentRepository.save(dbAppointment2);
 
         Assert.assertTrue(dbAppointment2.getUpdatedAt().isAfter(dbAppointment.getUpdatedAt()));

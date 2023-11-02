@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ExaminationTypeRepository extends ElementRepository<ExaminationType, Long> {
+public interface ExaminationTypeRepository extends ElementRepository<ExaminationType, String> {
 
 
     List<ExaminationType> findByNameAndDeleted(String name, boolean deleted);

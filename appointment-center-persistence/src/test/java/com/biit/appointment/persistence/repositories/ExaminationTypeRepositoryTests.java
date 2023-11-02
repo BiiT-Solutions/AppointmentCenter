@@ -19,7 +19,6 @@ import java.util.Set;
 public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextTests {
 
     private static final String TEST_NAME = "normal";
-    private static final String TEST_TRANSLATION = "none";
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final long ORGANIZATION_ID = 456l;
@@ -31,7 +30,7 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
     private AppointmentTypeRepository appointmentTypeRepository;
 
     public static ExaminationType generateExaminationType(String name, AppointmentType appointmentType) {
-        return new ExaminationType(name, TEST_TRANSLATION, ORGANIZATION_ID, appointmentType);
+        return new ExaminationType(name, ORGANIZATION_ID, appointmentType);
     }
 
     @BeforeClass

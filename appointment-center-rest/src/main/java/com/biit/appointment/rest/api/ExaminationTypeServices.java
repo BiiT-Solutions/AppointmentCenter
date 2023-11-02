@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/examinations-types")
-public class ExaminationTypeServices extends ElementServices<ExaminationType, Long, ExaminationTypeDTO, ExaminationTypeRepository,
+public class ExaminationTypeServices extends ElementServices<ExaminationType, String, ExaminationTypeDTO, ExaminationTypeRepository,
         ExaminationTypeProvider, ExaminationTypeConverterRequest, ExaminationTypeConverter, ExaminationTypeController> {
 
     protected ExaminationTypeServices(ExaminationTypeController controller) {

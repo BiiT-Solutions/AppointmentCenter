@@ -2,9 +2,9 @@ package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 
-public class ExaminationTypeDTO extends ElementDTO<Long> {
+public class ExaminationTypeDTO extends ElementDTO<String> {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -21,12 +21,12 @@ public class ExaminationTypeDTO extends ElementDTO<Long> {
     private boolean appointmentOverlapsAllowed = false;
 
     @Override
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
