@@ -11,12 +11,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "recurrence")
@@ -28,8 +29,8 @@ public class Recurrence extends Element<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private Appointment appointment;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Appointment> appointments;
 
     @Column(name = "frequency", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -51,12 +52,12 @@ public class Recurrence extends Element<Long> {
         this.id = id;
     }
 
-    public Appointment getAppointment() {
-        return appointment;
+    public Set<Appointment> getAppointments() {
+        return appointments;
     }
 
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
+    public void setAppointments(Set<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     public RecurrenceFrequency getFrequency() {
