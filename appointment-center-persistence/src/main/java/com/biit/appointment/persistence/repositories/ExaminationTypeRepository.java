@@ -15,6 +15,8 @@ public interface ExaminationTypeRepository extends ElementRepository<Examination
 
     List<ExaminationType> findByNameAndDeleted(String name, boolean deleted);
 
+    List<ExaminationType> findByNameInAndDeleted(Collection<String> name, boolean deleted);
+
     Optional<ExaminationType> findByNameAndOrganizationIdAndDeleted(String name, Long organizationId, boolean deleted);
 
     List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, AppointmentType appointmentType, boolean deleted);

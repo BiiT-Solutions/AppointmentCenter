@@ -21,6 +21,10 @@ public class ExaminationTypeProvider extends ElementProvider<ExaminationType, St
         return getRepository().findByNameAndDeleted(name, deleted);
     }
 
+    public List<ExaminationType> findByNameAndDeleted(Collection<String> names, boolean deleted) {
+        return getRepository().findByNameInAndDeleted(names, deleted);
+    }
+
     public ExaminationType findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
         return  getRepository().findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
                 new ExaminationTypeNotFoundException(this.getClass(), "No examination defined with name '" + name + "' and organization '"

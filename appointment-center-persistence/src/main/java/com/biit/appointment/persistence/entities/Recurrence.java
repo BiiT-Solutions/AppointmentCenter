@@ -11,6 +11,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
@@ -28,6 +30,16 @@ public class Recurrence extends Element<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "organizer_id", nullable = false)
+    private Long organizerId;
+
+    @Column(name = "organization_id", nullable = false)
+    private Long organizationId;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "examination_type")
+    private ExaminationType examinationType;
 
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Appointment> appointments;
@@ -82,5 +94,29 @@ public class Recurrence extends Element<Long> {
 
     public void setEndsAt(LocalDateTime endsAt) {
         this.endsAt = endsAt;
+    }
+
+    public Long getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(Long organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public ExaminationType getExaminationType() {
+        return examinationType;
+    }
+
+    public void setExaminationType(ExaminationType examinationType) {
+        this.examinationType = examinationType;
     }
 }

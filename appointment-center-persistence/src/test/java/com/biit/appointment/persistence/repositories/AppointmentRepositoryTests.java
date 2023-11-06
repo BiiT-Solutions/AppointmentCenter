@@ -110,13 +110,13 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertNotNull(appointment.getId());
         Assert.assertEquals(appointmentRepository.count(), 1);
         Assert.assertNotNull(appointmentRepository.findByOrganizerId(ORGANIZER_ID));
-        Assert.assertNotNull(appointmentRepository.getById(appointment.getId()));
+        Assert.assertNotNull(appointmentRepository.findById(appointment.getId()));
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void getAppointmentsByPatient() {
-        Assert.assertEquals(appointmentRepository.countByAttendeeIdIn(patientId), 1);
-        Assert.assertEquals(appointmentRepository.countByAttendeeIdIn(-1L), 0);
+        Assert.assertEquals(appointmentRepository.count(null, null, patientId, null, null, null, null, null), 1);
+        Assert.assertEquals(appointmentRepository.count(null, null, -1L, null, null, null, null, null), 0);
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
@@ -142,52 +142,52 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertEquals(appointmentRepository.count(), 1);
 
         // Check get All with filters;
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, null, null, null, null, null).size(), 1);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, null, null, null, null).size(), 1);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, null, null, null).size(), 1);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.FINISHED, null, null, null).size(), 0);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, START_TIME_1, null, null).size(), 1);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, null, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, null, null, null, null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), null, null, null, null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, null, null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.FINISHED), null, null, null).size(), 0);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, null, null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, (ExaminationType) null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, (ExaminationType) null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, null, false), 1);
         Assert.assertEquals(
                 appointmentRepository.count(
-                        null, null, (ExaminationType) null, null, null, null, false),
+                        null, null, null, null, null, null, null, false),
                 1);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
+        Assert.assertEquals(appointmentRepository.count(
                 ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, (ExaminationType) null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, (ExaminationType) null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                null, null, (ExaminationType) null, null, null, null, false), 1);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
+                null, null, null, null, null, null, null, false), 1);
+        Assert.assertEquals(appointmentRepository.count(
                 ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), AppointmentStatus.NOT_STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), AppointmentStatus.STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
-        Assert.assertEquals(appointmentRepository.countExaminationTypesIn(
-                ORGANIZATION_ID, null, null, null, AppointmentStatus.STARTED, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
+        Assert.assertEquals(appointmentRepository.count(
+                ORGANIZATION_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+        Assert.assertEquals(appointmentRepository.count(
+                ORGANIZATION_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
+        Assert.assertEquals(appointmentRepository.count(
+                ORGANIZATION_ID, null, null, null, Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
 
         // NOTE This test will fail with older versions of MYSQL!
-        Assert.assertEquals(appointmentRepository.findAll(
-                ORGANIZATION_ID, ORGANIZER_ID, type, AppointmentStatus.NOT_STARTED, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT + 1), null, null).size(), 0);
+        Assert.assertEquals(appointmentRepository.findBy(
+                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT + 1), null, null).size(), 0);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
@@ -276,33 +276,6 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
-    public void searchNextWorkshop() {
-        AppointmentType appointmentType = appointmentTypeRepository.findByNameAndOrganizationId(APPOINTMENT_SPECIALTY, ORGANIZATION_ID).orElseThrow();
-        ExaminationType workshopType = generateExaminationType(TEST_NAME + "_2", appointmentType);
-        workshopType.setAppointmentOverlapsAllowed(true);
-        workshopType = examinationTypeRepository.save(workshopType);
-
-        // Next workshop in 1 week
-        LocalDateTime workshop1StartsInTime = CURRENT_TIME.plusDays(7);
-
-        // Create first workshop on the future
-        Appointment workshop1 = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, workshop1StartsInTime,
-                workshopType, patientId);
-        workshop1 = appointmentRepository.save(workshop1);
-
-        // Create second workshop later on the future
-        LocalDateTime workshop2StartsInTime = CURRENT_TIME.plusDays(14);
-        Appointment workshop2 = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, workshop2StartsInTime,
-                workshopType, patientId);
-        appointmentRepository.save(workshop2);
-
-        Assert.assertEquals(appointmentRepository.getNext(ORGANIZATION_ID, workshopType, LocalDateTime.now()).get(0), workshop1);
-
-        appointmentRepository.delete(workshop1);
-        appointmentRepository.delete(workshop2);
-    }
-
-    @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkBigAppointment() {
         Appointment appointment = appointmentRepository
                 .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
@@ -310,18 +283,6 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2.minusMinutes(END_TIME_MINUTES_INCREMENT),
                         START_TIME_2.plusMinutes(2 * END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
         appointmentRepository.delete(appointment);
-    }
-
-    @Test(dependsOnMethods = {"checkBigAppointment", "checkOverlapsCancelledAppointment"})
-    public void checkSuggestedAppointments() {
-        long previousAppointments = appointmentRepository.countExaminationTypesIn(ORGANIZATION_ID, ORGANIZER_ID, null,
-                null, null, START_TIME_1, LONG_TIME_4, false);
-        long totalAppointments = appointmentRepository.count();
-        appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, null, type, patientId));
-        Assert.assertEquals(appointmentRepository.count(), totalAppointments + 1);
-
-        Assert.assertEquals(appointmentRepository.findAll(ORGANIZATION_ID, ORGANIZER_ID, null, null,
-                START_TIME_1, LONG_TIME_4, false).size(), previousAppointments + 2);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities", "getAppointmentsByPatient"})
@@ -371,35 +332,6 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
         Assert.assertTrue(dbAppointment2.isUpdated());
 
         appointmentRepository.delete(dbAppointment2);
-    }
-
-    @Test
-    public void getPreviousAppointment() {
-        Appointment appointment1 = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID,
-                LONG_TIME_4, type, patientId);
-        appointment1 = appointmentRepository.save(appointment1);
-        Appointment appointment2 = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID,
-                LONG_TIME_4.minusSeconds(200), type, patientId);
-        appointment2 = appointmentRepository.save(appointment2);
-        Appointment appointment3 = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID,
-                LONG_TIME_4.minusSeconds(500), type, patientId);
-        appointment3 = appointmentRepository.save(appointment3);
-
-        Assert.assertEquals(appointmentRepository.getPrevious(appointment1).get(0), appointment2);
-        Assert.assertEquals(appointmentRepository.getPrevious(appointment2).get(0), appointment3);
-        Assert.assertTrue(appointmentRepository.getPrevious(appointment3).isEmpty());
-
-        // Change starting time of third appointment
-        appointment3.setStartTime(LONG_TIME_4.minusSeconds(100));
-        appointment3 = appointmentRepository.save(appointment3);
-        // With Transactional.NEVER the get previous returns the appointment with the
-        // wrong time and equals fails.
-        Appointment previousAppointment = appointmentRepository.getPrevious(appointment1).get(0);
-        Assert.assertEquals(previousAppointment, appointment3);
-
-        appointmentRepository.delete(appointment1);
-        appointmentRepository.delete(appointment2);
-        appointmentRepository.delete(appointment3);
     }
 
     @AfterClass(alwaysRun = true)

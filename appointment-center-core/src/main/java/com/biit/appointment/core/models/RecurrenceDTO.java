@@ -18,6 +18,10 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     private LocalDateTime endsAt;
 
+    private Long organizerId;
+
+    private Long organizationId;
+
     @Override
     public Long getId() {
         return id;
@@ -58,5 +62,21 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     public void setEndsAt(LocalDateTime endsAt) {
         this.endsAt = endsAt;
+    }
+
+    public Long getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(Long organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
     }
 }
