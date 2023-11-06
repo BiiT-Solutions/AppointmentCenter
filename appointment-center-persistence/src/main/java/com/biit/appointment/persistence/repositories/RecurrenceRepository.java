@@ -1,6 +1,5 @@
 package com.biit.appointment.persistence.repositories;
 
-import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.server.persistence.repositories.ElementRepository;
@@ -29,12 +28,12 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             SELECT r FROM Recurrence  r WHERE
             (:organizationId IS NULL OR r.organizationId = :organizationId) AND
             (:organizerId IS NULL OR r.organizerId = :organizerId) AND
-            (r.examinationType IN :examinationTypes) AND
+            (r.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
             (((:lowerTimeBoundary IS NULL OR r.endsAt >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR r.startsAt <= :upperTimeBoundary)) OR
             r.startsAt IS NULL AND r.endsAt IS NULL)
             """)
-    List<Appointment> findBy(
+    List<Recurrence> findBy(
             @Param("organizationId") Long organizationId, @Param("organizerId") Long organizerId,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
@@ -55,7 +54,7 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             SELECT COUNT(r) FROM Recurrence r WHERE
             (:organizationId IS NULL OR r.organizationId = :organizationId) AND
             (:organizerId IS NULL OR r.organizerId = :organizerId) AND
-            (r.examinationType IN :examinationTypes) AND
+            (r.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
             (((:lowerTimeBoundary IS NULL OR r.endsAt >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR r.startsAt <= :upperTimeBoundary)) OR
             r.startsAt IS NULL AND r.endsAt IS NULL)
