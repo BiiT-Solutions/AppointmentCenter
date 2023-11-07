@@ -10,6 +10,12 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    private Long organizerId;
+
+    private Long organizationId;
+
+    private ExaminationTypeDTO examinationType;
+
     private Set<AppointmentDTO> appointments;
 
     private RecurrenceFrequency frequency;
@@ -18,9 +24,6 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     private LocalDateTime endsAt;
 
-    private Long organizerId;
-
-    private Long organizationId;
 
     @Override
     public Long getId() {
@@ -66,6 +69,14 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     public Long getOrganizerId() {
         return organizerId;
+    }
+
+    public ExaminationTypeDTO getExaminationType() {
+        return examinationType;
+    }
+
+    public void setExaminationType(ExaminationTypeDTO examinationType) {
+        this.examinationType = examinationType;
     }
 
     public void setOrganizerId(Long organizerId) {

@@ -6,6 +6,7 @@ import com.biit.appointment.core.converters.models.ExaminationTypeConverterReque
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.CustomPropertyDTO;
 import com.biit.appointment.core.providers.CustomPropertyProvider;
+import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.server.controller.converters.ElementConverter;
 import org.hibernate.LazyInitializationException;
@@ -21,19 +22,24 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
 
     private final ExaminationTypeConverter examinationTypeConverter;
     private final CustomPropertyConverter customPropertyConverter;
-
     private final CustomPropertyProvider customPropertyProvider;
+    private final RecurrenceProvider recurrenceProvider;
 
     public AppointmentConverter(ExaminationTypeConverter examinationTypeConverter,
                                 CustomPropertyConverter customPropertyConverter,
-                                CustomPropertyProvider customPropertyProvider) {
+                                CustomPropertyProvider customPropertyProvider,
+                                RecurrenceProvider recurrenceProvider) {
         this.examinationTypeConverter = examinationTypeConverter;
         this.customPropertyConverter = customPropertyConverter;
         this.customPropertyProvider = customPropertyProvider;
+        this.recurrenceProvider = recurrenceProvider;
     }
 
     @Override
     protected AppointmentDTO convertElement(AppointmentConverterRequest from) {
+        if (from.getEntity() == null) {
+            return null;
+        }
         final AppointmentDTO appointmentDTO = new AppointmentDTO();
         BeanUtils.copyProperties(from.getEntity(), appointmentDTO);
         appointmentDTO.setExaminationType(examinationTypeConverter.convert(new ExaminationTypeConverterRequest(from.getEntity().getExaminationType())));
@@ -55,6 +61,7 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         }
 
         appointmentDTO.setCustomProperties(customProperties);
+        appointmentDTO.setRecurrence(from.getEntity().getRecurrence().getId());
 
         return appointmentDTO;
     }
@@ -67,6 +74,13 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         final Appointment appointment = new Appointment();
         BeanUtils.copyProperties(to, appointment);
         appointment.setExaminationType(examinationTypeConverter.reverse(to.getExaminationType()));
+        appointment.setAttendees(new HashSet<>(to.getAttendees()));
+        appointment.setStatus(to.getStatus());
+        appointment.setCustomProperties(customPropertyConverter.reverseAll(to.getCustomProperties()));
+        if (to.getRecurrence() != null) {
+            appointment.setRecurrence(recurrenceProvider.get(to.getRecurrence()).orElse(null));
+        }
+
         return appointment;
     }
 }

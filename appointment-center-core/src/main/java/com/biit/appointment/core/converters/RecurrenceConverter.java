@@ -1,6 +1,7 @@
 package com.biit.appointment.core.converters;
 
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
+import com.biit.appointment.core.converters.models.ExaminationTypeConverterRequest;
 import com.biit.appointment.core.converters.models.RecurrenceConverterRequest;
 import com.biit.appointment.core.models.RecurrenceDTO;
 import com.biit.appointment.persistence.entities.Recurrence;
@@ -16,9 +17,12 @@ import java.util.stream.Collectors;
 public class RecurrenceConverter extends ElementConverter<Recurrence, RecurrenceDTO, RecurrenceConverterRequest> {
 
     private final AppointmentConverter appointmentConverter;
+    private final ExaminationTypeConverter examinationTypeConverter;
 
-    public RecurrenceConverter(AppointmentConverter appointmentConverter) {
+    public RecurrenceConverter(AppointmentConverter appointmentConverter,
+                               ExaminationTypeConverter examinationTypeConverter) {
         this.appointmentConverter = appointmentConverter;
+        this.examinationTypeConverter = examinationTypeConverter;
     }
 
     @Override
@@ -30,6 +34,7 @@ public class RecurrenceConverter extends ElementConverter<Recurrence, Recurrence
         BeanUtils.copyProperties(from.getEntity(), recurrenceDTO);
         recurrenceDTO.setAppointments(new HashSet<>(appointmentConverter.convertAll(from.getEntity().getAppointments().stream()
                 .map(AppointmentConverterRequest::new).collect(Collectors.toList()))));
+        recurrenceDTO.setExaminationType(examinationTypeConverter.convertElement(new ExaminationTypeConverterRequest(from.getEntity().getExaminationType())));
         return recurrenceDTO;
     }
 
@@ -41,6 +46,7 @@ public class RecurrenceConverter extends ElementConverter<Recurrence, Recurrence
         final Recurrence recurrence = new Recurrence();
         BeanUtils.copyProperties(to, recurrence);
         recurrence.setAppointments(new ArrayList<>(appointmentConverter.reverseAll(to.getAppointments())));
+        recurrence.setExaminationType(examinationTypeConverter.reverse(to.getExaminationType()));
         return recurrence;
     }
 }

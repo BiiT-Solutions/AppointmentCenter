@@ -31,6 +31,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private Collection<CustomPropertyDTO> customProperties;
 
+    private Long recurrence;
+
     @Override
     public Long getId() {
         return id;
@@ -119,5 +121,13 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setCustomProperties(Collection<CustomPropertyDTO> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public Long getRecurrence() {
+        return recurrence;
+    }
+
+    public void setRecurrence(Long recurrence) {
+        this.recurrence = recurrence;
     }
 }
