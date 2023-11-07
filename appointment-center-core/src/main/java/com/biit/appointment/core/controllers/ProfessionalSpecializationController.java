@@ -69,4 +69,20 @@ public class ProfessionalSpecializationController extends ElementController<Prof
             Long organizationId, Collection<AppointmentType> appointmentTypes) {
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes));
     }
+
+    public List<ProfessionalSpecializationDTO> findByUserId(Long userId) {
+        return convertAll(getProvider().findByUserId(userId));
+    }
+
+    public List<ProfessionalSpecializationDTO> findByUserIdAndOrganizationId(Long userId, Long organizationId) {
+        return convertAll(getProvider().findByUserIdAndOrganizationId(userId, organizationId));
+    }
+
+    public List<ProfessionalSpecializationDTO> findByUserId(Collection<Long> usersIds) {
+        return convertAll(getProvider().findByUserId(usersIds));
+    }
+
+    public List<ProfessionalSpecializationDTO> findByUserIdAndOrganizationId(Collection<Long> usersIds, Long organizationId) {
+        return convertAll(getProvider().findByUserIdAndOrganizationId(usersIds, organizationId));
+    }
 }

@@ -33,11 +33,27 @@ public class ProfessionalSpecializationProvider extends ElementProvider<Professi
 
     public List<ProfessionalSpecialization> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
             Long organizationId, AppointmentType appointmentType) {
-        return getRepository().findAllByOrOrganizationIdAndAppointmentType(organizationId, appointmentType);
+        return getRepository().findByOrganizationIdAndAppointmentType(organizationId, appointmentType);
     }
 
     public List<ProfessionalSpecialization> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
             Long organizationId, Collection<AppointmentType> appointmentTypes) {
-        return getRepository().findAllByOrOrganizationIdAndAppointmentTypeIn(organizationId, appointmentTypes);
+        return getRepository().findByOrganizationIdAndAppointmentTypeIn(organizationId, appointmentTypes);
+    }
+
+    public List<ProfessionalSpecialization> findByUserId(Long userId) {
+        return getRepository().findByUserId(userId);
+    }
+
+    public List<ProfessionalSpecialization> findByUserIdAndOrganizationId(Long userId, Long organizationId) {
+        return getRepository().findByUserIdAndOrganizationId(userId, organizationId);
+    }
+
+    public List<ProfessionalSpecialization> findByUserId(Collection<Long> userIds) {
+        return getRepository().findByUserIdIn(userIds);
+    }
+
+    public List<ProfessionalSpecialization> findByUserIdAndOrganizationId(Collection<Long> userIds, Long organizationId) {
+        return getRepository().findByUserIdInAndOrganizationId(userIds, organizationId);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -70,16 +71,51 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
         return getController().findAllByOrOrganizationIdAndAppointmentType(organizationId, appointmentTypeName);
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of professional specializations by its organization and a set of appointments types.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProfessionalSpecializationDTO> getByOrganizationAndAppointmentTypes(
+    public List<ProfessionalSpecializationDTO> getByOrganization(
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,
             @Parameter(description = "Name of the appointment types")
             @RequestParam(name = "appointmentTypeNames") Optional<Collection<String>> appointmentTypeNames,
             HttpServletRequest request) {
         return getController().findAllByOrOrganizationIdAndAppointmentTypeInUsingNames(organizationId, appointmentTypeNames.orElse(null));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of professional specializations by a user.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProfessionalSpecializationDTO> getByUser(
+            @Parameter(description = "Collection of users ids")
+            @RequestParam(name = "usersIds") Optional<Collection<Long>> usersIds,
+            HttpServletRequest request) {
+        if (usersIds.isPresent()) {
+            return getController().findByUserId(usersIds.get());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of professional specializations by a user in an organization.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/organizations/{organizationId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProfessionalSpecializationDTO> getByUser(
+            @Parameter(description = "Id of an existing organization")
+            @PathVariable(name = "organizationId") Long organizationId,
+            @Parameter(description = "Collection of users ids")
+            @RequestParam(name = "usersIds") Optional<Collection<Long>> usersIds,
+            HttpServletRequest request) {
+        if (usersIds.isPresent()) {
+            return getController().findByUserIdAndOrganizationId(usersIds.get(), organizationId);
+        } else {
+            return new ArrayList<>();
+        }
     }
 }
