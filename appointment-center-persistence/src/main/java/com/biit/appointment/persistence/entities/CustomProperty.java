@@ -1,5 +1,6 @@
 package com.biit.appointment.persistence.entities;
 
+import com.biit.server.persistence.entities.StorableObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,13 +11,14 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "custom_properties", indexes = {
         @Index(name = "ind_key", columnList = "property_key"),
         @Index(name = "ind_value", columnList = "property_value"),
 })
-public class CustomProperty {
+public class CustomProperty extends StorableObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,5 +75,13 @@ public class CustomProperty {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public static CustomProperty copy(CustomProperty source) {
+        final CustomProperty customProperty = new CustomProperty();
+        BeanUtils.copyProperties(source, customProperty);
+        customProperty.setId(null);
+        customProperty.setAppointment(source.getAppointment());
+        return customProperty;
     }
 }

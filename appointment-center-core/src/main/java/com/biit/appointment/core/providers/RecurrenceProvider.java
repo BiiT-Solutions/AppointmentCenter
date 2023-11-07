@@ -1,6 +1,5 @@
 package com.biit.appointment.core.providers;
 
-import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
@@ -19,8 +18,8 @@ public class RecurrenceProvider extends ElementProvider<Recurrence, Long, Recurr
     }
 
     public List<Recurrence> findAll(Long organizationId, Long organizerId, Collection<ExaminationType> examinationType,
-                                     LocalDateTime lowerTimeBoundary,
-                                     LocalDateTime upperTimeBoundary) {
+                                    LocalDateTime lowerTimeBoundary,
+                                    LocalDateTime upperTimeBoundary) {
         return getRepository().findBy(organizationId, organizerId, examinationType, lowerTimeBoundary, upperTimeBoundary);
     }
 

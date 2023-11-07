@@ -4,12 +4,12 @@ import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.server.controllers.models.ElementDTO;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Set;
 
 public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long id;
-
-    private Long doctorId;
 
     private LocalDateTime startTime;
 
@@ -19,19 +19,9 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
-    private Long customerId;
+    private Set<Long> attendees;
 
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
-
-    private String anamneseForm = null;
-
-    private Integer anamneseVersion = null;
-
-    private String flowableProcessInstanceId;
-
-    private String orbeonDocumentId;
-
-    private String intakeFormId;
 
     private Long cost;
 
@@ -39,7 +29,7 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private LocalDateTime finishedTime = null;
 
-    private String conclusion;
+    private Collection<CustomPropertyDTO> customProperties;
 
     @Override
     public Long getId() {
@@ -49,14 +39,6 @@ public class AppointmentDTO extends ElementDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(Long doctorId) {
-        this.doctorId = doctorId;
     }
 
     public LocalDateTime getStartTime() {
@@ -91,12 +73,12 @@ public class AppointmentDTO extends ElementDTO<Long> {
         this.examinationType = examinationType;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Set<Long> getAttendees() {
+        return attendees;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setAttendees(Set<Long> attendees) {
+        this.attendees = attendees;
     }
 
     public AppointmentStatus getStatus() {
@@ -105,46 +87,6 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
-    }
-
-    public String getAnamneseForm() {
-        return anamneseForm;
-    }
-
-    public void setAnamneseForm(String anamneseForm) {
-        this.anamneseForm = anamneseForm;
-    }
-
-    public Integer getAnamneseVersion() {
-        return anamneseVersion;
-    }
-
-    public void setAnamneseVersion(Integer anamneseVersion) {
-        this.anamneseVersion = anamneseVersion;
-    }
-
-    public String getFlowableProcessInstanceId() {
-        return flowableProcessInstanceId;
-    }
-
-    public void setFlowableProcessInstanceId(String flowableProcessInstanceId) {
-        this.flowableProcessInstanceId = flowableProcessInstanceId;
-    }
-
-    public String getOrbeonDocumentId() {
-        return orbeonDocumentId;
-    }
-
-    public void setOrbeonDocumentId(String orbeonDocumentId) {
-        this.orbeonDocumentId = orbeonDocumentId;
-    }
-
-    public String getIntakeFormId() {
-        return intakeFormId;
-    }
-
-    public void setIntakeFormId(String intakeFormId) {
-        this.intakeFormId = intakeFormId;
     }
 
     public Long getCost() {
@@ -171,11 +113,11 @@ public class AppointmentDTO extends ElementDTO<Long> {
         this.finishedTime = finishedTime;
     }
 
-    public String getConclusion() {
-        return conclusion;
+    public Collection<CustomPropertyDTO> getCustomProperties() {
+        return customProperties;
     }
 
-    public void setConclusion(String conclusion) {
-        this.conclusion = conclusion;
+    public void setCustomProperties(Collection<CustomPropertyDTO> customProperties) {
+        this.customProperties = customProperties;
     }
 }

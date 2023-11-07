@@ -3,6 +3,7 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,14 +13,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "recurrence")
@@ -41,8 +46,10 @@ public class Recurrence extends Element<Long> {
     @JoinColumn(name = "examination_type")
     private ExaminationType examinationType;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Appointment> appointments;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "appointments_by_recurrence", joinColumns = @JoinColumn(name = "recurrence"), inverseJoinColumns = @JoinColumn(name = "appointment"))
+    @OrderColumn(name = "appointment_index")
+    private List<Appointment> appointments;
 
     @Column(name = "frequency", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -64,11 +71,11 @@ public class Recurrence extends Element<Long> {
         this.id = id;
     }
 
-    public Set<Appointment> getAppointments() {
+    public List<Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(Set<Appointment> appointments) {
+    public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
 
@@ -118,5 +125,28 @@ public class Recurrence extends Element<Long> {
 
     public void setExaminationType(ExaminationType examinationType) {
         this.examinationType = examinationType;
+    }
+
+    public List<LocalDate> getMatches(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary) {
+        final List<LocalDate> matchingDates = new ArrayList<>();
+        LocalDateTime checkingDate = lowerTimeBoundary;
+        while (checkingDate.isBefore(upperTimeBoundary)) {
+            if (hasMatch(checkingDate)) {
+                matchingDates.add(checkingDate.toLocalDate());
+            }
+            checkingDate = checkingDate.plusDays(1);
+        }
+        return matchingDates;
+    }
+
+    public boolean hasMatch(LocalDateTime date) {
+        if (getAppointments() == null || getAppointments().isEmpty() || date == null) {
+            return false;
+        }
+        if (endsAt.isBefore(date) || startsAt.isAfter(date)) {
+            return false;
+        }
+        final LocalDateTime recurrenceStartDate = getAppointments().get(0).getStartTime();
+        return getFrequency().hasRecurrence(recurrenceStartDate.toLocalDate(), date.toLocalDate());
     }
 }

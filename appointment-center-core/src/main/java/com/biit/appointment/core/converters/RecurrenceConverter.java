@@ -8,6 +8,7 @@ import com.biit.server.controller.converters.ElementConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class RecurrenceConverter extends ElementConverter<Recurrence, Recurrence
         }
         final Recurrence recurrence = new Recurrence();
         BeanUtils.copyProperties(to, recurrence);
-        recurrence.setAppointments(new HashSet<>(appointmentConverter.reverseAll(to.getAppointments())));
+        recurrence.setAppointments(new ArrayList<>(appointmentConverter.reverseAll(to.getAppointments())));
         return recurrence;
     }
 }

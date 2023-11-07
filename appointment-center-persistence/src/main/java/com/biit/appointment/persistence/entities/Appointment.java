@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.beans.BeanUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,7 +26,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "appointments")
@@ -226,6 +229,26 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
             return false;
         }
         return getUpdatedAt().truncatedTo(ChronoUnit.SECONDS).isAfter(getCreatedAt().truncatedTo(ChronoUnit.SECONDS));
+    }
+
+    public static Appointment copy(Appointment sourceAppointment) {
+        final Appointment appointment = new Appointment();
+        BeanUtils.copyProperties(sourceAppointment, appointment);
+        appointment.setExaminationType(sourceAppointment.getExaminationType());
+        appointment.setAttendees(new HashSet<>(sourceAppointment.getAttendees()));
+        appointment.setStatus(sourceAppointment.getStatus());
+        appointment.setId(null);
+        final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).collect(Collectors.toList());
+        customProperties.forEach(customProperty -> customProperty.setAppointment(appointment));
+        appointment.setCustomProperties(customProperties);
+        return appointment;
+    }
+
+    public static Appointment of(Appointment sourceAppointment, LocalDateTime onDate) {
+        final Appointment appointment = Appointment.copy(sourceAppointment);
+        appointment.setStartTime(onDate.toLocalDate().atTime(sourceAppointment.getStartTime().toLocalTime()));
+        appointment.setEndTime(appointment.getStartTime().plus(Duration.between(sourceAppointment.getEndTime(), sourceAppointment.getStartTime())));
+        return appointment;
     }
 
 }
