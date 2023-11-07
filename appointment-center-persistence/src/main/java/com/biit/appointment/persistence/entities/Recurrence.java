@@ -3,7 +3,6 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,6 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class Recurrence extends Element<Long> {
     @JoinColumn(name = "examination_type")
     private ExaminationType examinationType;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "appointments_by_recurrence", joinColumns = @JoinColumn(name = "recurrence"), inverseJoinColumns = @JoinColumn(name = "appointment"))
     @OrderColumn(name = "appointment_index")
     private List<Appointment> appointments;
@@ -77,6 +77,14 @@ public class Recurrence extends Element<Long> {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public void addAppointment(Appointment appointment) {
+        if (this.appointments == null) {
+            appointments = new ArrayList<>();
+            this.setExaminationType(appointment.getExaminationType());
+        }
+        appointments.add(appointment);
     }
 
     public RecurrenceFrequency getFrequency() {
@@ -127,6 +135,21 @@ public class Recurrence extends Element<Long> {
         this.examinationType = examinationType;
     }
 
+    /**
+     * Returns an appointment if is already generated on the selected date.
+     *
+     * @param date
+     * @return
+     */
+    public Appointment getAppointment(LocalDate date) {
+        for (Appointment appointment : appointments) {
+            if (appointment.getStartTime().toLocalDate().equals(date)) {
+                return appointment;
+            }
+        }
+        return null;
+    }
+
     public List<LocalDate> getMatches(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary) {
         final List<LocalDate> matchingDates = new ArrayList<>();
         LocalDateTime checkingDate = lowerTimeBoundary;
@@ -143,7 +166,7 @@ public class Recurrence extends Element<Long> {
         if (getAppointments() == null || getAppointments().isEmpty() || date == null) {
             return false;
         }
-        if (endsAt.isBefore(date) || startsAt.isAfter(date)) {
+        if (endsAt.toLocalDate().atTime(LocalTime.MAX).isBefore(date) || startsAt.isAfter(date)) {
             return false;
         }
         final LocalDateTime recurrenceStartDate = getAppointments().get(0).getStartTime();

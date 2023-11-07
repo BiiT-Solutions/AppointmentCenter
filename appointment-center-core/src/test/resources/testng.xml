@@ -7,11 +7,11 @@
     <test name="AppointmentCenter" enabled="true" preserve-order="true">
         <groups>
             <run>
-<!--                <include name=""/> -->
+                <include name="recurrenceTest"/>
             </run>
         </groups>
         <classes>
-<!--            <class name="com.biit.appointment.persistence."/> -->
+            <class name="com.biit.appointment.core.test.RecurrenceTest"/>
         </classes>
     </test>
 </suite>

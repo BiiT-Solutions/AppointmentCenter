@@ -49,7 +49,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "organization_id", nullable = false)
+    @Column(name = "organization_id", nullable = true)
     private Long organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -71,7 +71,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "finished_time")
     private LocalDateTime finishedTime = null;
 
-    @OneToMany(mappedBy = "appointment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appointment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<CustomProperty> customProperties;
 
     public Appointment() {
@@ -246,8 +246,9 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public static Appointment of(Appointment sourceAppointment, LocalDateTime onDate) {
         final Appointment appointment = Appointment.copy(sourceAppointment);
+        final LocalDateTime appointmentStartTime = appointment.getStartTime();
         appointment.setStartTime(onDate.toLocalDate().atTime(sourceAppointment.getStartTime().toLocalTime()));
-        appointment.setEndTime(appointment.getStartTime().plus(Duration.between(sourceAppointment.getEndTime(), sourceAppointment.getStartTime())));
+        appointment.setEndTime(appointment.getStartTime().plus(Duration.between(appointmentStartTime, sourceAppointment.getEndTime())));
         return appointment;
     }
 
