@@ -89,7 +89,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of professional specializations by a user.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/users/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByUser(
             @Parameter(description = "Collection of users ids")
             @RequestParam(name = "usersIds") Optional<Collection<Long>> usersIds,
@@ -105,7 +105,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of professional specializations by a user in an organization.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/organizations/{organizationId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/organizations/{organizationId}/users/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByUser(
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,

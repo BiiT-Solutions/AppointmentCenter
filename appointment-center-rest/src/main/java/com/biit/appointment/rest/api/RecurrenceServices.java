@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/recurrence")
 public class RecurrenceServices extends ElementServices<Recurrence, Long, RecurrenceDTO, RecurrenceRepository,
         RecurrenceProvider, RecurrenceConverterRequest, RecurrenceConverter, RecurrenceController> {
 
