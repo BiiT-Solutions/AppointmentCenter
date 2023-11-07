@@ -98,8 +98,8 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
 
     @AfterMethod
     public void cleanDatabase() {
-        recurrenceProvider.deleteAll();
         appointmentProvider.deleteAll();
+        recurrenceProvider.deleteAll();
     }
 
 
@@ -236,8 +236,8 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
 
     @AfterClass
     public void cleanUpDatabase() {
-        recurrenceProvider.deleteAll();
         appointmentProvider.deleteAll();
+        recurrenceProvider.deleteAll();
         examinationTypeProvider.deleteAll();
         appointmentTypeProvider.deleteAll();
     }

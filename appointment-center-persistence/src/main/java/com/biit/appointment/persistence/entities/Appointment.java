@@ -74,6 +74,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @OneToMany(mappedBy = "appointment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<CustomProperty> customProperties;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recurrence")
+    private Recurrence recurrence;
+
     public Appointment() {
         super();
         customProperties = new ArrayList<>();
@@ -200,6 +204,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
             this.attendees = new HashSet<>();
         }
         this.attendees.add(attendee);
+    }
+
+    public Recurrence getRecurrence() {
+        return recurrence;
+    }
+
+    public void setRecurrence(Recurrence recurrence) {
+        this.recurrence = recurrence;
     }
 
     public LocalDateTime getFinishedTime() {

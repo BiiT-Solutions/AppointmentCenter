@@ -12,10 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -46,9 +44,7 @@ public class Recurrence extends Element<Long> {
     @JoinColumn(name = "examination_type")
     private ExaminationType examinationType;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "appointments_by_recurrence", joinColumns = @JoinColumn(name = "recurrence"), inverseJoinColumns = @JoinColumn(name = "appointment"))
-    @OrderColumn(name = "appointment_index")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recurrence")
     private List<Appointment> appointments;
 
     @Column(name = "frequency", nullable = false)
@@ -85,6 +81,7 @@ public class Recurrence extends Element<Long> {
             this.setExaminationType(appointment.getExaminationType());
         }
         appointments.add(appointment);
+        appointment.setRecurrence(this);
     }
 
     public RecurrenceFrequency getFrequency() {
