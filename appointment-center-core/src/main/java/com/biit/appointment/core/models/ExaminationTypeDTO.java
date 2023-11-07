@@ -1,14 +1,11 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ExaminationTypeDTO extends ElementDTO<String> {
 
-    private String id;
-
     private String name;
-
-    private String translation;
 
     private AppointmentTypeDTO appointmentType;
 
@@ -20,14 +17,16 @@ public class ExaminationTypeDTO extends ElementDTO<String> {
 
     private boolean appointmentOverlapsAllowed = false;
 
+    @JsonIgnore
     @Override
     public String getId() {
-        return id;
+        return getName();
     }
 
+    @JsonIgnore
     @Override
     public void setId(String id) {
-        this.id = id;
+        setName(name);
     }
 
     public String getName() {
@@ -36,14 +35,6 @@ public class ExaminationTypeDTO extends ElementDTO<String> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getTranslation() {
-        return translation;
-    }
-
-    public void setTranslation(String translation) {
-        this.translation = translation;
     }
 
     public AppointmentTypeDTO getAppointmentType() {
@@ -85,4 +76,5 @@ public class ExaminationTypeDTO extends ElementDTO<String> {
     public void setAppointmentOverlapsAllowed(boolean appointmentOverlapsAllowed) {
         this.appointmentOverlapsAllowed = appointmentOverlapsAllowed;
     }
+
 }

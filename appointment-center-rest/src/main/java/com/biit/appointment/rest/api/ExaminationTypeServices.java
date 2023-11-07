@@ -35,7 +35,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets a list of examinations by its name.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/names/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByName(@Parameter(description = "Name of the examination type")
                                               @PathVariable(name = "name") String name,
@@ -47,7 +47,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets an examinations by its name and organization.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/names/{name}/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ExaminationTypeDTO getByNameAndOrganization(@Parameter(description = "Name of the examination type")
                                                        @PathVariable(name = "name") String name,
@@ -61,7 +61,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets an examinations by its organization and an appointment type name.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/organizations/{organizationId}/appointment-type/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByOrganizationAndAppointmentType(
             @Parameter(description = "Id of an existing organization")
@@ -75,8 +75,8 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets a list of appointments that are defined on the past.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/past/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Gets an examinations by organization  and a set of appointments types.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByOrganizationAndAppointmentTypes(
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,

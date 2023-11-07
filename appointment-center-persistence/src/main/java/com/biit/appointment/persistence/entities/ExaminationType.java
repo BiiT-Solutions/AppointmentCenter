@@ -35,7 +35,7 @@ public class ExaminationType extends Element<String> implements Comparable<Exami
     @JoinColumn(name = "appointment_type")
     private AppointmentType appointmentType;
 
-    @Column(name = "organization_id", nullable = false)
+    @Column(name = "organization_id")
     private Long organizationId;
 
     @Convert(converter = DoubleCryptoConverter.class)

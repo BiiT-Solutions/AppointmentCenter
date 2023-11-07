@@ -3,6 +3,7 @@ package com.biit.appointment.persistence.entities;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -18,6 +19,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.beans.BeanUtils;
 
 import java.time.Duration;
@@ -49,14 +52,16 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "organization_id", nullable = true)
+    @Column(name = "organization_id")
     private Long organizationId;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "examination_type")
     private ExaminationType examinationType;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "attendees")
+    @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "attendee_id", nullable = false)
     private Set<Long> attendees;
 
