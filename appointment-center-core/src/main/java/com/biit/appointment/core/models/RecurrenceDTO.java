@@ -3,6 +3,7 @@ package com.biit.appointment.core.models;
 import com.biit.appointment.persistence.entities.RecurrenceFrequency;
 import com.biit.server.controllers.models.ElementDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -23,6 +24,8 @@ public class RecurrenceDTO extends ElementDTO<Long> {
     private LocalDateTime startsAt;
 
     private LocalDateTime endsAt;
+
+    private Set<LocalDate> skippedIterations;
 
 
     @Override
@@ -89,5 +92,13 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public Set<LocalDate> getSkippedIterations() {
+        return skippedIterations;
+    }
+
+    public void setSkippedIterations(Set<LocalDate> skippedIterations) {
+        this.skippedIterations = skippedIterations;
     }
 }

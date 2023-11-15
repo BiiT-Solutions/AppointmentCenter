@@ -20,9 +20,11 @@ import org.testng.annotations.Test;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -232,6 +234,51 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.get(1).getStartTime().getDayOfWeek(), DayOfWeek.MONDAY);
         //Check is third week also.
         Assert.assertEquals(appointments.get(1).getStartTime().get(ChronoField.ALIGNED_WEEK_OF_MONTH), 3);
+    }
+
+    @Test
+    public void addSkipIterationToRecurrence() {
+        Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(7));
+        final Recurrence recurrence = generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.DAILY);
+        recurrenceProvider.addSkipIteration(recurrence.getId(), LocalDate.now(), null);
+        recurrenceProvider.addSkipIteration(recurrence.getId(), LocalDate.now().plusDays(1), null);
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+                LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
+        //8 days but 2 skipped.
+        Assert.assertEquals(appointments.size(), 6);
+
+        recurrenceProvider.removeSkipIteration(recurrence.getId(), LocalDate.now(), null);
+        appointments = appointmentProvider.findBy(null, null, null, null, null,
+                LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
+        //8 days but 1 skipped.
+        Assert.assertEquals(appointments.size(), 7);
+    }
+
+    @Test
+    public void addAppointmentExceptionToRecurrence() {
+        Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(7));
+        final Recurrence recurrence = generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.DAILY);
+        //Replace appointment from today to two hours later.
+        Appointment appointmentException = Appointment.of(pastWeekAppointment, null);
+        appointmentException.setStartTime(LocalDateTime.now().plusHours(2));
+        appointmentException.setEndTime(LocalDateTime.now().plusHours(3));
+        recurrenceProvider.addAppointmentException(recurrence.getId(), appointmentException, null);
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+                LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(7), null);
+        //9 appointments. One is stored on database as is the exception.
+        Assert.assertEquals(appointments.size(), 9);
+        Assert.assertNotNull(appointments.get(1).getId());
+        Assert.assertEquals(appointments.get(1).getStartTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(2).truncatedTo(ChronoUnit.HOURS));
+        Assert.assertEquals(appointments.get(1).getEndTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS));
+
+
+        appointments = appointmentProvider.findBy(null, null, null, null, null,
+                LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), null);
+        //9 appointments. One is stored on database as is the exception.
+        Assert.assertEquals(appointments.size(), 15);
+        Assert.assertNotNull(appointments.get(7).getId());
+        Assert.assertEquals(appointments.get(7).getStartTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(2).truncatedTo(ChronoUnit.HOURS));
+        Assert.assertEquals(appointments.get(7).getEndTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS));
     }
 
     @AfterClass

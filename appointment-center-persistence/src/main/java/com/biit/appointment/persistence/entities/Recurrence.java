@@ -3,7 +3,9 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,12 +19,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "recurrence")
@@ -46,6 +52,12 @@ public class Recurrence extends Element<Long> {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "recurrence")
     private List<Appointment> appointments;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "skipped_iterations")
+    @Fetch(value = FetchMode.SUBSELECT)
+    @Column(name = "iteration_date", nullable = false)
+    private Set<LocalDate> skippedIterations;
 
     @Column(name = "frequency", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -82,6 +94,13 @@ public class Recurrence extends Element<Long> {
         }
         appointments.add(appointment);
         appointment.setRecurrence(this);
+    }
+
+    public boolean removeAppointment(Appointment appointment) {
+        if (appointments != null) {
+            return appointments.remove(appointment);
+        }
+        return false;
     }
 
     public RecurrenceFrequency getFrequency() {
@@ -159,6 +178,19 @@ public class Recurrence extends Element<Long> {
         return matchingDates;
     }
 
+
+    public boolean hasMatch(LocalDate date) {
+        if (getAppointments() == null || getAppointments().isEmpty() || date == null) {
+            return false;
+        }
+        if (endsAt.toLocalDate().isBefore(date) || startsAt.toLocalDate().isAfter(date)) {
+            return false;
+        }
+        final LocalDateTime recurrenceStartDate = getAppointments().get(0).getStartTime();
+        return getFrequency().hasRecurrence(recurrenceStartDate.toLocalDate(), date);
+    }
+
+
     public boolean hasMatch(LocalDateTime date) {
         if (getAppointments() == null || getAppointments().isEmpty() || date == null) {
             return false;
@@ -168,5 +200,27 @@ public class Recurrence extends Element<Long> {
         }
         final LocalDateTime recurrenceStartDate = getAppointments().get(0).getStartTime();
         return getFrequency().hasRecurrence(recurrenceStartDate.toLocalDate(), date.toLocalDate());
+    }
+
+    public Set<LocalDate> getSkippedIterations() {
+        return skippedIterations;
+    }
+
+    public void setSkippedIterations(Set<LocalDate> skippedIterations) {
+        this.skippedIterations = skippedIterations;
+    }
+
+    public void addSkippedIterations(LocalDate skippedIteration) {
+        if (skippedIterations == null) {
+            skippedIterations = new HashSet<>();
+        }
+        skippedIterations.add(skippedIteration);
+    }
+
+    public boolean removeSkippedIterations(LocalDate skippedIteration) {
+        if (skippedIterations != null) {
+            return skippedIterations.remove(skippedIteration);
+        }
+        return false;
     }
 }

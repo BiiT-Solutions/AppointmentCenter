@@ -264,8 +264,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     public static Appointment of(Appointment sourceAppointment, LocalDateTime onDate) {
         final Appointment appointment = Appointment.copy(sourceAppointment);
         final LocalDateTime appointmentStartTime = appointment.getStartTime();
-        appointment.setStartTime(onDate.toLocalDate().atTime(sourceAppointment.getStartTime().toLocalTime()));
-        appointment.setEndTime(appointment.getStartTime().plus(Duration.between(appointmentStartTime, sourceAppointment.getEndTime())));
+        if (onDate != null) {
+            appointment.setStartTime(onDate.toLocalDate().atTime(sourceAppointment.getStartTime().toLocalTime()));
+            appointment.setEndTime(appointment.getStartTime().plus(Duration.between(appointmentStartTime, sourceAppointment.getEndTime())));
+        }
         return appointment;
     }
 
