@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/professional-specialization")
+@RequestMapping("/professional-specializations")
 public class ProfessionalSpecializationServices extends ElementServices<ProfessionalSpecialization, Long, ProfessionalSpecializationDTO,
         ProfessionalSpecializationRepository, ProfessionalSpecializationProvider, ProfessionalSpecializationConverterRequest,
         ProfessionalSpecializationConverter, ProfessionalSpecializationController> {
