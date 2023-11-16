@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/recurrence")
+@RequestMapping("/recurrences")
 public class RecurrenceServices extends ElementServices<Recurrence, Long, RecurrenceDTO, RecurrenceRepository,
         RecurrenceProvider, RecurrenceConverterRequest, RecurrenceConverter, RecurrenceController> {
 
