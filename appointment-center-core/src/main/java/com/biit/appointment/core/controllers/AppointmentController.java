@@ -130,5 +130,13 @@ public class AppointmentController extends ElementController<Appointment, Long, 
     public boolean overlaps(AppointmentDTO appointment) {
         return getProvider().overlaps(reverse(appointment));
     }
+
+    public AppointmentDTO addSpeaker(Long appointmentId, Long speakerId, String updatedBy) {
+        return convert(getProvider().addSpeaker(appointmentId, speakerId, updatedBy));
+    }
+
+    public AppointmentDTO addSpeaker(AppointmentDTO appointment, Long speakerId, String updatedBy) {
+        return convert(getProvider().addSpeaker(reverse(appointment), speakerId, updatedBy));
+    }
 }
 

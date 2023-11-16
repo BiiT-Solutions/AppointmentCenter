@@ -22,7 +22,7 @@ public class InvalidParameterException extends LoggedException {
     }
 
     public InvalidParameterException(Class<?> clazz) {
-        this(clazz, "MyEntity not found");
+        this(clazz, "Parameter not found");
     }
 
     public InvalidParameterException(Class<?> clazz, Throwable e) {

@@ -60,6 +60,12 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private ExaminationType examinationType;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "speakers")
+    @Fetch(value = FetchMode.SUBSELECT)
+    @Column(name = "speaker_id", nullable = false)
+    private Set<Long> speakers;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "attendees")
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "attendee_id", nullable = false)
@@ -211,6 +217,21 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         this.attendees.add(attendee);
     }
 
+    public Set<Long> getSpeakers() {
+        return speakers;
+    }
+
+    public void setSpeakers(Set<Long> speakers) {
+        this.speakers = speakers;
+    }
+
+    public void addSpeaker(Long speaker) {
+        if (this.speakers == null) {
+            this.speakers = new HashSet<>();
+        }
+        this.speakers.add(speaker);
+    }
+
     public Recurrence getRecurrence() {
         return recurrence;
     }
@@ -252,7 +273,12 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         final Appointment appointment = new Appointment();
         BeanUtils.copyProperties(sourceAppointment, appointment);
         appointment.setExaminationType(sourceAppointment.getExaminationType());
-        appointment.setAttendees(new HashSet<>(sourceAppointment.getAttendees()));
+        if (sourceAppointment.getAttendees() != null) {
+            appointment.setAttendees(new HashSet<>(sourceAppointment.getAttendees()));
+        }
+        if (sourceAppointment.getSpeakers() != null) {
+            appointment.setSpeakers(new HashSet<>(sourceAppointment.getSpeakers()));
+        }
         appointment.setStatus(sourceAppointment.getStatus());
         appointment.setId(null);
         final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).collect(Collectors.toList());

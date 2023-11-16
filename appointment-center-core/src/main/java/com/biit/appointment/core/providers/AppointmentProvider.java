@@ -1,9 +1,12 @@
 package com.biit.appointment.core.providers;
 
+import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
+import com.biit.appointment.core.exceptions.InvalidProfessionalSpecializationException;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
+import com.biit.appointment.persistence.entities.ProfessionalSpecialization;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
@@ -15,16 +18,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentProvider extends ElementProvider<Appointment, Long, AppointmentRepository> {
 
     private final RecurrenceRepository recurrenceRepository;
 
+    private final ProfessionalSpecializationProvider professionalSpecializationProvider;
 
-    public AppointmentProvider(AppointmentRepository repository, RecurrenceRepository recurrenceRepository) {
+
+    public AppointmentProvider(AppointmentRepository repository, RecurrenceRepository recurrenceRepository,
+                               ProfessionalSpecializationProvider professionalSpecializationProvider) {
         super(repository);
         this.recurrenceRepository = recurrenceRepository;
+        this.professionalSpecializationProvider = professionalSpecializationProvider;
     }
 
 
@@ -119,6 +127,26 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      */
     public boolean overlaps(Appointment appointment) {
         return getRepository().overlaps(appointment) > 0;
+    }
+
+    public Appointment addSpeaker(Long appointmentId, Long speakerId, String updatedBy) {
+        final Appointment appointment = getRepository().findById(appointmentId).orElseThrow(
+                () -> new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
+        return addSpeaker(appointment, speakerId, updatedBy);
+    }
+
+    public Appointment addSpeaker(Appointment appointment, Long speakerId, String updatedBy) {
+        final List<ProfessionalSpecialization> specializations = professionalSpecializationProvider.findByUserId(speakerId);
+        if (appointment.getExaminationType() != null && appointment.getExaminationType().getAppointmentType() != null) {
+            if (!specializations.stream().map(ProfessionalSpecialization::getAppointmentType).collect(Collectors.toSet())
+                    .contains(appointment.getExaminationType().getAppointmentType())) {
+                throw new InvalidProfessionalSpecializationException(this.getClass(), "Speaker '" + speakerId
+                        + "' has no the required specialization '" + appointment.getExaminationType().getAppointmentType() + "'.");
+            }
+        }
+        appointment.addSpeaker(speakerId);
+        appointment.setUpdatedBy(updatedBy);
+        return getRepository().save(appointment);
     }
 
 }
