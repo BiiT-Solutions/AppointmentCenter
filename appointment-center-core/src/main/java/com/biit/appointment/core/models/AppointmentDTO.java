@@ -19,6 +19,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
+    private Set<Long> speakers;
+
     private Set<Long> attendees;
 
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
@@ -73,6 +75,14 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setExaminationType(ExaminationTypeDTO examinationType) {
         this.examinationType = examinationType;
+    }
+
+    public Set<Long> getSpeakers() {
+        return speakers;
+    }
+
+    public void setSpeakers(Set<Long> speakers) {
+        this.speakers = speakers;
     }
 
     public Set<Long> getAttendees() {

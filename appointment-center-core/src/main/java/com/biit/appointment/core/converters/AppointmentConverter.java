@@ -43,7 +43,12 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         final AppointmentDTO appointmentDTO = new AppointmentDTO();
         BeanUtils.copyProperties(from.getEntity(), appointmentDTO);
         appointmentDTO.setExaminationType(examinationTypeConverter.convert(new ExaminationTypeConverterRequest(from.getEntity().getExaminationType())));
-        appointmentDTO.setAttendees(new HashSet<>(from.getEntity().getAttendees()));
+        if (from.getEntity().getAttendees() != null) {
+            appointmentDTO.setAttendees(new HashSet<>(from.getEntity().getAttendees()));
+        }
+        if (from.getEntity().getSpeakers() != null) {
+            appointmentDTO.setSpeakers(new HashSet<>(from.getEntity().getSpeakers()));
+        }
         appointmentDTO.setStatus(from.getEntity().getStatus());
 
         Collection<CustomPropertyDTO> customProperties;
