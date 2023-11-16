@@ -1,7 +1,7 @@
 package com.biit.appointment.core.controllers.kafka.payloads;
 
 import com.biit.appointment.core.models.AppointmentDTO;
-import com.biit.appointment.logger.AppointmentCenterLogger;
+import com.biit.appointment.logger.EventsLogger;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.events.EventPayload;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +13,7 @@ public class AppointmentPayload implements EventPayload {
         try {
             setJson(ObjectMapperFactory.getObjectMapper().writeValueAsString(appointment));
         } catch (JsonProcessingException e) {
-            AppointmentCenterLogger.errorMessage(this.getClass(), e);
+            EventsLogger.errorMessage(this.getClass(), e);
             throw new RuntimeException(e);
         }
     }
