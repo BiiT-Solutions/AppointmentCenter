@@ -19,7 +19,7 @@ import java.util.UUID;
 @Component
 public class RecurrenceEventSender implements IEventSender<RecurrenceDTO> {
 
-    private static final String RECURRENCE_EVENT_TYPE = "appointment";
+    private static final String RECURRENCE_EVENT_TYPE = "recurrence";
 
     @Value("${spring.kafka.send.topic:}")
     private String sendTopic;
