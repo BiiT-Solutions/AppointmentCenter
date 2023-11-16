@@ -1,6 +1,6 @@
 package com.biit.appointment.core.controllers.kafka;
 
-import com.biit.appointment.logger.EventsLogger;
+import com.biit.kafka.logger.EventsLogger;
 import com.biit.kafka.consumers.EventListener;
 import com.biit.kafka.events.Event;
 import org.springframework.stereotype.Controller;
