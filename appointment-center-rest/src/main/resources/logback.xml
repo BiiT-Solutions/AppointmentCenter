@@ -34,7 +34,11 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
-    <logger name="com.biit.database.encryption.logger.EncryptorLogger" additivity="false" level="ERROR">
+    <logger name="com.biit.drools.baseform.logger.EventsLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="com.biit.appointment.logger.EncryptorLogger" additivity="false" level="ERROR">
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>

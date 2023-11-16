@@ -29,6 +29,11 @@
             <groupId>com.biit</groupId>
             <artifactId>rest-server-dto</artifactId>
         </dependency>
+        <!-- Kafka -->
+        <dependency>
+            <groupId>com.biit</groupId>
+            <artifactId>kafka-client-dto</artifactId>
+        </dependency>
 
         <!--Testing-->
         <dependency>

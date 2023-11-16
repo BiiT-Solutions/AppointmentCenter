@@ -1,16 +1,16 @@
 package com.biit.appointment.core.controllers;
 
+import com.biit.appointment.core.controllers.kafka.AppointmentEventSender;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
-import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
-import com.biit.server.controller.ElementController;
+import com.biit.kafka.controller.KafkaElementController;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -18,17 +18,16 @@ import java.util.Collection;
 import java.util.List;
 
 @Controller
-public class AppointmentController extends ElementController<Appointment, Long, AppointmentDTO, AppointmentRepository,
+public class AppointmentController extends KafkaElementController<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter> {
 
     private final ExaminationTypeProvider examinationTypeProvider;
-    private final RecurrenceProvider recurrenceProvider;
 
     protected AppointmentController(AppointmentProvider provider, AppointmentConverter converter,
-                                    ExaminationTypeProvider examinationTypeProvider, RecurrenceProvider recurrenceProvider) {
-        super(provider, converter);
+                                    ExaminationTypeProvider examinationTypeProvider,
+                                    AppointmentEventSender eventSender) {
+        super(provider, converter, eventSender);
         this.examinationTypeProvider = examinationTypeProvider;
-        this.recurrenceProvider = recurrenceProvider;
     }
 
     @Override

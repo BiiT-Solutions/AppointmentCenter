@@ -223,4 +223,19 @@ public class Recurrence extends Element<Long> {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "Recurrence{"
+                + "id=" + id
+                + ", organizerId=" + organizerId
+                + ", organizationId=" + organizationId
+                + ", examinationType=" + examinationType
+                + ", appointments=" + appointments
+                + ", skippedIterations=" + skippedIterations
+                + ", frequency=" + frequency
+                + ", startsAt=" + startsAt
+                + ", endsAt=" + endsAt
+                + '}';
+    }
 }

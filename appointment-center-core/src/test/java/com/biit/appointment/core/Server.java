@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @SpringBootApplication
 @Service
-@ComponentScan({"com.biit.appointment"})
+@ComponentScan({"com.biit.appointment", "com.biit.kafka"})
 @ConfigurationPropertiesScan({"com.biit.appointment.core"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 @EnableJpaRepositories("com.biit.appointment.persistence.repositories")

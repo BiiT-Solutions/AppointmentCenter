@@ -1,5 +1,6 @@
 package com.biit.appointment.core.controllers;
 
+import com.biit.appointment.core.controllers.kafka.RecurrenceEventSender;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.RecurrenceConverter;
 import com.biit.appointment.core.converters.models.RecurrenceConverterRequest;
@@ -8,20 +9,21 @@ import com.biit.appointment.core.models.RecurrenceDTO;
 import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
-import com.biit.server.controller.ElementController;
+import com.biit.kafka.controller.KafkaElementController;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
 
 @Controller
-public class RecurrenceController extends ElementController<Recurrence, Long, RecurrenceDTO, RecurrenceRepository,
+public class RecurrenceController extends KafkaElementController<Recurrence, Long, RecurrenceDTO, RecurrenceRepository,
         RecurrenceProvider, RecurrenceConverterRequest, RecurrenceConverter> {
 
     private final AppointmentConverter appointmentConverter;
 
 
-    protected RecurrenceController(RecurrenceProvider provider, RecurrenceConverter converter, AppointmentConverter appointmentConverter) {
-        super(provider, converter);
+    protected RecurrenceController(RecurrenceProvider provider, RecurrenceConverter converter, AppointmentConverter appointmentConverter,
+                                   RecurrenceEventSender eventSender) {
+        super(provider, converter, eventSender);
         this.appointmentConverter = appointmentConverter;
     }
 

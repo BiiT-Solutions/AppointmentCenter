@@ -38,6 +38,10 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
+    <logger name="com.biit.appointment.logger.EncryptorLogger" additivity="false" level="ERROR">
+        <appender-ref ref="DAILY"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
 
     <!-- Default ones -->
