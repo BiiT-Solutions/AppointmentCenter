@@ -61,7 +61,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of professional specializations by its organization and the appointment type name.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/organizations/{organizationId}/appointment-type/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/organizations/{organizationId}/appointment-types/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByOrganizationAndAppointmentType(
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,

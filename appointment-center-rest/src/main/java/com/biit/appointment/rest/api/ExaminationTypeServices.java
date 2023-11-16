@@ -62,7 +62,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets an examinations by its organization and an appointment type name.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/organizations/{organizationId}/appointment-type/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/organizations/{organizationId}/appointment-types/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByOrganizationAndAppointmentType(
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,

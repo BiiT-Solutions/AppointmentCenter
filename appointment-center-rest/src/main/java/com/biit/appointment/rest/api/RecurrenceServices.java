@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,7 +73,7 @@ public class RecurrenceServices extends ElementServices<Recurrence, Long, Recurr
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes an appointment exception from a recurrence.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/{id}/appointments", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/appointments", produces = MediaType.APPLICATION_JSON_VALUE)
     public RecurrenceDTO removeAppointmentException(@Parameter(description = "Id of the recurrence series.")
                                                     @PathVariable(name = "id") Long id,
                                                     @RequestBody AppointmentDTO appointmentDTO,
