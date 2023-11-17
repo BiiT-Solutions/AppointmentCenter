@@ -1,8 +1,9 @@
 package com.biit.appointment.core.controllers.kafka;
 
-import com.biit.kafka.logger.EventsLogger;
 import com.biit.kafka.consumers.EventListener;
 import com.biit.kafka.events.Event;
+import com.biit.kafka.logger.EventsLogger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.Instant;
@@ -16,11 +17,13 @@ public class EventController {
     private static final String PROCESS = "process";
 
 
-    public EventController(EventListener eventListener) {
+    public EventController(@Autowired(required = false) EventListener eventListener) {
 
         //Listen to topic
-        eventListener.addListener((event, offset, key, partition, topic, timeStamp) ->
-                eventHandler(event, key, partition, topic, timeStamp));
+        if (eventListener != null) {
+            eventListener.addListener((event, offset, key, partition, topic, timeStamp) ->
+                    eventHandler(event, key, partition, topic, timeStamp));
+        }
     }
 
     public void eventHandler(Event event, String key, int partition, String topic, long timeStamp) {
