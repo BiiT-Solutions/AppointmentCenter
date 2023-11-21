@@ -9,7 +9,7 @@ import com.biit.appointment.core.models.RecurrenceDTO;
 import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
-import com.biit.kafka.controller.KafkaElementController;
+import com.biit.kafka.controllers.KafkaElementController;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;

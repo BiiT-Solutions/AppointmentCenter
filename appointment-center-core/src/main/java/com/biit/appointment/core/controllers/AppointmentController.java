@@ -10,7 +10,7 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
-import com.biit.kafka.controller.KafkaElementController;
+import com.biit.kafka.controllers.KafkaElementController;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
