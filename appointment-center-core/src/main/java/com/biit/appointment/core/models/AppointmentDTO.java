@@ -11,6 +11,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    private String title;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -43,6 +45,14 @@ public class AppointmentDTO extends ElementDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public LocalDateTime getStartTime() {

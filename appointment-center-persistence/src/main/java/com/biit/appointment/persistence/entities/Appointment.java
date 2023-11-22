@@ -1,10 +1,15 @@
 package com.biit.appointment.persistence.entities;
 
+import com.biit.database.encryption.BooleanCryptoConverter;
+import com.biit.database.encryption.DoubleCryptoConverter;
+import com.biit.database.encryption.LongCryptoConverter;
+import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -43,6 +48,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Convert(converter = StringCryptoConverter.class)
+    private String title;
+
     @Column(name = "organizer_id", nullable = false)
     private Long organizerId;
 
@@ -53,6 +62,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
+    @Convert(converter = LongCryptoConverter.class)
     private Long organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -75,8 +85,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(nullable = false)
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
 
+    @Convert(converter = DoubleCryptoConverter.class)
     private Double cost;
 
+    @Convert(converter = BooleanCryptoConverter.class)
     private boolean deleted = false;
 
     @Column(name = "finished_time")
@@ -102,6 +114,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public LocalDateTime getStartTime() {

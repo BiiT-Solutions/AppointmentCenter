@@ -1,10 +1,12 @@
 package com.biit.appointment.persistence.entities;
 
 
+import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,9 +43,11 @@ public class Recurrence extends Element<Long> {
     private Long id;
 
     @Column(name = "organizer_id", nullable = false)
+    @Convert(converter = LongCryptoConverter.class)
     private Long organizerId;
 
     @Column(name = "organization_id", nullable = false)
+    @Convert(converter = LongCryptoConverter.class)
     private Long organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
