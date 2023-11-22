@@ -108,4 +108,32 @@ public class RecurrenceProvider extends ElementProvider<Recurrence, Long, Recurr
                 + "' has removed appointment exception '" + appointment + "' on recurrence '" + recurrence + "'.");
         return getRepository().save(recurrence);
     }
+
+
+    @Override
+    public void delete(Recurrence entity) {
+        super.delete(entity);
+        entity.getAppointments().forEach(appointment -> {
+            if (entity.getAppointments().size() > 1) {
+                appointmentRepository.deleteAll(entity.getAppointments().subList(1, entity.getAppointments().size()));
+            }
+        });
+    }
+
+    @Override
+    public void deleteById(Long recurrenceId) {
+        final Recurrence recurrence = getRepository().findById(recurrenceId).orElseThrow(() ->
+                new RecurrenceNotFoundException(this.getClass(), "No recurrence found with id '" + recurrenceId + "'."));
+        delete(recurrence);
+    }
+
+    @Override
+    public void deleteAll() {
+        getRepository().findAll().forEach(this::delete);
+    }
+
+    @Override
+    public void deleteAll(Collection<Recurrence> entities) {
+        entities.forEach(this::delete);
+    }
 }
