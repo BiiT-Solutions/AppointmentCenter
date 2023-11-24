@@ -10,7 +10,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${spring.kafka.topic:}')")
+@ConditionalOnExpression("${spring.kafka.enabled:false}")
 @EnableKafka
 @Configuration
 public class EventConsumerListener extends EventListener {
