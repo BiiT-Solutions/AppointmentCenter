@@ -5,7 +5,6 @@ import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
-import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Appointment extends Element<Long> implements Comparable<Appointment> {
-    private final static int DESCRIPTION_LENGTH = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

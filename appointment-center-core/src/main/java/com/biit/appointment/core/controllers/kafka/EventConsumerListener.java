@@ -16,14 +16,17 @@ import org.springframework.messaging.handler.annotation.Payload;
 public class EventConsumerListener extends EventListener {
 
     @Override
-    @KafkaListener(topics = "${spring.kafka.topic:null}", groupId = "${spring.kafka.group.id:null}", clientIdPrefix = "firstListener",
+    @KafkaListener(topics = "${spring.kafka.topic:null}",
+            clientIdPrefix = "#{${spring.kafka.client.id}?:T(java.util.UUID).randomUUID().toString()}",
+            groupId = "#{${spring.kafka.group.id}?:T(java.util.UUID).randomUUID().toString()}",
             containerFactory = "templateEventListenerContainerFactory", autoStartup = "${spring.kafka.enabled:true}")
     public void eventsListener(@Payload(required = false) Event event,
                                final @Header(KafkaHeaders.OFFSET) Integer offset,
+                               final @Header(KafkaHeaders.GROUP_ID) String groupId,
                                final @Header(value = KafkaHeaders.KEY, required = false) String key,
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
-        super.eventsListener(event, offset, key, partition, topic, timeStamp);
+        super.eventsListener(event, offset, groupId, key, partition, topic, timeStamp);
     }
 }
