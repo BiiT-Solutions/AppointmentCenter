@@ -13,6 +13,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private String title;
 
+    private String description;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -53,6 +55,14 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartTime() {

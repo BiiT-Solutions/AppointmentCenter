@@ -5,6 +5,7 @@ import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
+import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -19,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -43,14 +45,20 @@ import java.util.stream.Collectors;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Appointment extends Element<Long> implements Comparable<Appointment> {
+    private final static int DESCRIPTION_LENGTH = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "title")
     @Convert(converter = StringCryptoConverter.class)
     private String title;
+
+    @Lob
+    @Column(name = "description")
+    @Convert(converter = StringCryptoConverter.class)
+    private String description;
 
     @Column(name = "organizer_id", nullable = false)
     private Long organizerId;
@@ -122,6 +130,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartTime() {
