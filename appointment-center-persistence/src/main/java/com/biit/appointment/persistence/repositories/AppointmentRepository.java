@@ -16,7 +16,7 @@ import java.util.List;
 public interface AppointmentRepository extends ElementRepository<Appointment, Long> {
 
     /**
-     * Finds all appointments from an organization.
+     * Finds all appointments from an organizer.
      *
      * @param organizerId the organizer of the appointment.
      * @return a list of appointments.

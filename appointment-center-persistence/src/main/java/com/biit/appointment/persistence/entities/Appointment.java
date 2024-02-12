@@ -76,7 +76,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private ExaminationType examinationType;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "speakers")
+    @CollectionTable(name = "appointment_speakers")
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "speaker_id", nullable = false)
     private Set<Long> speakers;
