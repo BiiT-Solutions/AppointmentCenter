@@ -5,17 +5,20 @@ import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.InvalidProfessionalSpecializationException;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
+import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.ProfessionalSpecialization;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
 import com.biit.server.providers.ElementProvider;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -146,6 +149,23 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         }
         appointment.addSpeaker(speakerId);
         appointment.setUpdatedBy(updatedBy);
+        return getRepository().save(appointment);
+    }
+
+    public Appointment create(AppointmentTemplate appointmentTemplate, LocalDateTime startingAt, String createdBy) {
+        if (appointmentTemplate == null) {
+            return null;
+        }
+        final Appointment appointment = new Appointment();
+        BeanUtils.copyProperties(appointmentTemplate, appointment);
+        appointment.setExaminationType(appointmentTemplate.getExaminationType());
+        appointment.setCreatedBy(createdBy);
+        if (appointmentTemplate.getSpeakers() != null) {
+            appointment.setSpeakers(new HashSet<>(appointmentTemplate.getSpeakers()));
+        }
+        appointment.setStartTime(startingAt);
+        appointment.setEndTime(startingAt.plusMinutes(appointmentTemplate.getDuration()));
+
         return getRepository().save(appointment);
     }
 

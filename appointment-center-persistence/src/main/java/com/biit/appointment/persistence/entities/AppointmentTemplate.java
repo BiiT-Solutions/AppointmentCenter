@@ -45,6 +45,7 @@ public class AppointmentTemplate extends Element<Long> {
     @Convert(converter = StringCryptoConverter.class)
     private String description;
 
+    //In minutes
     @Column(name = "duration")
     @Convert(converter = IntegerCryptoConverter.class)
     private int duration;

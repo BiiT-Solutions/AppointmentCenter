@@ -4,6 +4,7 @@ import com.biit.appointment.core.controllers.AppointmentController;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
@@ -121,5 +122,15 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                      @PathVariable(name = "speakerId") Long speakerId,
                                      Authentication authentication, HttpServletRequest request) {
         return getController().addSpeaker(appointmentId, speakerId, authentication.name());
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates an appointment from a template.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/starting-time/{startingTime}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment")
+                                       @PathVariable(name = "startingTime") LocalDateTime startingTime,
+                                       @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
+        return getController().create(appointmentTemplateDTO, startingTime, authentication.name());
     }
 }

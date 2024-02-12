@@ -2,8 +2,10 @@ package com.biit.appointment.core.controllers;
 
 import com.biit.appointment.core.controllers.kafka.AppointmentEventSender;
 import com.biit.appointment.core.converters.AppointmentConverter;
+import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.Appointment;
@@ -22,12 +24,15 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter> {
 
     private final ExaminationTypeProvider examinationTypeProvider;
+    private final AppointmentTemplateConverter appointmentTemplateConverter;
 
     protected AppointmentController(AppointmentProvider provider, AppointmentConverter converter,
                                     ExaminationTypeProvider examinationTypeProvider,
-                                    AppointmentEventSender eventSender) {
+                                    AppointmentEventSender eventSender,
+                                    AppointmentTemplateConverter appointmentTemplateConverter) {
         super(provider, converter, eventSender);
         this.examinationTypeProvider = examinationTypeProvider;
+        this.appointmentTemplateConverter = appointmentTemplateConverter;
     }
 
     @Override
@@ -136,6 +141,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     public AppointmentDTO addSpeaker(AppointmentDTO appointment, Long speakerId, String updatedBy) {
         return convert(getProvider().addSpeaker(reverse(appointment), speakerId, updatedBy));
+    }
+
+    public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, String createdBy) {
+        return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, createdBy));
     }
 }
 
