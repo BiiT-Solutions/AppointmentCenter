@@ -143,8 +143,8 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convert(getProvider().addSpeaker(reverse(appointment), speakerId, updatedBy));
     }
 
-    public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, String createdBy) {
-        return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, createdBy));
+    public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, Long organizerId, String createdBy) {
+        return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, organizerId, createdBy));
     }
 }
 

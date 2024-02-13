@@ -101,7 +101,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     /**
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
-     * @param organizationId      the organization of the parameters (can be null for any organization).
+     * @param organizationId      the organization of the appointment (can be null for any organization).
      * @param organizerId         who must resolve the appointment (can be null for any organizer).
      * @param attendee            who attend the meeting.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
@@ -152,7 +152,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().save(appointment);
     }
 
-    public Appointment create(AppointmentTemplate appointmentTemplate, LocalDateTime startingAt, String createdBy) {
+    public Appointment create(AppointmentTemplate appointmentTemplate, LocalDateTime startingAt, long organizerId, String createdBy) {
         if (appointmentTemplate == null) {
             return null;
         }
@@ -165,6 +165,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         }
         appointment.setStartTime(startingAt);
         appointment.setEndTime(startingAt.plusMinutes(appointmentTemplate.getDuration()));
+        appointment.setOrganizerId(organizerId);
 
         return getRepository().save(appointment);
     }

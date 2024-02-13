@@ -58,7 +58,8 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Convert(converter = StringCryptoConverter.class)
     private String description;
 
-    @Column(name = "organizer_id", nullable = false)
+    // who must resolve the appointment (can be null for any organizer).
+    @Column(name = "organizer_id")
     private Long organizerId;
 
     @Column(name = "start_time")

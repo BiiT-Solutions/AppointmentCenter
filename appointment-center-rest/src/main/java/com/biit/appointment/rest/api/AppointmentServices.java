@@ -9,7 +9,11 @@ import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
+import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
+import com.biit.server.security.IAuthenticatedUser;
+import com.biit.usermanager.client.provider.UserManagerClient;
+import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,8 +39,11 @@ import java.util.Optional;
 public class AppointmentServices extends ElementServices<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
-    public AppointmentServices(AppointmentController controller) {
+    private final UserManagerClient userManagerClient;
+
+    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient) {
         super(controller);
+        this.userManagerClient = userManagerClient;
     }
 
 
@@ -131,6 +138,10 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment")
                                        @PathVariable(name = "startingTime") LocalDateTime startingTime,
                                        @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
-        return getController().create(appointmentTemplateDTO, startingTime, authentication.name());
+        final Optional<IAuthenticatedUser> user = userManagerClient.findByUsername(authentication.name());
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.name() + "'.");
+        }
+        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getId(), authentication.name());
     }
 }

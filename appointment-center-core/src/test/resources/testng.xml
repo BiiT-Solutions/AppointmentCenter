@@ -9,11 +9,13 @@
             <run>
                 <include name="recurrenceTest"/>
                 <include name="appointmentTest"/>
+                <include name="appointmentTemplateTest"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.appointment.core.test.RecurrenceTest"/>
             <class name="com.biit.appointment.core.test.AppointmentTest"/>
+            <class name="com.biit.appointment.core.test.AppointmentTemplateTests"/>
         </classes>
     </test>
 </suite>
