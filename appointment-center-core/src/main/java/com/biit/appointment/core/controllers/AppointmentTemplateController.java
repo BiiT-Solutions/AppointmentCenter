@@ -44,7 +44,7 @@ public class AppointmentTemplateController extends ElementController<Appointment
     public List<AppointmentTemplateAvailabilityDTO> availability(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Long[] templatesId) {
         final List<AppointmentTemplateAvailabilityDTO> availability = new ArrayList<>();
         for (final Long templateId : templatesId) {
-            Optional<AppointmentTemplate> template = getProvider().findById(templateId);
+            final Optional<AppointmentTemplate> template = getProvider().findById(templateId);
             if (template.isPresent()) {
                 final AppointmentTemplateAvailabilityDTO appointmentTemplateAvailabilityDTO = new AppointmentTemplateAvailabilityDTO(convert(template.get()));
                 appointmentTemplateAvailabilityDTO.setAvailability(calculateAvailability(new LocalDateTimeRange(lowerTimeBoundary, upperTimeBoundary),
