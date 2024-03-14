@@ -4,11 +4,14 @@ import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentTemplateConverterRequest;
 import com.biit.appointment.core.models.AppointmentTemplateAvailabilityDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
+import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
+import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
 import com.biit.server.controller.ElementController;
 import com.biit.utils.date.range.LocalDateTimeRange;
+import com.biit.utils.date.range.LocalDateTimeRangeUtils;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -20,9 +23,13 @@ import java.util.Optional;
 public class AppointmentTemplateController extends ElementController<AppointmentTemplate, Long, AppointmentTemplateDTO, AppointmentTemplateRepository,
         AppointmentTemplateProvider, AppointmentTemplateConverterRequest, AppointmentTemplateConverter> {
 
+    private final AppointmentProvider appointmentProvider;
 
-    protected AppointmentTemplateController(AppointmentTemplateProvider provider, AppointmentTemplateConverter converter) {
+
+    protected AppointmentTemplateController(AppointmentTemplateProvider provider, AppointmentTemplateConverter converter,
+                                            AppointmentProvider appointmentProvider) {
         super(provider, converter);
+        this.appointmentProvider = appointmentProvider;
     }
 
     @Override
@@ -49,12 +56,24 @@ public class AppointmentTemplateController extends ElementController<Appointment
     }
 
     private List<LocalDateTimeRange> calculateAvailability(LocalDateTimeRange range, AppointmentTemplateDTO appointmentTemplateDTO) {
-        final List<LocalDateTimeRange> ranges = new ArrayList<>();
+        List<LocalDateTimeRange> ranges = new ArrayList<>();
         ranges.add(range);
         //Get office hours.
-        //From duration of the template. Must fit on the last hours.
-        //Get speakers availability.
+
+        //Limit by speakers' availability.
+        final List<Appointment> appointmentsWithSpeakers = appointmentProvider.findBySpeakers(appointmentTemplateDTO.getSpeakers());
+        for (Appointment appointment : appointmentsWithSpeakers) {
+            ranges = LocalDateTimeRangeUtils.removeRange(ranges, new LocalDateTimeRange(appointment.getStartTime(), appointment.getEndTime()));
+        }
+
+        //Limit by room's availability.
+
         //Remove already hours used by different appointments.
+
+        //No appointments on the past.
+        LocalDateTimeRangeUtils.removeRange(ranges, new LocalDateTimeRange(LocalDateTime.of(0, 1, 1, 0, 0, 1),
+                LocalDateTime.now()));
+
         return ranges;
     }
 }

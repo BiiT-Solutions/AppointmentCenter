@@ -24,6 +24,14 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     List<Appointment> findByOrganizerId(Long organizerId);
 
     /**
+     * Finds all appointments from a speaker.
+     *
+     * @param speakerIds a list of speakers
+     * @return a list of appointments that contains any of the speakers.
+     */
+    List<Appointment> findDistinctBySpeakersIn(Collection<Long> speakerIds);
+
+    /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).

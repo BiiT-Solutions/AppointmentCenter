@@ -1,16 +1,17 @@
 package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.models.AppointmentTemplateAvailabilityDTO;
+import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
+import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.AuthenticatedUserProvider;
 import com.biit.server.security.model.AuthRequest;
-import com.biit.usermanager.dto.ApplicationBackendServiceRoleDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +51,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"appointmentTemplatesServiceTests"})
 public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContextTests {
 
@@ -87,6 +91,9 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
 
     @Autowired
     private AppointmentTemplateProvider appointmentTemplateProvider;
+
+    @Autowired
+    private AppointmentProvider appointmentProvider;
 
     private MockMvc mockMvc;
 
@@ -197,9 +204,56 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
                 Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentTemplateAvailabilityDTO[].class));
 
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().size(), 1);
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).upperBound(), upperTimeBoundary);
     }
 
+
+    @Test(dependsOnMethods = "getDefaultAvailability")
+    public void getAvailabilityWithExistingAppointment() throws Exception {
+        //Set an existing appointment
+        final Appointment existingAppointment = new Appointment();
+        existingAppointment.setStartTime(LocalDateTime.of(2124, 2, 15, 17, 0));
+        existingAppointment.setEndTime(LocalDateTime.of(2124, 2, 15, 19, 30));
+        //One speaker is also present on this appointment
+        existingAppointment.setSpeakers(Collections.singleton(SPEAKERS.iterator().next()));
+        appointmentProvider.save(existingAppointment);
+
+        //Set another existing appointment
+        final Appointment anotherExistingAppointment = new Appointment();
+        anotherExistingAppointment.setStartTime(LocalDateTime.of(2124, 2, 15, 10, 0));
+        anotherExistingAppointment.setEndTime(LocalDateTime.of(2124, 2, 15, 12, 0));
+        //No speaker is also present on this appointment. Must not change the availability ranges.
+        anotherExistingAppointment.setSpeakers(Collections.singleton(53L));
+        appointmentProvider.save(anotherExistingAppointment);
+
+        //Range is one week
+        final LocalDateTime lowerTimeBoundary = LocalDateTime.of(2124, 2, 12, 0, 0);
+        final LocalDateTime upperTimeBoundary = LocalDateTime.of(2124, 2, 18, 23, 59);
+        final MvcResult createResult = mockMvc.perform(
+                        get("/appointment-templates/lower-time-boundary/"
+                                + lowerTimeBoundary.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                + "/upper-time-boundary/"
+                                + upperTimeBoundary.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                + "?templateId=" + appointmentTemplate.getId())
+                                .header(HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + jwtToken)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentTemplateAvailabilityDTO> appointmentTemplateAvailabilityDTOS =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentTemplateAvailabilityDTO[].class));
+
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().size(), 2);
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).upperBound(), LocalDateTime.of(2124, 2, 15, 17, 0));
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).lowerBound(), LocalDateTime.of(2124, 2, 15, 19, 30));
+        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).upperBound(), upperTimeBoundary);
+    }
 
 }

@@ -40,7 +40,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
 
 
     /**
-     * Finds all appointments from an organization.
+     * Finds all appointments from an organizer.
      *
      * @param organizerId the organizer of the appointment.
      * @return a list of appointments.
@@ -50,6 +50,19 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
         return getRepository().findByOrganizerId(organizerId);
+    }
+
+    /**
+     * Finds all appointments from a speaker.
+     *
+     * @param speakerIds the speakers of the appointment.
+     * @return a list of appointments.
+     */
+    public List<Appointment> findBySpeakers(Collection<Long> speakerIds) {
+        if (speakerIds == null || speakerIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an speaker!");
+        }
+        return getRepository().findDistinctBySpeakersIn(speakerIds);
     }
 
 
