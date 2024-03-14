@@ -1,17 +1,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="1" name="AppointmentCenter">
     <listeners>
-        <listener class-name="com.biit.appointment.rest.TestListener"></listener>
+        <listener class-name="com.biit.appointment.rest.TestListener"/>
     </listeners>
 
     <test name="AppointmentCenter" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <!--                <include name=""/> -->
+                <include name="appointmentTemplatesServiceTests"/>
             </run>
         </groups>
         <classes>
-            <!--            <class name="com.biit.appointment.persistence."/> -->
+            <class name="com.biit.appointment.rest.api.AppointmentTemplatesServiceTests"/>
         </classes>
     </test>
 </suite>
