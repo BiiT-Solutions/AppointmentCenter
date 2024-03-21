@@ -89,13 +89,15 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private Set<Long> attendees;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "appointment_status")
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
 
     @Convert(converter = DoubleCryptoConverter.class)
+    @Column(name = "cost")
     private Double cost;
 
     @Convert(converter = BooleanCryptoConverter.class)
+    @Column(nullable = false, name = "is_deleted")
     private boolean deleted = false;
 
     @Column(name = "finished_time")

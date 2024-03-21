@@ -39,7 +39,7 @@ public class DatabaseConfiguration {
     public LocalContainerEntityManagerFactoryBean appointmentCenterFactory(EntityManagerFactoryBuilder builder,
                                                                           @Qualifier("appointmentCenterDataSource") DataSource dataSource) {
         final HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", environment.getProperty("spring.appointments.datasource.jpa.hibernate.ddl-auto"));
+        properties.put("hibernate.hbm2ddl.auto", environment.getProperty("spring.appointments.datasource.hibernate.ddl-auto"));
         return builder.dataSource(dataSource).properties(properties).packages(PACKAGE).build();
     }
 

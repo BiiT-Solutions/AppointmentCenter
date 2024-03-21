@@ -65,6 +65,7 @@ public class AppointmentTemplate extends Element<Long> {
     private Set<Long> speakers;
 
     @Convert(converter = DoubleCryptoConverter.class)
+    @Column(name = "cost")
     private Double cost;
 
     @Override
