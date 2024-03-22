@@ -49,7 +49,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String title;
 
@@ -62,10 +62,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "organizer_id")
     private Long organizerId;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
@@ -85,7 +85,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "attendees")
     @Fetch(value = FetchMode.SUBSELECT)
-    @Column(name = "attendee_id", nullable = false)
+    @Column(name = "attendee_id")
     private Set<Long> attendees;
 
     @Enumerated(EnumType.STRING)
