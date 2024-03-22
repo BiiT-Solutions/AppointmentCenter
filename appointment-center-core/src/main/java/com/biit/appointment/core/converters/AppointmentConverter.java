@@ -71,7 +71,9 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         }
 
         appointmentDTO.setCustomProperties(customProperties);
-        appointmentDTO.setRecurrence(from.getEntity().getRecurrence().getId());
+        if (from.getEntity().getRecurrence() != null) {
+            appointmentDTO.setRecurrence(from.getEntity().getRecurrence().getId());
+        }
 
         return appointmentDTO;
     }
