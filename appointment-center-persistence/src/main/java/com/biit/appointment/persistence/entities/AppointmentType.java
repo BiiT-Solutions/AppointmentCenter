@@ -14,7 +14,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
-
 @Entity
 @Table(name = "appointment_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
         indexes = {
@@ -30,7 +29,7 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "organization_id", nullable = false)
