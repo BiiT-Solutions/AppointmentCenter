@@ -13,6 +13,7 @@ import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -53,12 +54,16 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
 
         Collection<CustomPropertyDTO> customProperties;
         try {
-            if (from.getEntity().getCustomProperties() != null) {
+            if (from.getCustomProperties() != null) {
                 customProperties = customPropertyConverter.convertAll(from.getCustomProperties().stream()
                         .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
             } else {
-                customProperties = customPropertyConverter.convertAll(from.getEntity().getCustomProperties().stream()
-                        .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
+                if (from.getEntity().getCustomProperties() != null) {
+                    customProperties = customPropertyConverter.convertAll(from.getEntity().getCustomProperties().stream()
+                            .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
+                } else {
+                    customProperties = new ArrayList<>();
+                }
             }
         } catch (LazyInitializationException e) {
             customProperties = customPropertyConverter.convertAll(customPropertyProvider.findByAppointment(from.getEntity()).stream()
