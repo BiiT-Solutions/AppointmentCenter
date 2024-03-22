@@ -79,7 +79,9 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         final Appointment appointment = new Appointment();
         BeanUtils.copyProperties(to, appointment);
         appointment.setExaminationType(examinationTypeConverter.reverse(to.getExaminationType()));
-        appointment.setAttendees(new HashSet<>(to.getAttendees()));
+        if (to.getAttendees() != null) {
+            appointment.setAttendees(new HashSet<>(to.getAttendees()));
+        }
         appointment.setStatus(to.getStatus());
         if (to.getSpeakers() != null) {
             appointment.setSpeakers(new HashSet<>(to.getSpeakers()));
