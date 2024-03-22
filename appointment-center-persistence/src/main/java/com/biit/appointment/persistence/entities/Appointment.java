@@ -49,7 +49,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     @Convert(converter = StringCryptoConverter.class)
     private String title;
 
