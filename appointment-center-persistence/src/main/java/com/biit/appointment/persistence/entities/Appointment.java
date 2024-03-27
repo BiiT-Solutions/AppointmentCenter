@@ -5,6 +5,7 @@ import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -63,9 +64,11 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private Long organizerId;
 
     @Column(name = "start_time", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime startTime;
 
     @Column(name = "end_time", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
