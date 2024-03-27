@@ -5,7 +5,6 @@ import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
