@@ -1,12 +1,15 @@
 package com.biit.appointment.rest;
 
 import com.biit.appointment.logger.AppointmentCenterLogger;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationListener;
@@ -19,6 +22,8 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.time.format.DateTimeFormatter;
+
 //Avoid Swagger redirecting https to http
 @OpenAPIDefinition(servers = {@Server(url = "${server.servlet.context-path}", description = "Default Server URL")})
 @SpringBootApplication
@@ -28,7 +33,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 })
 @ComponentScan({"com.biit.appointment", "com.biit.server.security", "com.biit.server", "com.biit.messagebird.client", "com.biit.usermanager.client",
         "com.biit.kafka"})
-@ConfigurationPropertiesScan({"com.biit.appointment.rest"})
+@ConfigurationPropertiesScan({"com.biit.appointment.rest", "com.biit.server.time"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 public class ServicesServer {
     private static final int POOL_SIZE = 20;

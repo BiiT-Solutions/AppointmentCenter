@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @SpringBootApplication
 @Service
 @ComponentScan({"com.biit.appointment", "com.biit.kafka"})
-@ConfigurationPropertiesScan({"com.biit.appointment.rest"})
+@ConfigurationPropertiesScan({"com.biit.appointment.rest", "com.biit.server.time"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 public class Server {
     public static void main(String[] args) {
