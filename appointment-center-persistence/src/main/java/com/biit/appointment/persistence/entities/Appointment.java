@@ -112,9 +112,9 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @JoinColumn(name = "recurrence")
     private Recurrence recurrence;
 
-    @Column(name = "full_day", nullable = false)
+    @Column(name = "all_day", nullable = false)
     @Convert(converter = BooleanCryptoConverter.class)
-    private boolean fullDay = false;
+    private boolean allDay = false;
 
     public Appointment() {
         super();
@@ -299,12 +299,12 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         this.customProperties = customProperties;
     }
 
-    public boolean isFullDay() {
-        return fullDay;
+    public boolean isAllDay() {
+        return allDay;
     }
 
-    public void setFullDay(boolean fullDay) {
-        this.fullDay = fullDay;
+    public void setAllDay(boolean fullDay) {
+        this.allDay = fullDay;
     }
 
     @Override
