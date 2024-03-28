@@ -39,6 +39,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long recurrence;
 
+    private boolean fullDay = false;
+
     @Override
     public Long getId() {
         return id;
@@ -159,5 +161,13 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setRecurrence(Long recurrence) {
         this.recurrence = recurrence;
+    }
+
+    public boolean isFullDay() {
+        return fullDay;
+    }
+
+    public void setFullDay(boolean fullDay) {
+        this.fullDay = fullDay;
     }
 }

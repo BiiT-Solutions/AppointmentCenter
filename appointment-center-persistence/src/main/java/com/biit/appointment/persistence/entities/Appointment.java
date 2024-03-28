@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.database.encryption.BooleanCryptoConverter;
 import com.biit.database.encryption.DoubleCryptoConverter;
+import com.biit.database.encryption.LocalDateTimeCryptoConverter;
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
@@ -62,10 +63,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "organizer_id")
     private Long organizerId;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time")
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
@@ -101,6 +102,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private boolean deleted = false;
 
     @Column(name = "finished_time")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime finishedTime = null;
 
     @OneToMany(mappedBy = "appointment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -109,6 +111,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recurrence")
     private Recurrence recurrence;
+
+    @Column(name = "full_day", nullable = false)
+    @Convert(converter = BooleanCryptoConverter.class)
+    private boolean fullDay = false;
 
     public Appointment() {
         super();
@@ -291,6 +297,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public void setCustomProperties(Collection<CustomProperty> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public boolean isFullDay() {
+        return fullDay;
+    }
+
+    public void setFullDay(boolean fullDay) {
+        this.fullDay = fullDay;
     }
 
     @Override
