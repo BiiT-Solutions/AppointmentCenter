@@ -63,10 +63,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "organizer_id")
     private Long organizerId;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
