@@ -41,9 +41,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "appointments")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Table(name = "appointments")
 public class Appointment extends Element<Long> implements Comparable<Appointment> {
 
     @Id
@@ -80,11 +80,11 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "appointment_speakers")
     @Fetch(value = FetchMode.SUBSELECT)
-    @Column(name = "speaker_id", nullable = false)
+    @Column(name = "speaker_id")
     private Set<Long> speakers;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "attendees")
+    @CollectionTable(name = "appointment_attendees")
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "attendee_id")
     private Set<Long> attendees;
@@ -303,8 +303,8 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         return allDay;
     }
 
-    public void setAllDay(boolean fullDay) {
-        this.allDay = fullDay;
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
     }
 
     @Override
