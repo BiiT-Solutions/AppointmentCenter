@@ -20,7 +20,7 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private Set<Long> speakers;
 
-    private Long cost;
+    private Double cost;
 
     @Override
     public Long getId() {
@@ -80,11 +80,11 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
         this.speakers = speakers;
     }
 
-    public Long getCost() {
+    public Double getCost() {
         return cost;
     }
 
-    public void setCost(Long cost) {
+    public void setCost(Double cost) {
         this.cost = cost;
     }
 }
