@@ -41,6 +41,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private boolean allDay = false;
 
+    private String colorTheme;
+
     @Override
     public Long getId() {
         return id;
@@ -169,5 +171,13 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setAllDay(boolean allDay) {
         this.allDay = allDay;
+    }
+
+    public String getColorTheme() {
+        return colorTheme;
+    }
+
+    public void setColorTheme(String colorTheme) {
+        this.colorTheme = colorTheme;
     }
 }

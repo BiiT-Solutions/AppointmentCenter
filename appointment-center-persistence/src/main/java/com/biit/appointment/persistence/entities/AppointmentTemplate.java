@@ -68,6 +68,12 @@ public class AppointmentTemplate extends Element<Long> {
     @Column(name = "cost")
     private Double cost;
 
+    //Is a code from the UX to store the color theme for the template.
+    @Convert(converter = StringCryptoConverter.class)
+    @Column(name = "color_theme")
+    private String colorTheme;
+
+
     @Override
     public Long getId() {
         return id;
@@ -132,5 +138,13 @@ public class AppointmentTemplate extends Element<Long> {
 
     public void setCost(Double cost) {
         this.cost = cost;
+    }
+
+    public String getColorTheme() {
+        return colorTheme;
+    }
+
+    public void setColorTheme(String colorTheme) {
+        this.colorTheme = colorTheme;
     }
 }

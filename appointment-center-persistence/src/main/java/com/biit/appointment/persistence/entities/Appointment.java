@@ -116,6 +116,11 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Convert(converter = BooleanCryptoConverter.class)
     private boolean allDay = false;
 
+    //Is a code from the UX to store the color theme for the template.
+    @Convert(converter = StringCryptoConverter.class)
+    @Column(name = "color_theme")
+    private String colorTheme;
+
     public Appointment() {
         super();
         customProperties = new ArrayList<>();
@@ -348,4 +353,11 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         return appointment;
     }
 
+    public String getColorTheme() {
+        return colorTheme;
+    }
+
+    public void setColorTheme(String colorTheme) {
+        this.colorTheme = colorTheme;
+    }
 }

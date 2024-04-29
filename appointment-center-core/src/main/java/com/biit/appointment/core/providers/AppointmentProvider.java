@@ -179,6 +179,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         appointment.setStartTime(startingAt);
         appointment.setEndTime(startingAt.plusMinutes(appointmentTemplate.getDuration()));
         appointment.setOrganizerId(organizerId);
+        appointment.setColorTheme(appointmentTemplate.getColorTheme());
 
         return getRepository().save(appointment);
     }
