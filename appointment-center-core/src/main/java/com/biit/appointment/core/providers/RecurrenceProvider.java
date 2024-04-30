@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RecurrenceProvider extends ElementProvider<Recurrence, Long, RecurrenceRepository> {
@@ -29,10 +30,10 @@ public class RecurrenceProvider extends ElementProvider<Recurrence, Long, Recurr
     }
 
 
-    public List<Recurrence> findAll(Long organizationId, Long organizerId, Collection<ExaminationType> examinationType,
+    public List<Recurrence> findAll(Long organizationId, UUID organizer, Collection<ExaminationType> examinationType,
                                     LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary) {
-        return getRepository().findBy(organizationId, organizerId, examinationType, lowerTimeBoundary, upperTimeBoundary);
+        return getRepository().findBy(organizationId, organizer, examinationType, lowerTimeBoundary, upperTimeBoundary);
     }
 
 

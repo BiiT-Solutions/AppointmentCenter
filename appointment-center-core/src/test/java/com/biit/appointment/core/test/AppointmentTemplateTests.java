@@ -23,12 +23,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"appointmentTemplateTest"})
 public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
     private final static Long ORGANIZATION_ID = 43L;
-    private final static Long PRACTITIONER_ID = 42L;
+    private final static UUID ORGANIZER = UUID.randomUUID();
     private final static int TEMPLATE_DURATION = 90;
     private final static double TEMPLATE_COST = 100D;
 
@@ -38,7 +39,8 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
 
     private static final String TEST_TYPE_NAME = "basic";
 
-    private static final Set<Long> SPEAKERS = new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
+    private static final Set<UUID> SPEAKERS = new HashSet<>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID(),
+            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
 
     @Autowired
     private AppointmentProvider appointmentProvider;
@@ -74,7 +76,7 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void generateProfessionalSpecialization() {
-        professionalSpecializationProvider.save(new ProfessionalSpecialization(type.getAppointmentType().getName(), type.getAppointmentType(), ORGANIZATION_ID, PRACTITIONER_ID));
+        professionalSpecializationProvider.save(new ProfessionalSpecialization(type.getAppointmentType().getName(), type.getAppointmentType(), ORGANIZATION_ID, ORGANIZER));
     }
 
     @Test
@@ -93,7 +95,7 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateAppointmentTemplate")
     public void generateAppointmentFromTemplate() {
-        Appointment appointment = appointmentProvider.create(appointmentTemplate, LocalDateTime.now(), PRACTITIONER_ID, null);
+        Appointment appointment = appointmentProvider.create(appointmentTemplate, LocalDateTime.now(), ORGANIZER, null);
         Assert.assertEquals(appointment.getEndTime().truncatedTo(ChronoUnit.MINUTES), LocalDateTime.now().plusMinutes(TEMPLATE_DURATION).truncatedTo(ChronoUnit.MINUTES));
         Assert.assertEquals(appointment.getCost(), TEMPLATE_COST);
         Assert.assertEquals(appointment.getTitle(), APPOINTMENT_TITLE);

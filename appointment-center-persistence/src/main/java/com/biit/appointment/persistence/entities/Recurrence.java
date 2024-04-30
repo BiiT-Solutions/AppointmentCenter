@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.entities;
 
 
 import com.biit.database.encryption.LongCryptoConverter;
+import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "recurrence")
@@ -42,9 +44,9 @@ public class Recurrence extends Element<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "organizer_id", nullable = false)
-    @Convert(converter = LongCryptoConverter.class)
-    private Long organizerId;
+    @Column(name = "organizer", nullable = false)
+    @Convert(converter = UUIDCryptoConverter.class)
+    private UUID organizer;
 
     @Column(name = "organization_id", nullable = false)
     @Convert(converter = LongCryptoConverter.class)
@@ -131,12 +133,12 @@ public class Recurrence extends Element<Long> {
         this.endsAt = endsAt;
     }
 
-    public Long getOrganizerId() {
-        return organizerId;
+    public UUID getOrganizer() {
+        return organizer;
     }
 
-    public void setOrganizerId(Long organizerId) {
-        this.organizerId = organizerId;
+    public void setOrganizer(UUID organizer) {
+        this.organizer = organizer;
     }
 
     public Long getOrganizationId() {
@@ -232,7 +234,7 @@ public class Recurrence extends Element<Long> {
     public String toString() {
         return "Recurrence{"
                 + "id=" + id
-                + ", organizerId=" + organizerId
+                + ", organizer=" + organizer
                 + ", organizationId=" + organizationId
                 + ", examinationType=" + examinationType
                 + ", appointments=" + appointments

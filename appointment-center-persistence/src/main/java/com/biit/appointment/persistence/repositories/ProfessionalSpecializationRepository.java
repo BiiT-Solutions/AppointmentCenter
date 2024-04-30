@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface ProfessionalSpecializationRepository extends ElementRepository<ProfessionalSpecialization, Long> {
@@ -24,11 +25,11 @@ public interface ProfessionalSpecializationRepository extends ElementRepository<
     List<ProfessionalSpecialization> findByOrganizationIdAndAppointmentTypeIn(
             Long organizationId, Collection<AppointmentType> appointmentTypes);
 
-    List<ProfessionalSpecialization> findByUserId(Long userId);
+    List<ProfessionalSpecialization> findByUser(UUID userUUID);
 
-    List<ProfessionalSpecialization> findByUserIdAndOrganizationId(Long userId, Long organizationId);
+    List<ProfessionalSpecialization> findByUserAndOrganizationId(UUID userUUID, Long organizationId);
 
-    List<ProfessionalSpecialization> findByUserIdIn(Collection<Long> userIds);
+    List<ProfessionalSpecialization> findByUserIn(Collection<UUID> userIds);
 
-    List<ProfessionalSpecialization> findByUserIdInAndOrganizationId(Collection<Long> userIds, Long organizationId);
+    List<ProfessionalSpecialization> findByUserInAndOrganizationId(Collection<UUID> userUUIDs, Long organizationId);
 }

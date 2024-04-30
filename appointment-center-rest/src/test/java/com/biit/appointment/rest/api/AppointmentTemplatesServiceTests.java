@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -69,7 +70,8 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final String APPOINTMENT_DESCRIPTION = "Template Description";
 
-    private static final Set<Long> SPEAKERS = new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
+    private static final Set<UUID> SPEAKERS = new HashSet<>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID(),
+            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
 
     @Autowired
     private AuthenticatedUserProvider authenticatedUserProvider;
@@ -225,7 +227,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         anotherExistingAppointment.setStartTime(LocalDateTime.of(2124, 2, 15, 10, 0));
         anotherExistingAppointment.setEndTime(LocalDateTime.of(2124, 2, 15, 12, 0));
         //No speaker is also present on this appointment. Must not change the availability ranges.
-        anotherExistingAppointment.setSpeakers(Collections.singleton(53L));
+        anotherExistingAppointment.setSpeakers(Collections.singleton(UUID.randomUUID()));
         appointmentProvider.save(anotherExistingAppointment);
 
         //Range is one week

@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
+import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -18,6 +19,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "professional_specialization", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
@@ -45,20 +48,20 @@ public class ProfessionalSpecialization extends Element<Long> {
     @Convert(converter = LongCryptoConverter.class)
     private Long organizationId;
 
-    @Column(name = "user_id", nullable = false)
-    @Convert(converter = LongCryptoConverter.class)
-    private Long userId;
+    @Column(name = "user_uuid", nullable = false)
+    @Convert(converter = UUIDCryptoConverter.class)
+    private UUID user;
 
     public ProfessionalSpecialization() {
         super();
     }
 
-    public ProfessionalSpecialization(String name, AppointmentType appointmentType, Long organizationId, Long userId) {
+    public ProfessionalSpecialization(String name, AppointmentType appointmentType, Long organizationId, UUID user) {
         this();
         this.name = name;
         this.appointmentType = appointmentType;
         this.organizationId = organizationId;
-        this.userId = userId;
+        this.user = user;
     }
 
     @Override
@@ -87,19 +90,19 @@ public class ProfessionalSpecialization extends Element<Long> {
         this.organizationId = organizationId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UUID getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(UUID userUUID) {
+        this.user = userUUID;
     }
 
     @Override
     public String toString() {
         return "ProfessionalSpecialization{"
                 + "appointmentType=" + appointmentType
-                + ", userId=" + userId
+                + ", userId=" + user
                 + '}';
     }
 }

@@ -6,6 +6,7 @@ import com.biit.server.controllers.models.ElementDTO;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 public class AppointmentDTO extends ElementDTO<Long> {
 
@@ -15,6 +16,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private String description;
 
+    private UUID organizer;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -23,9 +26,9 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
-    private Set<Long> speakers;
+    private Set<UUID> speakers;
 
-    private Set<Long> attendees;
+    private Set<UUID> attendees;
 
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
 
@@ -101,19 +104,27 @@ public class AppointmentDTO extends ElementDTO<Long> {
         this.examinationType = examinationType;
     }
 
-    public Set<Long> getSpeakers() {
+    public UUID getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(UUID organizer) {
+        this.organizer = organizer;
+    }
+
+    public Set<UUID> getSpeakers() {
         return speakers;
     }
 
-    public void setSpeakers(Set<Long> speakers) {
+    public void setSpeakers(Set<UUID> speakers) {
         this.speakers = speakers;
     }
 
-    public Set<Long> getAttendees() {
+    public Set<UUID> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(Set<Long> attendees) {
+    public void setAttendees(Set<UUID> attendees) {
         this.attendees = attendees;
     }
 

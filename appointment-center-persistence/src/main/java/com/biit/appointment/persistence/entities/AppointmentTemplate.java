@@ -25,6 +25,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "appointment_templates")
@@ -61,8 +62,8 @@ public class AppointmentTemplate extends Element<Long> {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "appointment_template_speakers")
     @Fetch(value = FetchMode.SUBSELECT)
-    @Column(name = "speaker_id", nullable = false)
-    private Set<Long> speakers;
+    @Column(name = "speaker_uuids", nullable = false)
+    private Set<UUID> speakers;
 
     @Convert(converter = DoubleCryptoConverter.class)
     @Column(name = "cost")
@@ -124,11 +125,11 @@ public class AppointmentTemplate extends Element<Long> {
         this.examinationType = examinationType;
     }
 
-    public Set<Long> getSpeakers() {
+    public Set<UUID> getSpeakers() {
         return speakers;
     }
 
-    public void setSpeakers(Set<Long> speakers) {
+    public void setSpeakers(Set<UUID> speakers) {
         this.speakers = speakers;
     }
 

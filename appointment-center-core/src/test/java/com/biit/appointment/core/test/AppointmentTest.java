@@ -22,15 +22,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"appointmentTest"})
 public class AppointmentTest extends AbstractTestNGSpringContextTests {
 
-    private final static Long ORGANIZER_ID = 32L;
+    private final static UUID ORGANIZER_ID = UUID.randomUUID();
     private final static Long ORGANIZATION_ID = 43L;
-    private final static Long PRACTITIONER_ID = 42L;
-    private final static Long OTHER_PRACTITIONER_ID = 41L;
+    private final static UUID PRACTITIONER_ID = UUID.randomUUID();
+    private final static UUID OTHER_PRACTITIONER_ID = UUID.randomUUID();
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final String OTHER_APPOINTMENT_SPECIALTY = "TaiChi";
@@ -38,7 +39,8 @@ public class AppointmentTest extends AbstractTestNGSpringContextTests {
     private static final String TEST_TYPE_NAME = "basic";
     private static final String OTHER_TYPE_NAME = "Acupuncture";
 
-    private static final Set<Long> ATTENDEES = new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
+    private static final Set<UUID> ATTENDEES = new HashSet<>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
+            UUID.randomUUID(), UUID.randomUUID()));
 
     @Autowired
     private AppointmentProvider appointmentProvider;
@@ -64,7 +66,7 @@ public class AppointmentTest extends AbstractTestNGSpringContextTests {
         final Appointment appointment = new Appointment();
         appointment.setStartTime(LocalDateTime.now());
         appointment.setEndTime(LocalDateTime.now().plusHours(2));
-        appointment.setOrganizerId(ORGANIZER_ID);
+        appointment.setOrganizer(ORGANIZER_ID);
         appointment.setOrganizationId(ORGANIZATION_ID);
         appointment.setExaminationType(type);
         appointment.setAttendees(ATTENDEES);
@@ -104,7 +106,7 @@ public class AppointmentTest extends AbstractTestNGSpringContextTests {
     @Test(expectedExceptions = InvalidProfessionalSpecializationException.class)
     public void addSpeakerWithoutSpecialization() {
         final Appointment nextWeekAppointment = generateAppointment(LocalDateTime.now().plusDays(7));
-        appointmentProvider.addSpeaker(nextWeekAppointment, 1L, null);
+        appointmentProvider.addSpeaker(nextWeekAppointment, UUID.randomUUID(), null);
     }
 
     @Test

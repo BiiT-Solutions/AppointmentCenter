@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class AppointmentController extends KafkaElementController<Appointment, Long, AppointmentDTO, AppointmentRepository,
@@ -44,7 +45,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId       the organization of the parameters (can be null for any organization).
-     * @param organizerId          who must resolve the appointment (can be null for any organizer).
+     * @param organizer          who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
      * @param examinationTypeNames a collection of name of types.
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
@@ -53,11 +54,11 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findByWithExaminationTypeNames(Long organizationId, Long organizerId, Long attendee, Collection<String> examinationTypeNames,
+    public List<AppointmentDTO> findByWithExaminationTypeNames(Long organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
                                                                Collection<AppointmentStatus> appointmentStatuses,
                                                                LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
-        return findBy(organizationId, organizerId, attendee, examinationTypes, appointmentStatuses, lowerTimeBoundary,
+        return findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }
 
@@ -66,7 +67,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizerId         who must resolve the appointment (can be null for any organizer).
+     * @param organizer         who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -75,10 +76,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findBy(Long organizationId, Long organizerId, Long attendee, Collection<ExaminationType> examinationTypes,
+    public List<AppointmentDTO> findBy(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                                        Collection<AppointmentStatus> appointmentStatuses,
                                        LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return convertAll(getProvider().findBy(organizationId, organizerId, attendee, examinationTypes, appointmentStatuses,
+        return convertAll(getProvider().findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted));
     }
 
@@ -86,7 +87,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId       the organization of the parameters (can be null for any organization).
-     * @param organizerId          who must resolve the appointment (can be null for any organizer).
+     * @param organizer          who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
      * @param examinationTypeNames a collection of name of types.
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
@@ -95,11 +96,11 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long countByWithExaminationTypeNames(Long organizationId, Long organizerId, Long attendee, Collection<String> examinationTypeNames,
+    public long countByWithExaminationTypeNames(Long organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
                                                 Collection<AppointmentStatus> appointmentStatuses,
                                                 LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
-        return getProvider().count(organizationId, organizerId, attendee, examinationTypes, appointmentStatuses,
+        return getProvider().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
@@ -108,7 +109,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizerId         who must resolve the appointment (can be null for any organizer).
+     * @param organizer         who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -117,10 +118,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long count(Long organizationId, Long organizerId, Long attendee, Collection<ExaminationType> examinationTypes,
+    public long count(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                       Collection<AppointmentStatus> appointmentStatuses,
                       LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return getProvider().count(organizationId, organizerId, attendee, examinationTypes, appointmentStatuses,
+        return getProvider().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
@@ -135,16 +136,28 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return getProvider().overlaps(reverse(appointment));
     }
 
-    public AppointmentDTO addSpeaker(Long appointmentId, Long speakerId, String updatedBy) {
+    public AppointmentDTO addSpeaker(Long appointmentId, UUID speakerId, String updatedBy) {
         return convert(getProvider().addSpeaker(appointmentId, speakerId, updatedBy));
     }
 
-    public AppointmentDTO addSpeaker(AppointmentDTO appointment, Long speakerId, String updatedBy) {
+    public AppointmentDTO addSpeaker(AppointmentDTO appointment, UUID speakerId, String updatedBy) {
         return convert(getProvider().addSpeaker(reverse(appointment), speakerId, updatedBy));
     }
 
-    public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, Long organizerId, String createdBy) {
-        return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, organizerId, createdBy));
+    public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, UUID organizer, String createdBy) {
+        return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, organizer, createdBy));
+    }
+
+    public List<AppointmentDTO> getByorganizer(UUID organizer) {
+        return convertAll(getProvider().findByorganizer(organizer));
+    }
+
+    public List<AppointmentDTO> getByOrganizationId(Long organizationId) {
+        return convertAll(getProvider().findByOrganizationId(organizationId));
+    }
+
+    public List<AppointmentDTO> getByAttendeesIds(Collection<UUID> attendeesIds) {
+        return convertAll(getProvider().findByAttendeesIn(attendeesIds));
     }
 }
 

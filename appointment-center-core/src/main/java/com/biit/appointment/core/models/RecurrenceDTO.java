@@ -6,12 +6,13 @@ import com.biit.server.controllers.models.ElementDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 public class RecurrenceDTO extends ElementDTO<Long> {
 
     private Long id;
 
-    private Long organizerId;
+    private UUID organizer;
 
     private Long organizationId;
 
@@ -70,8 +71,8 @@ public class RecurrenceDTO extends ElementDTO<Long> {
         this.endsAt = endsAt;
     }
 
-    public Long getOrganizerId() {
-        return organizerId;
+    public UUID getOrganizer() {
+        return organizer;
     }
 
     public ExaminationTypeDTO getExaminationType() {
@@ -82,8 +83,8 @@ public class RecurrenceDTO extends ElementDTO<Long> {
         this.examinationType = examinationType;
     }
 
-    public void setOrganizerId(Long organizerId) {
-        this.organizerId = organizerId;
+    public void setOrganizer(UUID organizer) {
+        this.organizer = organizer;
     }
 
     public Long getOrganizationId() {

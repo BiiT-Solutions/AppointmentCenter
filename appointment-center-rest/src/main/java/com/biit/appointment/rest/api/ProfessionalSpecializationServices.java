@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/professional-specializations")
@@ -92,10 +93,10 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @GetMapping(value = "/users/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByUser(
             @Parameter(description = "Collection of users ids")
-            @RequestParam(name = "usersIds") Optional<Collection<Long>> usersIds,
+            @RequestParam(name = "usersIds") Optional<Collection<UUID>> usersIds,
             HttpServletRequest request) {
         if (usersIds.isPresent()) {
-            return getController().findByUserId(usersIds.get());
+            return getController().findByUserUUID(usersIds.get());
         } else {
             return new ArrayList<>();
         }
@@ -110,10 +111,10 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
             @Parameter(description = "Id of an existing organization")
             @PathVariable(name = "organizationId") Long organizationId,
             @Parameter(description = "Collection of users ids")
-            @RequestParam(name = "usersIds") Optional<Collection<Long>> usersIds,
+            @RequestParam(name = "usersUUIDs") Optional<Collection<UUID>> usersUUIDs,
             HttpServletRequest request) {
-        if (usersIds.isPresent()) {
-            return getController().findByUserIdAndOrganizationId(usersIds.get(), organizationId);
+        if (usersUUIDs.isPresent()) {
+            return getController().findByUserUUIDAndOrganizationId(usersUUIDs.get(), organizationId);
         } else {
             return new ArrayList<>();
         }

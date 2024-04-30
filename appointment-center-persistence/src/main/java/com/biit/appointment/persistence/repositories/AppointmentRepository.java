@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends ElementRepository<Appointment, Long> {
@@ -18,24 +19,40 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from an organizer.
      *
-     * @param organizerId the organizer of the appointment.
+     * @param organizer the organizer of the appointment.
      * @return a list of appointments.
      */
-    List<Appointment> findByOrganizerId(Long organizerId);
+    List<Appointment> findByOrganizer(UUID organizer);
 
     /**
-     * Finds all appointments from a speaker.
+     * Finds all appointments from an organization.
+     *
+     * @param organizationId the organization.
+     * @return a list of appointments.
+     */
+    List<Appointment> findByOrganizationId(Long organizationId);
+
+    /**
+     * Finds all appointments from a group of speakers.
      *
      * @param speakerIds a list of speakers
      * @return a list of appointments that contains any of the speakers.
      */
-    List<Appointment> findDistinctBySpeakersIn(Collection<Long> speakerIds);
+    List<Appointment> findDistinctBySpeakersIn(Collection<UUID> speakerIds);
+
+    /**
+     * Finds all appointments from a collection of attendees.
+     *
+     * @param attendeesIds a list of attendees
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findDistinctByAttendeesIn(Collection<UUID> attendeesIds);
 
     /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizerId         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status or a list).
      * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
@@ -46,7 +63,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     @Query("""
             SELECT a FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:organizer IS NULL OR a.organizer = :organizer) AND
             (:attendee IS NULL OR :attendee MEMBER OF a.attendees) AND
             (a.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
             (a.status IN :appointmentStatuses OR :appointmentStatuses IS NULL) AND
@@ -57,8 +74,8 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             """)
     List<Appointment> findBy(
             @Param("organizationId") Long organizationId,
-            @Param("organizerId") Long organizerId,
-            @Param("attendee") Long attendee,
+            @Param("organizer") UUID organizer,
+            @Param("attendee") UUID attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatuses") Collection<AppointmentStatus> appointmentStatuses,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
@@ -70,7 +87,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizerId         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param examinationTypes    the type of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
      * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
@@ -81,7 +98,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     @Query("""
             SELECT COUNT(a) FROM Appointment a WHERE
             (:organizationId IS NULL OR a.organizationId = :organizationId) AND
-            (:organizerId IS NULL OR a.organizerId = :organizerId) AND
+            (:organizer IS NULL OR a.organizer = :organizer) AND
             (:attendee IS NULL OR :attendee MEMBER OF a.attendees) AND
             (a.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
             (a.status IN :appointmentStatuses OR :appointmentStatuses IS NULL) AND
@@ -92,8 +109,8 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             """)
     long count(
             @Param("organizationId") Long organizationId,
-            @Param("organizerId") Long organizerId,
-            @Param("attendee") Long attendee,
+            @Param("organizer") UUID organizer,
+            @Param("attendee") UUID attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("appointmentStatuses") Collection<AppointmentStatus> appointmentStatuses,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
@@ -111,7 +128,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             SELECT COUNT(a) FROM Appointment a WHERE
             (:#{#appointment.id} IS NULL OR a.id <> :#{#appointment.id}) AND
             (:#{#appointment.organizationId} IS NULL OR a.organizationId = :#{#appointment.organizationId}) AND
-            (:#{#appointment.organizerId} IS NULL OR a.organizerId = :#{#appointment.organizerId}) AND
+            (:#{#appointment.organizer} IS NULL OR a.organizer = :#{#appointment.organizer}) AND
             (a.status <> com.biit.appointment.persistence.entities.AppointmentStatus.CANCELLED) AND
             (:#{#appointment.examinationType.appointmentOverlapsAllowed} = false OR a.examinationType.appointmentOverlapsAllowed = false) AND
             (

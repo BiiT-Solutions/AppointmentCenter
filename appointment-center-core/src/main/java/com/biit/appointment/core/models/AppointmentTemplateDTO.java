@@ -3,6 +3,7 @@ package com.biit.appointment.core.models;
 import com.biit.server.controllers.models.ElementDTO;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
@@ -18,7 +19,7 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
-    private Set<Long> speakers;
+    private Set<UUID> speakers;
 
     private Double cost;
 
@@ -74,11 +75,11 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
         this.examinationType = examinationType;
     }
 
-    public Set<Long> getSpeakers() {
+    public Set<UUID> getSpeakers() {
         return speakers;
     }
 
-    public void setSpeakers(Set<Long> speakers) {
+    public void setSpeakers(Set<UUID> speakers) {
         this.speakers = speakers;
     }
 

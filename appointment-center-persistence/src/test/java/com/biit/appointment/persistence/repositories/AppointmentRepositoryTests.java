@@ -17,14 +17,15 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests.generateExaminationType;
 
 @SpringBootTest
 @Test(groups = {"appointmentRepository"})
 public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests {
-    private static final long ORGANIZER_ID = 123456l;
-    private static final long ORGANIZATION_ID = 456l;
+    private static final UUID ORGANIZER_ID = UUID.randomUUID();
+    private static final long ORGANIZATION_ID = 456L;
     private static final String APPOINTMENT_SPECIALTY = "Physical";
 
     // Timestamp without nanoseconds.
@@ -70,7 +71,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     private ExaminationType type;
     private ExaminationType typeAllowsOverlaps;
 
-    private Long patientId = 42L;
+    private final UUID attendeeId = UUID.randomUUID();
 
     @BeforeClass
     public void prepareData() {
@@ -96,40 +97,57 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
     @Test
     public void storeEntity() {
-        Assert.assertNotNull(patientId);
+        Assert.assertNotNull(attendeeId);
         Assert.assertNotNull(type);
 
         Assert.assertEquals(appointmentRepository.count(), 0);
         // Create appointment with examination result
         Appointment appointment = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_1, type,
-                patientId);
+                attendeeId);
         // appointment.addExaminationResult(AppointmentTestUtils.createExaminationResult(examinationForm));
 
         appointment = appointmentRepository.save(appointment);
 
         Assert.assertNotNull(appointment.getId());
         Assert.assertEquals(appointmentRepository.count(), 1);
-        Assert.assertNotNull(appointmentRepository.findByOrganizerId(ORGANIZER_ID));
         Assert.assertNotNull(appointmentRepository.findById(appointment.getId()));
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void getAppointmentsByPatient() {
-        Assert.assertEquals(appointmentRepository.count(null, null, patientId, null, null, null, null, null), 1);
-        Assert.assertEquals(appointmentRepository.count(null, null, -1L, null, null, null, null, null), 0);
+        Assert.assertEquals(appointmentRepository.count(null, null, attendeeId, null, null, null, null, null), 1);
+        Assert.assertEquals(appointmentRepository.count(null, null, UUID.randomUUID(), null, null, null, null, null), 0);
+    }
+
+    @Test(dependsOnMethods = {"storeEntity"})
+    public void getAppointmentsByOrganizer() {
+        Assert.assertEquals(appointmentRepository.findByOrganizer(ORGANIZER_ID).size(), 1);
+        Assert.assertEquals(appointmentRepository.findByOrganizer(UUID.randomUUID()).size(), 0);
+    }
+
+    @Test(dependsOnMethods = {"storeEntity"})
+    public void getAppointmentsByOrganizationId() {
+        Assert.assertEquals(appointmentRepository.findByOrganizationId(ORGANIZATION_ID).size(), 1);
+        Assert.assertEquals(appointmentRepository.findByOrganizer(UUID.randomUUID()).size(), 0);
+    }
+
+    @Test(dependsOnMethods = {"storeEntity"})
+    public void getAppointmentsByAttendees() {
+        Assert.assertEquals(appointmentRepository.findDistinctByAttendeesIn(Collections.singleton(attendeeId)).size(), 1);
+        Assert.assertEquals(appointmentRepository.findDistinctByAttendeesIn(Collections.singleton(UUID.randomUUID())).size(), 0);
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void retrieveEntity() {
         Assert.assertEquals(appointmentRepository.count(), 1);
-        List<Appointment> appointments = appointmentRepository.findByOrganizerId(ORGANIZER_ID);
+        List<Appointment> appointments = appointmentRepository.findByOrganizer(ORGANIZER_ID);
         Assert.assertNotNull(appointments);
         Assert.assertFalse(appointments.isEmpty());
         Appointment appointment = appointments.get(0);
         Assert.assertNotNull(appointment);
         Assert.assertEquals(appointment.getStartTime(), START_TIME_1);
         Assert.assertEquals(appointment.getEndTime(), START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT));
-        Assert.assertTrue(appointment.getAttendees().contains(patientId));
+        Assert.assertTrue(appointment.getAttendees().contains(attendeeId));
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
@@ -193,68 +211,68 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByStartTime() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, attendeeId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, OVERLAP_START_TIME_2,
-                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByStartTimeDifferentDoctor() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, attendeeId));
         // Different organizers, then false.
         Assert.assertFalse(appointmentRepository.overlaps(
-                AppointmentTestUtils.createAppointment(ORGANIZER_ID + 1, ORGANIZATION_ID, OVERLAP_START_TIME_2,
-                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                AppointmentTestUtils.createAppointment(UUID.randomUUID(), ORGANIZATION_ID, OVERLAP_START_TIME_2,
+                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkIfOverlapsByEndTime() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, attendeeId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, NO_OVERLAP_START_TIME_2,
-                        NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkNoOverlaps() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_3, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_3, type, attendeeId));
         Assert.assertFalse(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, NO_OVERLAP_START_TIME_2,
-                        NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        NO_OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButAllowed() {
         Appointment appointment = appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_5,
-                typeAllowsOverlaps, patientId));
+                typeAllowsOverlaps, attendeeId));
         Assert.assertFalse(appointmentRepository.overlaps(AppointmentTestUtils.createAppointment(ORGANIZER_ID,
-                ORGANIZATION_ID, START_TIME_5, typeAllowsOverlaps, patientId)) > 0);
+                ORGANIZATION_ID, START_TIME_5, typeAllowsOverlaps, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButOnlyOneAllowed() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_6, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_6, type, attendeeId));
         Assert.assertTrue(appointmentRepository.overlaps(AppointmentTestUtils.createAppointment(ORGANIZER_ID,
-                ORGANIZATION_ID, START_TIME_6, typeAllowsOverlaps, patientId)) > 0);
+                ORGANIZATION_ID, START_TIME_6, typeAllowsOverlaps, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkOverlapsButOtherOneAllowed() {
         Appointment appointment = appointmentRepository.save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7,
-                typeAllowsOverlaps, patientId));
+                typeAllowsOverlaps, attendeeId));
         Assert.assertTrue(appointmentRepository.overlaps(
-                AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7, type, patientId)) > 0);
+                AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_7, type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
@@ -262,33 +280,33 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     public void checkOverlapsCancelledAppointment() {
         Appointment appointment = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID,
                 START_TIME_CANCELLED, OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type,
-                patientId);
+                attendeeId);
         appointment = appointmentRepository.save(appointment);
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_CANCELLED,
-                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
         Assert.assertFalse(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_CANCELLED,
-                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        OVERLAP_START_TIME_2.plusMinutes(END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})
     public void checkBigAppointment() {
         Appointment appointment = appointmentRepository
-                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, patientId));
+                .save(AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type, attendeeId));
         Assert.assertTrue(appointmentRepository.overlaps(
                 AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2.minusMinutes(END_TIME_MINUTES_INCREMENT),
-                        START_TIME_2.plusMinutes(2 * END_TIME_MINUTES_INCREMENT), type, patientId)) > 0);
+                        START_TIME_2.plusMinutes(2 * END_TIME_MINUTES_INCREMENT), type, attendeeId)) > 0);
         appointmentRepository.delete(appointment);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities", "getAppointmentsByPatient"})
     public void checkEditedAppointment() {
         Appointment appointment = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_2, type,
-                patientId);
+                attendeeId);
         appointment = appointmentRepository.save(appointment);
         Assert.assertFalse(appointmentRepository.overlaps(appointment) > 0);
         appointmentRepository.delete(appointment);
@@ -314,7 +332,7 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
     public void isAppointmentModified()
             throws InterruptedException {
         Appointment appointment = AppointmentTestUtils.createAppointment(ORGANIZER_ID, ORGANIZATION_ID, START_TIME_4, type,
-                patientId);
+                attendeeId);
 
         appointment = appointmentRepository.save(appointment);
         Appointment dbAppointment = appointmentRepository.findById(appointment.getId()).orElseThrow();

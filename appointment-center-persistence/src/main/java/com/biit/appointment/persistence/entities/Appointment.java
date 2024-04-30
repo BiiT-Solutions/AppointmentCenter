@@ -3,7 +3,6 @@ package com.biit.appointment.persistence.entities;
 import com.biit.database.encryption.BooleanCryptoConverter;
 import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.LocalDateTimeCryptoConverter;
-import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
@@ -38,6 +37,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
@@ -60,8 +60,8 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private String description;
 
     // who must resolve the appointment (can be null for any organizer).
-    @Column(name = "organizer_id")
-    private Long organizerId;
+    @Column(name = "organizer")
+    private UUID organizer;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -70,7 +70,6 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
-    @Convert(converter = LongCryptoConverter.class)
     private Long organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -81,13 +80,13 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @CollectionTable(name = "appointment_speakers")
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "speaker_id")
-    private Set<Long> speakers;
+    private Set<UUID> speakers;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "appointment_attendees")
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "attendee_id")
-    private Set<Long> attendees;
+    private Set<UUID> attendees;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "appointment_status")
@@ -168,12 +167,12 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         this.endTime = endTime;
     }
 
-    public Long getOrganizerId() {
-        return organizerId;
+    public UUID getOrganizer() {
+        return organizer;
     }
 
-    public void setOrganizerId(Long physiotherapistId) {
-        this.organizerId = physiotherapistId;
+    public void setOrganizer(UUID organizer) {
+        this.organizer = organizer;
     }
 
     public Long getOrganizationId() {
@@ -200,7 +199,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     public String toString() {
         return "Appointment{"
                 + "id=" + id
-                + ", organizerId=" + organizerId
+                + ", organizer=" + organizer
                 + ", startTime=" + startTime
                 + ", endTime=" + endTime
                 + ", organizationId=" + organizationId
@@ -233,7 +232,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     }
 
     public boolean isRejected() {
-        return organizerId == null;
+        return organizer == null;
 
     }
 
@@ -250,30 +249,30 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         return Duration.between(startTime, finishedTime);
     }
 
-    public Set<Long> getAttendees() {
+    public Set<UUID> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(Set<Long> attendees) {
+    public void setAttendees(Set<UUID> attendees) {
         this.attendees = attendees;
     }
 
-    public void addAttendee(Long attendee) {
+    public void addAttendee(UUID attendee) {
         if (this.attendees == null) {
             this.attendees = new HashSet<>();
         }
         this.attendees.add(attendee);
     }
 
-    public Set<Long> getSpeakers() {
+    public Set<UUID> getSpeakers() {
         return speakers;
     }
 
-    public void setSpeakers(Set<Long> speakers) {
+    public void setSpeakers(Set<UUID> speakers) {
         this.speakers = speakers;
     }
 
-    public void addSpeaker(Long speaker) {
+    public void addSpeaker(UUID speaker) {
         if (this.speakers == null) {
             this.speakers = new HashSet<>();
         }

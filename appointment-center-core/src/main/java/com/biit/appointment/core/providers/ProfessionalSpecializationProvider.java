@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProfessionalSpecializationProvider extends ElementProvider<ProfessionalSpecialization, Long, ProfessionalSpecializationRepository> {
@@ -41,19 +42,19 @@ public class ProfessionalSpecializationProvider extends ElementProvider<Professi
         return getRepository().findByOrganizationIdAndAppointmentTypeIn(organizationId, appointmentTypes);
     }
 
-    public List<ProfessionalSpecialization> findByUserId(Long userId) {
-        return getRepository().findByUserId(userId);
+    public List<ProfessionalSpecialization> findByUserUUID(UUID userUUID) {
+        return getRepository().findByUser(userUUID);
     }
 
-    public List<ProfessionalSpecialization> findByUserIdAndOrganizationId(Long userId, Long organizationId) {
-        return getRepository().findByUserIdAndOrganizationId(userId, organizationId);
+    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(UUID userUUID, Long organizationId) {
+        return getRepository().findByUserAndOrganizationId(userUUID, organizationId);
     }
 
-    public List<ProfessionalSpecialization> findByUserId(Collection<Long> userIds) {
-        return getRepository().findByUserIdIn(userIds);
+    public List<ProfessionalSpecialization> findByUserUUID(Collection<UUID> userUUIDs) {
+        return getRepository().findByUserIn(userUUIDs);
     }
 
-    public List<ProfessionalSpecialization> findByUserIdAndOrganizationId(Collection<Long> userIds, Long organizationId) {
-        return getRepository().findByUserIdInAndOrganizationId(userIds, organizationId);
+    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(Collection<UUID> userUUIDs, Long organizationId) {
+        return getRepository().findByUserInAndOrganizationId(userUUIDs, organizationId);
     }
 }

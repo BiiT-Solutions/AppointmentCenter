@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Controller
 public class ProfessionalSpecializationController extends ElementController<ProfessionalSpecialization, Long, ProfessionalSpecializationDTO,
@@ -70,19 +71,19 @@ public class ProfessionalSpecializationController extends ElementController<Prof
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserId(Long userId) {
-        return convertAll(getProvider().findByUserId(userId));
+    public List<ProfessionalSpecializationDTO> findByUserUUID(UUID userUUID) {
+        return convertAll(getProvider().findByUserUUID(userUUID));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserIdAndOrganizationId(Long userId, Long organizationId) {
-        return convertAll(getProvider().findByUserIdAndOrganizationId(userId, organizationId));
+    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(UUID userUUID, Long organizationId) {
+        return convertAll(getProvider().findByUserUUIDAndOrganizationId(userUUID, organizationId));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserId(Collection<Long> usersIds) {
-        return convertAll(getProvider().findByUserId(usersIds));
+    public List<ProfessionalSpecializationDTO> findByUserUUID(Collection<UUID> usersUUIDs) {
+        return convertAll(getProvider().findByUserUUID(usersUUIDs));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserIdAndOrganizationId(Collection<Long> usersIds, Long organizationId) {
-        return convertAll(getProvider().findByUserIdAndOrganizationId(usersIds, organizationId));
+    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(Collection<UUID> usersUUIDs, Long organizationId) {
+        return convertAll(getProvider().findByUserUUIDAndOrganizationId(usersUUIDs, organizationId));
     }
 }

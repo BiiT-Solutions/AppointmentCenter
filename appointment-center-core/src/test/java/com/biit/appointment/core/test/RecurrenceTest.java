@@ -29,18 +29,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"recurrenceTest"})
 public class RecurrenceTest extends AbstractTestNGSpringContextTests {
-    private final static Long ORGANIZER_ID = 32L;
+    private final static UUID ORGANIZER_ID = UUID.randomUUID();
     private final static Long ORGANIZATION_ID = 43L;
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
 
     private static final String TEST_TYPE_NAME = "basic";
 
-    private static final Set<Long> ATTENDEES = new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
+    private static final Set<UUID> ATTENDEES = new HashSet<>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID(),
+            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
 
     @Autowired
     private AppointmentProvider appointmentProvider;
@@ -65,7 +67,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
         final Appointment appointment = new Appointment();
         appointment.setStartTime(LocalDateTime.now());
         appointment.setEndTime(LocalDateTime.now().plusHours(2));
-        appointment.setOrganizerId(ORGANIZER_ID);
+        appointment.setOrganizer(ORGANIZER_ID);
         appointment.setOrganizationId(ORGANIZATION_ID);
         appointment.setExaminationType(type);
         appointment.setAttendees(ATTENDEES);
@@ -81,7 +83,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
     private Recurrence generateRecurrence(Appointment appointment, LocalDateTime startsAt, LocalDateTime endsAt, RecurrenceFrequency frequency) {
         final Recurrence recurrence = new Recurrence();
         recurrence.setOrganizationId(ORGANIZATION_ID);
-        recurrence.setOrganizerId(ORGANIZER_ID);
+        recurrence.setOrganizer(ORGANIZER_ID);
         recurrence.addAppointment(appointment);
         recurrence.setStartsAt(startsAt);
         recurrence.setEndsAt(endsAt);

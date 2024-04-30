@@ -31,8 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/appointments")
@@ -53,9 +56,9 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public List<AppointmentDTO> findAll(@Parameter(description = "Id of an existing organization")
                                         @RequestParam(name = "organizationId") Optional<Long> organizationId,
                                         @Parameter(description = "Id of an existing organizer")
-                                        @RequestParam(name = "organizerId") Optional<Long> organizerId,
+                                        @RequestParam(name = "organizer") Optional<UUID> organizer,
                                         @Parameter(description = "Id of an existing customer")
-                                        @RequestParam(name = "attendeeId") Optional<Long> attendeeId,
+                                        @RequestParam(name = "attendeeId") Optional<UUID> attendeeId,
                                         @Parameter(description = "Filter by different examinations types")
                                         @RequestParam(name = "examinationType") Optional<Collection<String>> examinationTypesNames,
                                         @Parameter(description = "Filter by appointment status")
@@ -67,7 +70,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                         @Parameter(description = "If it is marked as deleted")
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {
-        return getController().findByWithExaminationTypeNames(organizationId.orElse(null), organizerId.orElse(null), attendeeId.orElse(null),
+        return getController().findByWithExaminationTypeNames(organizationId.orElse(null), organizer.orElse(null), attendeeId.orElse(null),
                 examinationTypesNames.orElse(null), appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
@@ -79,9 +82,9 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public long countAll(@Parameter(description = "Id of an existing organization")
                          @RequestParam(name = "organizationId") Optional<Long> organizationId,
                          @Parameter(description = "Id of an existing organizer")
-                         @RequestParam(name = "organizerId") Optional<Long> organizerId,
+                         @RequestParam(name = "organizer") Optional<UUID> organizer,
                          @Parameter(description = "Id of an existing customer")
-                         @RequestParam(name = "attendeeId") Optional<Long> attendeeId,
+                         @RequestParam(name = "attendeeId") Optional<UUID> attendeeId,
                          @Parameter(description = "Filter by different examinations types")
                          @RequestParam(name = "examinationTypes") Optional<Collection<String>> examinationTypesNames,
                          @Parameter(description = "Filter by appointment status")
@@ -93,7 +96,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                          @Parameter(description = "If it is marked as deleted")
                          @RequestParam(name = "deleted") Optional<Boolean> deleted,
                          HttpServletRequest request) {
-        return getController().countByWithExaminationTypeNames(organizationId.orElse(null), organizerId.orElse(null), attendeeId.orElse(null),
+        return getController().countByWithExaminationTypeNames(organizationId.orElse(null), organizer.orElse(null), attendeeId.orElse(null),
                 examinationTypesNames.orElse(null), appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
@@ -111,9 +114,9 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds an speaker to an appointment. The speaker must have a Professional Specialization required on the appointment",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/speakers/{speakerId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public AppointmentDTO addSpeaker(@Parameter(description = "Id of an existing user")
-                                     @PathVariable(name = "speakerId") Long speakerId,
+    @PostMapping(value = "/speakers/{speakerUUID}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO addSpeaker(@Parameter(description = "UUID of an existing user")
+                                     @PathVariable(name = "speakerUUID") UUID speakerId,
                                      @RequestBody AppointmentDTO appointment, Authentication authentication, HttpServletRequest request) {
         return getController().addSpeaker(appointment, speakerId, authentication.name());
     }
@@ -122,14 +125,15 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds an speaker to an appointment. The speaker must have a Professional Specialization required on the appointment",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "{appointmentId}/speakers/{speakerId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{appointmentId}/speakers/{speakerUUID}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO addSpeaker(@Parameter(description = "Id of the appointment.")
                                      @PathVariable(name = "appointmentId") Long appointmentId,
                                      @Parameter(description = "Id of an existing user.")
-                                     @PathVariable(name = "speakerId") Long speakerId,
+                                     @PathVariable(name = "speakerUUID") UUID speakerUUID,
                                      Authentication authentication, HttpServletRequest request) {
-        return getController().addSpeaker(appointmentId, speakerId, authentication.name());
+        return getController().addSpeaker(appointmentId, speakerUUID, authentication.name());
     }
+
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates an appointment from a template.",
@@ -142,6 +146,6 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         if (user.isEmpty()) {
             throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.name() + "'.");
         }
-        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getId(), authentication.name());
+        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getUUID(), authentication.name());
     }
 }
