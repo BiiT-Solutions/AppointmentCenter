@@ -33,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -147,5 +146,33 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
             throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.name() + "'.");
         }
         return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getUUID(), authentication.name());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments organizer by a user.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/organizers/{organizerUUID}"}, produces = {"application/json"})
+    public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
+                                                 @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
+        return getController().getByorganizer(organizerUUID);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from an organization.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/organizations/{organizationId}"}, produces = {"application/json"})
+    public List<AppointmentDTO> getByOrganizationId(@Parameter(description = "Id of an existing organization", required = true)
+                                                    @PathVariable("organizationId") Long organizationId, Authentication authentication,
+                                                    HttpServletRequest request) {
+        return getController().getByOrganizationId(organizationId);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from an attendee.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/attendees/{attendeeUUID}"}, produces = {"application/json"})
+    public List<AppointmentDTO> getByAttendeeId(@Parameter(description = "Id of an existing attendee", required = true)
+                                                @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
+        return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 }
