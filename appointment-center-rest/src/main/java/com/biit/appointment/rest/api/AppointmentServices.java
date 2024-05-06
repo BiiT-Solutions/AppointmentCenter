@@ -165,7 +165,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/organizers/{organizerUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
                                                @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
-        securityController.checkIfCanSeeUserData(authentication.name(), organizerUUID, applicationName + "_" + securityService.getAdminPrivilege());
+        securityController.checkIfCanSeeUserData(authentication.name(), organizerUUID, securityService.getAdminPrivilege());
         return getController().getByorganizer(organizerUUID);
     }
 
@@ -185,7 +185,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/attendees/{attendeeUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByAttendeeId(@Parameter(description = "Id of an existing attendee", required = true)
                                                 @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
-        securityController.checkIfCanSeeUserData(authentication.name(), attendeeUUID, applicationName + "_" + securityService.getAdminPrivilege());
+        securityController.checkIfCanSeeUserData(authentication.name(), attendeeUUID, securityService.getAdminPrivilege());
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 }
