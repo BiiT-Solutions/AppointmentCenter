@@ -11,14 +11,17 @@ import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
+import com.biit.server.rest.SecurityService;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.usermanager.client.provider.UserManagerClient;
+import com.biit.usermanager.client.security.SecurityController;
 import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,10 +45,18 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
     private final UserManagerClient userManagerClient;
+    private final SecurityController securityController;
+    private final SecurityService securityService;
 
-    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient) {
+    @Value("${spring.application.name:}")
+    private String applicationName;
+
+    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient,
+                               SecurityController securityController, SecurityService securityService) {
         super(controller);
         this.userManagerClient = userManagerClient;
+        this.securityController = securityController;
+        this.securityService = securityService;
     }
 
 
@@ -153,7 +164,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments organizer by a user.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/organizers/{organizerUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
-                                                 @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
+                                               @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.name(), organizerUUID, applicationName + "_" + securityService.getAdminPrivilege());
         return getController().getByorganizer(organizerUUID);
     }
 
@@ -173,6 +185,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/attendees/{attendeeUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByAttendeeId(@Parameter(description = "Id of an existing attendee", required = true)
                                                 @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.name(), attendeeUUID, applicationName + "_" + securityService.getAdminPrivilege());
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 }
