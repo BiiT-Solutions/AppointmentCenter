@@ -11,16 +11,18 @@ import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
+import com.biit.server.rest.SecurityService;
 import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.ISecurityController;
 import com.biit.usermanager.client.provider.UserManagerClient;
 import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,10 +44,15 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
     private final UserManagerClient userManagerClient;
+    private final ISecurityController securityController;
+    private final SecurityService securityService;
 
-    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient) {
+    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient,
+                               ISecurityController securityController, SecurityService securityService) {
         super(controller);
         this.userManagerClient = userManagerClient;
+        this.securityController = securityController;
+        this.securityService = securityService;
     }
 
 
@@ -53,7 +60,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> findAll(@Parameter(description = "Id of an existing organization")
-                                        @RequestParam(name = "organizationId") Optional<Long> organizationId,
+                                        @RequestParam(name = "organizationId") Optional<String> organizationId,
                                         @Parameter(description = "Id of an existing organizer")
                                         @RequestParam(name = "organizer") Optional<UUID> organizer,
                                         @Parameter(description = "Id of an existing customer")
@@ -79,7 +86,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/find/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long countAll(@Parameter(description = "Id of an existing organization")
-                         @RequestParam(name = "organizationId") Optional<Long> organizationId,
+                         @RequestParam(name = "organizationId") Optional<String> organizationId,
                          @Parameter(description = "Id of an existing organizer")
                          @RequestParam(name = "organizer") Optional<UUID> organizer,
                          @Parameter(description = "Id of an existing customer")
@@ -117,7 +124,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public AppointmentDTO addSpeaker(@Parameter(description = "UUID of an existing user")
                                      @PathVariable(name = "speakerUUID") UUID speakerId,
                                      @RequestBody AppointmentDTO appointment, Authentication authentication, HttpServletRequest request) {
-        return getController().addSpeaker(appointment, speakerId, authentication.name());
+        return getController().addSpeaker(appointment, speakerId, authentication.getName());
     }
 
 
@@ -130,7 +137,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                      @Parameter(description = "Id of an existing user.")
                                      @PathVariable(name = "speakerUUID") UUID speakerUUID,
                                      Authentication authentication, HttpServletRequest request) {
-        return getController().addSpeaker(appointmentId, speakerUUID, authentication.name());
+        return getController().addSpeaker(appointmentId, speakerUUID, authentication.getName());
     }
 
 
@@ -141,11 +148,11 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment")
                                        @PathVariable(name = "startingTime") LocalDateTime startingTime,
                                        @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
-        final Optional<IAuthenticatedUser> user = userManagerClient.findByUsername(authentication.name());
+        final Optional<IAuthenticatedUser> user = userManagerClient.findByUsername(authentication.getName());
         if (user.isEmpty()) {
-            throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.name() + "'.");
+            throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.getName() + "'.");
         }
-        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getUUID(), authentication.name());
+        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getUUID(), authentication.getName());
     }
 
 
@@ -153,7 +160,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments organizer by a user.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/organizers/{organizerUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
-                                                 @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
+                                               @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.getName(), organizerUUID, securityService.getAdminPrivilege());
         return getController().getByorganizer(organizerUUID);
     }
 
@@ -162,7 +170,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments from an organization.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/organizations/{organizationId}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizationId(@Parameter(description = "Id of an existing organization", required = true)
-                                                    @PathVariable("organizationId") Long organizationId, Authentication authentication,
+                                                    @PathVariable("organizationId") String organizationId, Authentication authentication,
                                                     HttpServletRequest request) {
         return getController().getByOrganizationId(organizationId);
     }
@@ -173,6 +181,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/attendees/{attendeeUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByAttendeeId(@Parameter(description = "Id of an existing attendee", required = true)
                                                 @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.getName(), attendeeUUID, securityService.getAdminPrivilege());
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 }

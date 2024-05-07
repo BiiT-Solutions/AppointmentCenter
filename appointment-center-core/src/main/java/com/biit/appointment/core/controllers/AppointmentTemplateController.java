@@ -37,7 +37,7 @@ public class AppointmentTemplateController extends ElementController<Appointment
         return new AppointmentTemplateConverterRequest(appointmentTemplate);
     }
 
-    public List<AppointmentTemplateDTO> findByOrganizationId(Long organizationId) {
+    public List<AppointmentTemplateDTO> findByOrganizationId(String organizationId) {
         return convertAll(getProvider().findByOrganizationId(organizationId));
     }
 

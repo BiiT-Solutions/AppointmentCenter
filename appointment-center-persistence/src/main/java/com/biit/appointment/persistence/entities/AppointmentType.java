@@ -33,13 +33,13 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
     private String name;
 
     @Column(name = "organization_id", nullable = false)
-    private long organizationId;
+    private String organizationId;
 
     public AppointmentType() {
         super();
     }
 
-    public AppointmentType(String name, long organizationId) {
+    public AppointmentType(String name, String organizationId) {
         this();
         setName(name);
         setOrganizationId(organizationId);
@@ -63,11 +63,11 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
         this.name = name;
     }
 
-    public long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 
@@ -78,10 +78,9 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
 
     @Override
     public int hashCode() {
-        final int prime = HASH_SEED;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (int) (organizationId ^ (organizationId >>> (HASH_SEED + 1)));
+        result = HASH_SEED * result + name.hashCode();
+        result = HASH_SEED * result + organizationId.hashCode();
         return result;
     }
 

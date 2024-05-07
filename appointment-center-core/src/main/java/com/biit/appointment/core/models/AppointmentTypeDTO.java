@@ -8,7 +8,7 @@ public class AppointmentTypeDTO extends ElementDTO<Long> {
 
     private String name;
 
-    private long organizationId;
+    private String organizationId;
 
     @Override
     public Long getId() {
@@ -28,11 +28,11 @@ public class AppointmentTypeDTO extends ElementDTO<Long> {
         this.name = name;
     }
 
-    public long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 }

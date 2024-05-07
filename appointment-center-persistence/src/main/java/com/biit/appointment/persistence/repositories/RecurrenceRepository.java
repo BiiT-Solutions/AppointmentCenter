@@ -35,7 +35,7 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             r.startsAt IS NULL AND r.endsAt IS NULL)
             """)
     List<Recurrence> findBy(
-            @Param("organizationId") Long organizationId, @Param("organizer") UUID organizer,
+            @Param("organizationId") String organizationId, @Param("organizer") UUID organizer,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary);
@@ -61,7 +61,7 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             r.startsAt IS NULL AND r.endsAt IS NULL)
             """)
     long countExaminationTypesIn(
-            @Param("organizationId") Long organizationId, @Param("organizer") Long organizer,
+            @Param("organizationId") String organizationId, @Param("organizer") Long organizer,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary);

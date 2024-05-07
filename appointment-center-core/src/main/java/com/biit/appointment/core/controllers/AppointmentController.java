@@ -54,7 +54,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findByWithExaminationTypeNames(Long organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
+    public List<AppointmentDTO> findByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
                                                                Collection<AppointmentStatus> appointmentStatuses,
                                                                LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
@@ -76,7 +76,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findBy(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public List<AppointmentDTO> findBy(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                                        Collection<AppointmentStatus> appointmentStatuses,
                                        LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         return convertAll(getProvider().findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
@@ -96,7 +96,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long countByWithExaminationTypeNames(Long organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
+    public long countByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
                                                 Collection<AppointmentStatus> appointmentStatuses,
                                                 LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
@@ -118,7 +118,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long count(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public long count(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                       Collection<AppointmentStatus> appointmentStatuses,
                       LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         return getProvider().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
@@ -152,7 +152,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convertAll(getProvider().findByorganizer(organizer));
     }
 
-    public List<AppointmentDTO> getByOrganizationId(Long organizationId) {
+    public List<AppointmentDTO> getByOrganizationId(String organizationId) {
         return convertAll(getProvider().findByOrganizationId(organizationId));
     }
 

@@ -59,7 +59,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * @param organizationId the organization.
      * @return a list of appointments.
      */
-    public List<Appointment> findByOrganizationId(Long organizationId) {
+    public List<Appointment> findByOrganizationId(String organizationId) {
         if (organizationId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
@@ -105,7 +105,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<Appointment> findBy(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public List<Appointment> findBy(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                                     Collection<AppointmentStatus> appointmentStatuses,
                                     LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<Recurrence> recurrences = recurrenceRepository.findBy(organizationId, organizer, examinationTypes, lowerTimeBoundary, upperTimeBoundary);
@@ -150,7 +150,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long count(Long organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public long count(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                       Collection<AppointmentStatus> appointmentStatuses,
                       LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final AtomicLong appointments = new AtomicLong(getRepository().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,

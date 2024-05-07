@@ -29,7 +29,7 @@ import java.util.UUID;
 public class AppointmentTest extends AbstractTestNGSpringContextTests {
 
     private final static UUID ORGANIZER_ID = UUID.randomUUID();
-    private final static Long ORGANIZATION_ID = 43L;
+    private final static String ORGANIZATION_ID = "THE ORGANIZATION";
     private final static UUID PRACTITIONER_ID = UUID.randomUUID();
     private final static UUID OTHER_PRACTITIONER_ID = UUID.randomUUID();
 

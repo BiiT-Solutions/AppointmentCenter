@@ -10,7 +10,7 @@ public class ProfessionalSpecializationDTO extends ElementDTO<Long> {
 
     private AppointmentTypeDTO appointmentType;
 
-    private Long organizationId;
+    private String organizationId;
 
     private Long userId;
 
@@ -40,11 +40,11 @@ public class ProfessionalSpecializationDTO extends ElementDTO<Long> {
         this.appointmentType = appointmentType;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

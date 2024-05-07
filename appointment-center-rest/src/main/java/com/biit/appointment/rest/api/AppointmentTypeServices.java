@@ -35,7 +35,7 @@ public class AppointmentTypeServices extends ElementServices<AppointmentType, Lo
     public AppointmentTypeDTO getPrevious(@Parameter(description = "Name of the appointment type")
                                           @PathVariable(name = "name") String name,
                                           @Parameter(description = "Id of an existing organization")
-                                          @PathVariable(name = "organizationId") Long organizationId,
+                                          @PathVariable(name = "organizationId") String organizationId,
                                           HttpServletRequest request) {
         return getController().findByNameAndOrganizationId(name, organizationId);
     }

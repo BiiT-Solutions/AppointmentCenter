@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AppointmentTypeRepository extends ElementRepository<AppointmentType, Long> {
 
-    Optional<AppointmentType> findByNameAndOrganizationId(String name, Long organizationId);
+    Optional<AppointmentType> findByNameAndOrganizationId(String name, String organizationId);
 }

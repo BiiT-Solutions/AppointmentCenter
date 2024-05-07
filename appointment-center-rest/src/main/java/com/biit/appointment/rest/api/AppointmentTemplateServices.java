@@ -39,7 +39,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     @Operation(summary = "Gets all templates from an organization.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/organization/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentTemplateDTO> findByOrganizationId(@Parameter(description = "Id of an existing organization.")
-                                                             @PathVariable(name = "organizationId") Long organizationId, HttpServletRequest request) {
+                                                             @PathVariable(name = "organizationId") String organizationId, HttpServletRequest request) {
         return getController().findByOrganizationId(organizationId);
     }
 

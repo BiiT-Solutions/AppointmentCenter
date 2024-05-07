@@ -53,7 +53,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     public ProfessionalSpecializationDTO getByNameAndOrganization(@Parameter(description = "Name of the examination type")
                                                                   @PathVariable(name = "name") String name,
                                                                   @Parameter(description = "Id of an existing organization")
-                                                                  @PathVariable(name = "organizationId") Long organizationId,
+                                                                  @PathVariable(name = "organizationId") String organizationId,
                                                                   HttpServletRequest request) {
         return getController().findByNameAndOrganizationId(name, organizationId);
     }
@@ -65,7 +65,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @GetMapping(value = "/organizations/{organizationId}/appointment-types/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByOrganizationAndAppointmentType(
             @Parameter(description = "Id of an existing organization")
-            @PathVariable(name = "organizationId") Long organizationId,
+            @PathVariable(name = "organizationId") String organizationId,
             @Parameter(description = "Name of the appointment type")
             @PathVariable(name = "appointmentTypeName") String appointmentTypeName,
             HttpServletRequest request) {
@@ -79,7 +79,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @GetMapping(value = "/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByOrganization(
             @Parameter(description = "Id of an existing organization")
-            @PathVariable(name = "organizationId") Long organizationId,
+            @PathVariable(name = "organizationId") String organizationId,
             @Parameter(description = "Name of the appointment types")
             @RequestParam(name = "appointmentTypeNames") Optional<Collection<String>> appointmentTypeNames,
             HttpServletRequest request) {
@@ -109,7 +109,7 @@ public class ProfessionalSpecializationServices extends ElementServices<Professi
     @GetMapping(value = "/organizations/{organizationId}/users/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfessionalSpecializationDTO> getByUser(
             @Parameter(description = "Id of an existing organization")
-            @PathVariable(name = "organizationId") Long organizationId,
+            @PathVariable(name = "organizationId") String organizationId,
             @Parameter(description = "Collection of users ids")
             @RequestParam(name = "usersUUIDs") Optional<Collection<UUID>> usersUUIDs,
             HttpServletRequest request) {

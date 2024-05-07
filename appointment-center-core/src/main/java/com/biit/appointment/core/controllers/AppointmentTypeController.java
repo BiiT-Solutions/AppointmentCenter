@@ -22,7 +22,7 @@ public class AppointmentTypeController extends ElementController<AppointmentType
         return new AppointmentTypeConverterRequest(appointmentType);
     }
 
-    public AppointmentTypeDTO findByNameAndOrganizationId(String name, Long organizationId) {
+    public AppointmentTypeDTO findByNameAndOrganizationId(String name, String organizationId) {
         return convert(getProvider().findByNameAndOrganizationId(name, organizationId));
     }
 }

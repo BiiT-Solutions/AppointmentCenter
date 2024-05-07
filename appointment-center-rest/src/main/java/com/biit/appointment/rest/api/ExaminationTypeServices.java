@@ -52,7 +52,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
     public ExaminationTypeDTO getByNameAndOrganization(@Parameter(description = "Name of the examination type")
                                                        @PathVariable(name = "name") String name,
                                                        @Parameter(description = "Id of an existing organization")
-                                                       @PathVariable(name = "organizationId") Long organizationId,
+                                                       @PathVariable(name = "organizationId") String organizationId,
                                                        @Parameter(description = "If it is deleted or not")
                                                        @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                                        HttpServletRequest request) {
@@ -65,7 +65,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
     @GetMapping(value = "/organizations/{organizationId}/appointment-types/{appointmentTypeName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByOrganizationAndAppointmentType(
             @Parameter(description = "Id of an existing organization")
-            @PathVariable(name = "organizationId") Long organizationId,
+            @PathVariable(name = "organizationId") String organizationId,
             @Parameter(description = "Name of the appointment type")
             @PathVariable(name = "appointmentTypeName") String appointmentTypeName,
             @Parameter(description = "If it is deleted or not")
@@ -79,7 +79,7 @@ public class ExaminationTypeServices extends ElementServices<ExaminationType, St
     @GetMapping(value = "/organizations/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExaminationTypeDTO> getByOrganization(
             @Parameter(description = "Id of an existing organization")
-            @PathVariable(name = "organizationId") Long organizationId,
+            @PathVariable(name = "organizationId") String organizationId,
             @Parameter(description = "Name of the appointment types")
             @RequestParam(name = "appointmentTypeNames") Optional<Collection<String>> appointmentTypeNames,
             @Parameter(description = "If it is deleted or not")

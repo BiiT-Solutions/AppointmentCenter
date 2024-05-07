@@ -37,22 +37,22 @@ public class ExaminationTypeController extends ElementController<ExaminationType
         return convertAll(getProvider().findByNameAndDeleted(name, deleted));
     }
 
-    public ExaminationTypeDTO findByNameAndOrganizationId(String name, Long organizationId, boolean deleted) {
+    public ExaminationTypeDTO findByNameAndOrganizationId(String name, String organizationId, boolean deleted) {
         return convert(getProvider().findByNameAndOrganizationId(name, organizationId, deleted));
     }
 
-    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(Long organizationId, String appointmentTypeName, boolean deleted) {
+    public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(String organizationId, String appointmentTypeName, boolean deleted) {
         return findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId,
                 appointmentTypeProvider.findByNameAndOrganizationId(appointmentTypeName, organizationId), deleted);
     }
 
     public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
-            Long organizationId, AppointmentType appointmentType, boolean deleted) {
+            String organizationId, AppointmentType appointmentType, boolean deleted) {
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted));
     }
 
     public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeletedUsingNames(
-            Long organizationId, Collection<String> appointmentTypeNames, boolean deleted) {
+            String organizationId, Collection<String> appointmentTypeNames, boolean deleted) {
         if (appointmentTypeNames != null) {
             final Set<AppointmentType> appointmentTypes = new HashSet<>();
             for (final String appointmentTypeName : appointmentTypeNames) {
@@ -65,7 +65,7 @@ public class ExaminationTypeController extends ElementController<ExaminationType
     }
 
     public List<ExaminationTypeDTO> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
-            Long organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
+            String organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted));
     }
 }

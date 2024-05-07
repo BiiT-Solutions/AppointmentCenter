@@ -39,22 +39,22 @@ public class ProfessionalSpecializationController extends ElementController<Prof
         return convertAll(getProvider().findByName(name));
     }
 
-    public ProfessionalSpecializationDTO findByNameAndOrganizationId(String name, Long organizationId) {
+    public ProfessionalSpecializationDTO findByNameAndOrganizationId(String name, String organizationId) {
         return convert(getProvider().findByNameAndOrganizationId(name, organizationId));
     }
 
-    public List<ProfessionalSpecializationDTO> findAllByOrOrganizationIdAndAppointmentType(Long organizationId, String appointmentTypeName) {
+    public List<ProfessionalSpecializationDTO> findAllByOrOrganizationIdAndAppointmentType(String organizationId, String appointmentTypeName) {
         return findAllByOrOrganizationIdAndAppointmentType(organizationId,
                 appointmentTypeProvider.findByNameAndOrganizationId(appointmentTypeName, organizationId));
     }
 
     public List<ProfessionalSpecializationDTO> findAllByOrOrganizationIdAndAppointmentType(
-            Long organizationId, AppointmentType appointmentType) {
+            String organizationId, AppointmentType appointmentType) {
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType));
     }
 
     public List<ProfessionalSpecializationDTO> findAllByOrOrganizationIdAndAppointmentTypeInUsingNames(
-            Long organizationId, Collection<String> appointmentTypeNames) {
+            String organizationId, Collection<String> appointmentTypeNames) {
         if (appointmentTypeNames != null) {
             final Set<AppointmentType> appointmentTypes = new HashSet<>();
             for (final String appointmentTypeName : appointmentTypeNames) {
@@ -67,7 +67,7 @@ public class ProfessionalSpecializationController extends ElementController<Prof
     }
 
     public List<ProfessionalSpecializationDTO> findAllByOrOrganizationIdAndAppointmentTypeIn(
-            Long organizationId, Collection<AppointmentType> appointmentTypes) {
+            String organizationId, Collection<AppointmentType> appointmentTypes) {
         return convertAll(getProvider().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes));
     }
 
@@ -75,7 +75,7 @@ public class ProfessionalSpecializationController extends ElementController<Prof
         return convertAll(getProvider().findByUserUUID(userUUID));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(UUID userUUID, Long organizationId) {
+    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(UUID userUUID, String organizationId) {
         return convertAll(getProvider().findByUserUUIDAndOrganizationId(userUUID, organizationId));
     }
 
@@ -83,7 +83,7 @@ public class ProfessionalSpecializationController extends ElementController<Prof
         return convertAll(getProvider().findByUserUUID(usersUUIDs));
     }
 
-    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(Collection<UUID> usersUUIDs, Long organizationId) {
+    public List<ProfessionalSpecializationDTO> findByUserUUIDAndOrganizationId(Collection<UUID> usersUUIDs, String organizationId) {
         return convertAll(getProvider().findByUserUUIDAndOrganizationId(usersUUIDs, organizationId));
     }
 }

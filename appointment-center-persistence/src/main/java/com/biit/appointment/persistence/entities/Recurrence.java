@@ -1,7 +1,6 @@
 package com.biit.appointment.persistence.entities;
 
 
-import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
@@ -49,8 +48,7 @@ public class Recurrence extends Element<Long> {
     private UUID organizer;
 
     @Column(name = "organization_id", nullable = false)
-    @Convert(converter = LongCryptoConverter.class)
-    private Long organizationId;
+    private String organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "examination_type")
@@ -141,11 +139,11 @@ public class Recurrence extends Element<Long> {
         this.organizer = organizer;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

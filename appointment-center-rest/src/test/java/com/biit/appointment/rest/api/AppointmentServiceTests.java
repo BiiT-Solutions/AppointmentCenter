@@ -8,6 +8,8 @@ import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.AuthenticatedUserProvider;
+import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.exceptions.ActionNotAllowedException;
 import com.biit.server.security.model.AuthRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,6 +37,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -48,10 +51,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Test(groups = {"appointmentServiceTests"})
 public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
+    private final static String GUEST_NAME = "guest";
     private final static String USER_PASSWORD = "password";
     private final static String JWT_SALT = "4567";
-
-    private final static Long ORGANIZATION_ID = 43L;
+    private final static String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
     private static final String APPOINTMENT_TITLE = "The Appointment";
     private static final String APPOINTMENT_SPECIALTY = "Physical";
@@ -79,11 +82,15 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
     private MockMvc mockMvc;
 
-    private String jwtToken;
+    private String adminJwtToken;
+    private String guestJwtToken;
 
     private ExaminationType type;
 
     private Appointment appointment;
+
+    private IAuthenticatedUser admin;
+    private IAuthenticatedUser guest;
 
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -121,7 +128,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     @BeforeClass
     public void addUser() {
         //Create the admin user
-        authenticatedUserProvider.createUser(USER_NAME, USER_NAME, USER_PASSWORD);
+        admin = authenticatedUserProvider.createUser(USER_NAME, USER_NAME, USER_PASSWORD);
+        guest = authenticatedUserProvider.createUser(GUEST_NAME, GUEST_NAME, USER_PASSWORD);
     }
 
     @BeforeClass
@@ -130,6 +138,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         appointment.setTitle(APPOINTMENT_TITLE);
         appointment.setStartTime(LocalDateTime.of(2024, 3, 27, 16, 38, 3));
         appointment.setEndTime(LocalDateTime.of(2024, 3, 27, 18, 38, 3));
+        appointment.setOrganizer(UUID.fromString(admin.getUID()));
         this.appointment = appointmentProvider.save(appointment);
     }
 
@@ -140,7 +149,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void setAuthentication() throws Exception {
+    public void setAdminAuthentication() throws Exception {
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
@@ -154,22 +163,73 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(jwtToken);
+        adminJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertNotNull(adminJwtToken);
     }
 
-    @Test(dependsOnMethods = "setAuthentication")
+    @Test
+    public void setGuestAuthentication() throws Exception {
+        AuthRequest request = new AuthRequest();
+        request.setUsername(GUEST_NAME);
+        request.setPassword(USER_PASSWORD);
+
+        final MvcResult createResult = this.mockMvc
+                .perform(post("/auth/public/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        guestJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertNotNull(guestJwtToken);
+    }
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
     public void checkAppointmentTimeFormat() throws Exception {
         final MvcResult createResult = this.mockMvc
                 .perform(get("/appointments/" + appointment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json("{'startTime':'2024-03-27T16:38:03Z'}"))
                 .andExpect(content().json("{'endTime':'2024-03-27T18:38:03Z'}"))
                 .andReturn();
+    }
 
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void getOwnAppointmentByOrganizer() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/organizers/" + admin.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "setAdminAuthentication", expectedExceptions = ActionNotAllowedException.class)
+    public void getOthersAppointmentByOrganizer() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/organizers/" + guest.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void adminGetOthersAppointmentByOrganizer() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/organizers/" + guest.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
     }
 
 }

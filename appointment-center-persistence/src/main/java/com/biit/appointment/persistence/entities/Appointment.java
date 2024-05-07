@@ -70,7 +70,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private LocalDateTime endTime;
 
     @Column(name = "organization_id")
-    private Long organizationId;
+    private String organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "examination_type")
@@ -175,11 +175,11 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         this.organizer = organizer;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 
