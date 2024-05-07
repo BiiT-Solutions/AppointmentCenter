@@ -2,7 +2,6 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.IntegerCryptoConverter;
-import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
@@ -52,8 +51,7 @@ public class AppointmentTemplate extends Element<Long> {
     private int duration;
 
     @Column(name = "organization_id")
-    @Convert(converter = LongCryptoConverter.class)
-    private Long organizationId;
+    private String organizationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "examination_type")
@@ -109,11 +107,11 @@ public class AppointmentTemplate extends Element<Long> {
         this.duration = duration;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

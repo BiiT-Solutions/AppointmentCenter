@@ -13,7 +13,7 @@ public class AppointmentTypeProvider extends ElementProvider<AppointmentType, Lo
         super(repository);
     }
 
-    public AppointmentType findByNameAndOrganizationId(String name, Long organizationId) {
+    public AppointmentType findByNameAndOrganizationId(String name, String organizationId) {
         return  getRepository().findByNameAndOrganizationId(name, organizationId).orElseThrow(() ->
                 new AppointmentTypeNotFoundException(this.getClass(), "No appointment type found"));
     }

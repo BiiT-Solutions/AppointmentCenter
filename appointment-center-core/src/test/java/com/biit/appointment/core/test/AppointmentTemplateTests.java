@@ -28,7 +28,7 @@ import java.util.UUID;
 @SpringBootTest
 @Test(groups = {"appointmentTemplateTest"})
 public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
-    private final static Long ORGANIZATION_ID = 43L;
+    private final static String ORGANIZATION_ID = "The Organization";
     private final static UUID ORGANIZER = UUID.randomUUID();
     private final static int TEMPLATE_DURATION = 90;
     private final static double TEMPLATE_COST = 100D;

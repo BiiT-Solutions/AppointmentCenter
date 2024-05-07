@@ -21,7 +21,7 @@ public class ExaminationTypeRepositoryTests extends AbstractTestNGSpringContextT
     private static final String TEST_NAME = "normal";
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
-    private static final long ORGANIZATION_ID = 456l;
+    private static final String ORGANIZATION_ID = "The Organization";
 
     @Autowired
     private ExaminationTypeRepository examinationTypeRepository;

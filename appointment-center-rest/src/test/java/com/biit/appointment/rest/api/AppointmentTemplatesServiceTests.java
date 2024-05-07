@@ -60,8 +60,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
     private final static String USER_PASSWORD = "password";
     private final static String JWT_SALT = "4567";
 
-
-    private final static Long ORGANIZATION_ID = 43L;
+    private final static String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
 
     private final static int TEMPLATE_DURATION = 90;

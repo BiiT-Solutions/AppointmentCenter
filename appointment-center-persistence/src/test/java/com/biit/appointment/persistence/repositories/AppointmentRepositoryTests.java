@@ -25,7 +25,7 @@ import static com.biit.appointment.persistence.repositories.ExaminationTypeRepos
 @Test(groups = {"appointmentRepository"})
 public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests {
     private static final UUID ORGANIZER_ID = UUID.randomUUID();
-    private static final long ORGANIZATION_ID = 456L;
+    private static final String ORGANIZATION_ID = "The Organization";
     private static final String APPOINTMENT_SPECIALTY = "Physical";
 
     // Timestamp without nanoseconds.

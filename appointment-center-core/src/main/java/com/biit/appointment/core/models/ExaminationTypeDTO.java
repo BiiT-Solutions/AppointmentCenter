@@ -9,7 +9,7 @@ public class ExaminationTypeDTO extends ElementDTO<String> {
 
     private AppointmentTypeDTO appointmentType;
 
-    private Long organizationId;
+    private String organizationId;
 
     private Double price;
 
@@ -45,11 +45,11 @@ public class ExaminationTypeDTO extends ElementDTO<String> {
         this.appointmentType = appointmentType;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

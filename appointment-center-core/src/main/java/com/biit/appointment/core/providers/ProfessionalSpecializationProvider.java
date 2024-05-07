@@ -26,19 +26,19 @@ public class ProfessionalSpecializationProvider extends ElementProvider<Professi
         return getRepository().findByNameIn(names);
     }
 
-    public ProfessionalSpecialization findByNameAndOrganizationId(String name, Long organizationId) {
+    public ProfessionalSpecialization findByNameAndOrganizationId(String name, String organizationId) {
         return getRepository().findByNameAndOrganizationId(name, organizationId).orElseThrow(() ->
                 new ProfessionalSpecializationNotFoundException(this.getClass(), "No specialization defined with name '" + name + "' and organization '"
                         + organizationId + "'"));
     }
 
     public List<ProfessionalSpecialization> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
-            Long organizationId, AppointmentType appointmentType) {
+            String organizationId, AppointmentType appointmentType) {
         return getRepository().findByOrganizationIdAndAppointmentType(organizationId, appointmentType);
     }
 
     public List<ProfessionalSpecialization> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
-            Long organizationId, Collection<AppointmentType> appointmentTypes) {
+            String organizationId, Collection<AppointmentType> appointmentTypes) {
         return getRepository().findByOrganizationIdAndAppointmentTypeIn(organizationId, appointmentTypes);
     }
 
@@ -46,7 +46,7 @@ public class ProfessionalSpecializationProvider extends ElementProvider<Professi
         return getRepository().findByUser(userUUID);
     }
 
-    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(UUID userUUID, Long organizationId) {
+    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(UUID userUUID, String organizationId) {
         return getRepository().findByUserAndOrganizationId(userUUID, organizationId);
     }
 
@@ -54,7 +54,7 @@ public class ProfessionalSpecializationProvider extends ElementProvider<Professi
         return getRepository().findByUserIn(userUUIDs);
     }
 
-    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(Collection<UUID> userUUIDs, Long organizationId) {
+    public List<ProfessionalSpecialization> findByUserUUIDAndOrganizationId(Collection<UUID> userUUIDs, String organizationId) {
         return getRepository().findByUserInAndOrganizationId(userUUIDs, organizationId);
     }
 }

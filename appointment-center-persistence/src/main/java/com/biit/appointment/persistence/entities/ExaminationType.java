@@ -36,7 +36,7 @@ public class ExaminationType extends Element<String> implements Comparable<Exami
     private AppointmentType appointmentType;
 
     @Column(name = "organization_id")
-    private Long organizationId;
+    private String organizationId;
 
     @Convert(converter = DoubleCryptoConverter.class)
     private Double price;
@@ -61,7 +61,7 @@ public class ExaminationType extends Element<String> implements Comparable<Exami
         setDeleted(false);
     }
 
-    public ExaminationType(String name, Long organizationId, AppointmentType appointmentType) {
+    public ExaminationType(String name, String organizationId, AppointmentType appointmentType) {
         this();
         setName(name);
         setAppointmentType(appointmentType);
@@ -102,11 +102,11 @@ public class ExaminationType extends Element<String> implements Comparable<Exami
         this.price = price;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

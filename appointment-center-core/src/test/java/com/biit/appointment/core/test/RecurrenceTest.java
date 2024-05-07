@@ -35,7 +35,7 @@ import java.util.UUID;
 @Test(groups = {"recurrenceTest"})
 public class RecurrenceTest extends AbstractTestNGSpringContextTests {
     private final static UUID ORGANIZER_ID = UUID.randomUUID();
-    private final static Long ORGANIZATION_ID = 43L;
+    private final static String ORGANIZATION_ID = "THE ORGANIZATION";
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
 

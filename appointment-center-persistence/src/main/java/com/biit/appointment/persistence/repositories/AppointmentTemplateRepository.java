@@ -15,7 +15,7 @@ public interface AppointmentTemplateRepository extends ElementRepository<Appoint
      * @param organizationId the organizer of the appointment.
      * @return a list of appointments.
      */
-    List<AppointmentTemplate> findByOrganizationId(Long organizationId);
+    List<AppointmentTemplate> findByOrganizationId(String organizationId);
 
 
 }

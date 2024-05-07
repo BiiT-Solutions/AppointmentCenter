@@ -30,7 +30,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param organizationId the organization.
      * @return a list of appointments.
      */
-    List<Appointment> findByOrganizationId(Long organizationId);
+    List<Appointment> findByOrganizationId(String organizationId);
 
     /**
      * Finds all appointments from a group of speakers.
@@ -73,7 +73,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     List<Appointment> findBy(
-            @Param("organizationId") Long organizationId,
+            @Param("organizationId") String organizationId,
             @Param("organizer") UUID organizer,
             @Param("attendee") UUID attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
@@ -108,7 +108,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
             (:deleted IS NULL OR a.deleted = :deleted)
             """)
     long count(
-            @Param("organizationId") Long organizationId,
+            @Param("organizationId") String organizationId,
             @Param("organizer") UUID organizer,
             @Param("attendee") UUID attendee,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,

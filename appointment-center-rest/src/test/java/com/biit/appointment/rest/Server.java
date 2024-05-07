@@ -5,12 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 @SpringBootApplication
 @Service
-@ComponentScan({"com.biit.appointment", "com.biit.kafka"})
+@ComponentScan({"com.biit.appointment", "com.biit.server.security", "com.biit.server", "com.biit.messagebird.client", "com.biit.usermanager.client",
+        "com.biit.kafka"})
 @ConfigurationPropertiesScan({"com.biit.appointment.rest", "com.biit.server.time"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 public class Server {

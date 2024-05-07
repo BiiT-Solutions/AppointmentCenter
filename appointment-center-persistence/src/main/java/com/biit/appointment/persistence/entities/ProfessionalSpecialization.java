@@ -1,6 +1,5 @@
 package com.biit.appointment.persistence.entities;
 
-import com.biit.database.encryption.LongCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.server.persistence.entities.Element;
@@ -45,8 +44,7 @@ public class ProfessionalSpecialization extends Element<Long> {
     private AppointmentType appointmentType;
 
     @Column(name = "organization_id")
-    @Convert(converter = LongCryptoConverter.class)
-    private Long organizationId;
+    private String organizationId;
 
     @Column(name = "user_uuid", nullable = false)
     @Convert(converter = UUIDCryptoConverter.class)
@@ -56,7 +54,7 @@ public class ProfessionalSpecialization extends Element<Long> {
         super();
     }
 
-    public ProfessionalSpecialization(String name, AppointmentType appointmentType, Long organizationId, UUID user) {
+    public ProfessionalSpecialization(String name, AppointmentType appointmentType, String organizationId, UUID user) {
         this();
         this.name = name;
         this.appointmentType = appointmentType;
@@ -82,11 +80,11 @@ public class ProfessionalSpecialization extends Element<Long> {
         this.appointmentType = appointmentType;
     }
 
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
 

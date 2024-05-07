@@ -23,7 +23,7 @@ public class AppointmentTemplateProvider extends ElementProvider<AppointmentTemp
      * @param organizationId the organization of the appointment.
      * @return a list of appointments.
      */
-    public List<AppointmentTemplate> findByOrganizationId(Long organizationId) {
+    public List<AppointmentTemplate> findByOrganizationId(String organizationId) {
         if (organizationId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }

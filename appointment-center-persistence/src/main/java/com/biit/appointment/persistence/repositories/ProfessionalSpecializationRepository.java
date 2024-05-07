@@ -18,18 +18,18 @@ public interface ProfessionalSpecializationRepository extends ElementRepository<
 
     List<ProfessionalSpecialization> findByNameIn(Collection<String> name);
 
-    Optional<ProfessionalSpecialization> findByNameAndOrganizationId(String name, Long organizationId);
+    Optional<ProfessionalSpecialization> findByNameAndOrganizationId(String name, String organizationId);
 
-    List<ProfessionalSpecialization> findByOrganizationIdAndAppointmentType(Long organizationId, AppointmentType appointmentType);
+    List<ProfessionalSpecialization> findByOrganizationIdAndAppointmentType(String organizationId, AppointmentType appointmentType);
 
     List<ProfessionalSpecialization> findByOrganizationIdAndAppointmentTypeIn(
-            Long organizationId, Collection<AppointmentType> appointmentTypes);
+            String organizationId, Collection<AppointmentType> appointmentTypes);
 
     List<ProfessionalSpecialization> findByUser(UUID userUUID);
 
-    List<ProfessionalSpecialization> findByUserAndOrganizationId(UUID userUUID, Long organizationId);
+    List<ProfessionalSpecialization> findByUserAndOrganizationId(UUID userUUID, String organizationId);
 
     List<ProfessionalSpecialization> findByUserIn(Collection<UUID> userIds);
 
-    List<ProfessionalSpecialization> findByUserInAndOrganizationId(Collection<UUID> userUUIDs, Long organizationId);
+    List<ProfessionalSpecialization> findByUserInAndOrganizationId(Collection<UUID> userUUIDs, String organizationId);
 }
