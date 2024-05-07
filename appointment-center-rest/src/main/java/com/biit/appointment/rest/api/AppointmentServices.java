@@ -13,14 +13,13 @@ import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
 import com.biit.server.rest.SecurityService;
 import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.ISecurityController;
 import com.biit.usermanager.client.provider.UserManagerClient;
-import com.biit.usermanager.client.security.SecurityController;
 import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -45,14 +44,11 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
     private final UserManagerClient userManagerClient;
-    private final SecurityController securityController;
+    private final ISecurityController securityController;
     private final SecurityService securityService;
 
-    @Value("${spring.application.name:}")
-    private String applicationName;
-
     public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient,
-                               SecurityController securityController, SecurityService securityService) {
+                               ISecurityController securityController, SecurityService securityService) {
         super(controller);
         this.userManagerClient = userManagerClient;
         this.securityController = securityController;
@@ -165,7 +161,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/organizers/{organizerUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
                                                @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
-        //securityController.checkIfCanSeeUserData(authentication.getName(), organizerUUID, securityService.getAdminPrivilege());
+        securityController.checkIfCanSeeUserData(authentication.getName(), organizerUUID, securityService.getAdminPrivilege());
         return getController().getByorganizer(organizerUUID);
     }
 
@@ -185,7 +181,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @GetMapping(value = {"/attendees/{attendeeUUID}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByAttendeeId(@Parameter(description = "Id of an existing attendee", required = true)
                                                 @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
-        //securityController.checkIfCanSeeUserData(authentication.getName(), attendeeUUID, securityService.getAdminPrivilege());
+        securityController.checkIfCanSeeUserData(authentication.getName(), attendeeUUID, securityService.getAdminPrivilege());
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 }

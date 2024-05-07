@@ -9,8 +9,8 @@ import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.AuthenticatedUserProvider;
 import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.exceptions.ActionNotAllowedException;
 import com.biit.server.security.model.AuthRequest;
-import com.biit.usermanager.client.exceptions.ActionNotAllowedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -210,7 +210,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
     }
 
-    @Test(dependsOnMethods = "setAdminAuthentication", enabled = false, expectedExceptions = ActionNotAllowedException.class)
+    @Test(dependsOnMethods = "setAdminAuthentication", expectedExceptions = ActionNotAllowedException.class)
     public void getOthersAppointmentByOrganizer() throws Exception {
         final MvcResult createResult = this.mockMvc
                 .perform(get("/appointments/organizers/" + guest.getUID())
