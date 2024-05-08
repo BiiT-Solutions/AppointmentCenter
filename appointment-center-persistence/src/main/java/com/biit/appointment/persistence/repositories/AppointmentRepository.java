@@ -58,6 +58,13 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     List<Appointment> findByAppointmentTemplateIn(Collection<AppointmentTemplate> appointmentTemplates);
 
     /**
+     * Finds all appointments that are related to a template.
+     *
+     * @return a list of appointments that have been generated from a template.
+     */
+    List<Appointment> findByAppointmentTemplateNotNull();
+
+    /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).

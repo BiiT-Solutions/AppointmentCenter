@@ -46,6 +46,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private String colorTheme;
 
+    private Long appointmentTemplateId;
+
     @Override
     public Long getId() {
         return id;
@@ -190,5 +192,13 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setColorTheme(String colorTheme) {
         this.colorTheme = colorTheme;
+    }
+
+    public Long getAppointmentTemplateId() {
+        return appointmentTemplateId;
+    }
+
+    public void setAppointmentTemplateId(Long appointmentTemplateId) {
+        this.appointmentTemplateId = appointmentTemplateId;
     }
 }

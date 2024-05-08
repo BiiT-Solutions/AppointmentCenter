@@ -50,6 +50,7 @@ import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -270,7 +271,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         final LocalDateTime appointmentStartingTime = LocalDateTime.of(2035, 3, 3, 3, 3);
 
         final MvcResult createResult = mockMvc.perform(
-                        post("/appointments/starting-time/"
+                        post("/appointments/templates/starting-time/"
                                 + appointmentStartingTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(toJson(appointmentTemplateConverter.convert(new AppointmentTemplateConverterRequest(appointmentTemplate))))
@@ -300,7 +301,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         Assert.assertEquals(appointmentsFromTemplate.size(), 1);
     }
 
-    
+
     @Test(dependsOnMethods = "createAppointmentFromTemplate")
     public void getAppointmentFromTemplateList() throws Exception {
         final MvcResult createResult = mockMvc.perform(
@@ -314,6 +315,22 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         final List<AppointmentDTO> appointmentsFromTemplate =
                 Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
         Assert.assertEquals(appointmentsFromTemplate.size(), 1);
+    }
+
+
+    @Test(dependsOnMethods = {"getAppointmentFromTemplate", "getAppointmentFromTemplateList", "getAvailabilityWithExistingAppointment"})
+    public void deletingATemplateDoesNotDeleteTheAppointment() throws Exception {
+        mockMvc.perform(
+                        delete("/appointment-templates/" + appointmentTemplate.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andReturn();
+
+        Assert.assertEquals(appointmentTemplateProvider.count(), 0);
+        //Two starting appointments + 1 appointment created by a test.
+        Assert.assertEquals(appointmentProvider.count(), 3);
     }
 
 }

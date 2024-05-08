@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,40 @@ public class AppointmentTemplateController extends ElementController<Appointment
     public List<AppointmentTemplateDTO> findByOrganizationId(String organizationId) {
         return convertAll(getProvider().findByOrganizationId(organizationId));
     }
+
+
+    @Override
+    public void delete(AppointmentTemplateDTO entity, String deletedBy) {
+        //Remove relation in appointments.
+        final List<Appointment> appointments = appointmentProvider.findByAppointmentTemplatesIdsIn(Collections.singletonList(entity.getId()));
+        appointments.forEach(appointment -> appointment.setAppointmentTemplate(null));
+        appointmentProvider.saveAll(appointments);
+
+        super.delete(entity, deletedBy);
+    }
+
+
+    @Override
+    public void deleteAll(String deletedBy) {
+        //Remove relation in appointments.
+        final List<Appointment> appointments = appointmentProvider.findByAppointmentTemplateNotNull();
+        appointments.forEach(appointment -> appointment.setAppointmentTemplate(null));
+        appointmentProvider.saveAll(appointments);
+
+        super.deleteAll(deletedBy);
+    }
+
+
+    @Override
+    public void deleteById(Long id, String deletedBy) {
+        //Remove relation in appointments.
+        final List<Appointment> appointments = appointmentProvider.findByAppointmentTemplatesIdsIn(Collections.singletonList(id));
+        appointments.forEach(appointment -> appointment.setAppointmentTemplate(null));
+        appointmentProvider.saveAll(appointments);
+
+        super.deleteById(id, deletedBy);
+    }
+
 
     public List<AppointmentTemplateAvailabilityDTO> availability(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Long[] templatesId) {
         final List<AppointmentTemplateAvailabilityDTO> availability = new ArrayList<>();

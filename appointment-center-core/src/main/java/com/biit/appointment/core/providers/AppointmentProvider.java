@@ -176,6 +176,17 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().overlaps(appointment) > 0;
     }
 
+
+    /**
+     * Finds all appointments that are related to a template.
+     *
+     * @return a list of appointments that have been generated from a template.
+     */
+    public List<Appointment> findByAppointmentTemplateNotNull() {
+        return getRepository().findByAppointmentTemplateNotNull();
+    }
+
+
     /**
      * Finds all appointments that have been generated from a collection of templates.
      *

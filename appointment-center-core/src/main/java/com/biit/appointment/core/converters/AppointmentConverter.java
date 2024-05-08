@@ -3,11 +3,13 @@ package com.biit.appointment.core.converters;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.converters.models.CustomPropertyConverterRequest;
 import com.biit.appointment.core.converters.models.ExaminationTypeConverterRequest;
+import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.CustomPropertyDTO;
 import com.biit.appointment.core.providers.CustomPropertyProvider;
 import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
+import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
 import com.biit.server.controller.converters.ElementConverter;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
@@ -25,15 +27,17 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
     private final CustomPropertyConverter customPropertyConverter;
     private final CustomPropertyProvider customPropertyProvider;
     private final RecurrenceProvider recurrenceProvider;
+    private final AppointmentTemplateRepository appointmentTemplateRepository;
 
     public AppointmentConverter(ExaminationTypeConverter examinationTypeConverter,
                                 CustomPropertyConverter customPropertyConverter,
                                 CustomPropertyProvider customPropertyProvider,
-                                RecurrenceProvider recurrenceProvider) {
+                                RecurrenceProvider recurrenceProvider, AppointmentTemplateRepository appointmentTemplateRepository) {
         this.examinationTypeConverter = examinationTypeConverter;
         this.customPropertyConverter = customPropertyConverter;
         this.customPropertyProvider = customPropertyProvider;
         this.recurrenceProvider = recurrenceProvider;
+        this.appointmentTemplateRepository = appointmentTemplateRepository;
     }
 
     @Override
@@ -75,6 +79,10 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
             appointmentDTO.setRecurrence(from.getEntity().getRecurrence().getId());
         }
 
+        if (from.getEntity().getAppointmentTemplate() != null) {
+            appointmentDTO.setAppointmentTemplateId(from.getEntity().getAppointmentTemplate().getId());
+        }
+
         return appointmentDTO;
     }
 
@@ -96,6 +104,11 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         appointment.setCustomProperties(customPropertyConverter.reverseAll(to.getCustomProperties()));
         if (to.getRecurrence() != null) {
             appointment.setRecurrence(recurrenceProvider.get(to.getRecurrence()).orElse(null));
+        }
+        if (to.getAppointmentTemplateId() != null) {
+            appointment.setAppointmentTemplate(appointmentTemplateRepository.findById(to.getAppointmentTemplateId()).orElseThrow(() ->
+                    new InvalidParameterException(this.getClass(), "Does not exists an appointment template with id '"
+                            + to.getAppointmentTemplateId() + "'")));
         }
 
         return appointment;
