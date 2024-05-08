@@ -1,5 +1,8 @@
 package com.biit.appointment.rest.api;
 
+import com.biit.appointment.core.converters.AppointmentTemplateConverter;
+import com.biit.appointment.core.converters.models.AppointmentTemplateConverterRequest;
+import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
@@ -92,6 +95,9 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
 
     @Autowired
     private AppointmentTemplateProvider appointmentTemplateProvider;
+
+    @Autowired
+    private AppointmentTemplateConverter appointmentTemplateConverter;
 
     @Autowired
     private AppointmentProvider appointmentProvider;
@@ -255,6 +261,59 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).upperBound(), LocalDateTime.of(2124, 2, 15, 17, 0));
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).lowerBound(), LocalDateTime.of(2124, 2, 15, 19, 30));
         Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).upperBound(), upperTimeBoundary);
+    }
+
+
+    @Test(dependsOnMethods = "setAuthentication")
+    public void createAppointmentFromTemplate() throws Exception {
+        //Appointment generation time
+        final LocalDateTime appointmentStartingTime = LocalDateTime.of(2035, 3, 3, 3, 3);
+
+        final MvcResult createResult = mockMvc.perform(
+                        post("/appointments/starting-time/"
+                                + appointmentStartingTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(appointmentTemplateConverter.convert(new AppointmentTemplateConverterRequest(appointmentTemplate))))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+
+        final AppointmentDTO generatedAppointment = objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO.class);
+        Assert.assertEquals(generatedAppointment.getStartTime(), appointmentStartingTime);
+    }
+
+    @Test(dependsOnMethods = "createAppointmentFromTemplate")
+    public void getAppointmentFromTemplate() throws Exception {
+        final MvcResult createResult = mockMvc.perform(
+                        get("/appointments/templates/" + appointmentTemplate.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> appointmentsFromTemplate =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(appointmentsFromTemplate.size(), 1);
+    }
+
+    
+    @Test(dependsOnMethods = "createAppointmentFromTemplate")
+    public void getAppointmentFromTemplateList() throws Exception {
+        final MvcResult createResult = mockMvc.perform(
+                        get("/appointments/templates?templateId=" + appointmentTemplate.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> appointmentsFromTemplate =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(appointmentsFromTemplate.size(), 1);
     }
 
 }

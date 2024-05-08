@@ -10,6 +10,7 @@ import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.ProfessionalSpecialization;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
+import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.BeanUtils;
@@ -31,12 +32,16 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
 
     private final ProfessionalSpecializationProvider professionalSpecializationProvider;
 
+    private final AppointmentTemplateRepository appointmentTemplateRepository;
+
 
     public AppointmentProvider(AppointmentRepository repository, RecurrenceRepository recurrenceRepository,
-                               ProfessionalSpecializationProvider professionalSpecializationProvider) {
+                               ProfessionalSpecializationProvider professionalSpecializationProvider,
+                               AppointmentTemplateRepository appointmentTemplateRepository) {
         super(repository);
         this.recurrenceRepository = recurrenceRepository;
         this.professionalSpecializationProvider = professionalSpecializationProvider;
+        this.appointmentTemplateRepository = appointmentTemplateRepository;
     }
 
 
@@ -96,7 +101,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizer         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            who attend the meeting.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -141,7 +146,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the appointment (can be null for any organization).
-     * @param organizer         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            who attend the meeting.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -170,6 +175,31 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     public boolean overlaps(Appointment appointment) {
         return getRepository().overlaps(appointment) > 0;
     }
+
+    /**
+     * Finds all appointments that have been generated from a collection of templates.
+     *
+     * @param appointmentTemplatesIds a list of templates ids
+     * @return a list of appointments.
+     */
+    public List<Appointment> findByAppointmentTemplatesIdsIn(Collection<Long> appointmentTemplatesIds) {
+        return findByAppointmentTemplatesIn(appointmentTemplateRepository.findAllById(appointmentTemplatesIds));
+    }
+
+
+    /**
+     * Finds all appointments that have been generated from a collection of templates.
+     *
+     * @param appointmentTemplates a list of templates
+     * @return a list of appointments.
+     */
+    public List<Appointment> findByAppointmentTemplatesIn(Collection<AppointmentTemplate> appointmentTemplates) {
+        if (appointmentTemplates == null || appointmentTemplates.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select a template!");
+        }
+        return getRepository().findByAppointmentTemplateIn(appointmentTemplates);
+    }
+
 
     public Appointment addSpeaker(Long appointmentId, UUID speaker, String updatedBy) {
         final Appointment appointment = getRepository().findById(appointmentId).orElseThrow(
@@ -206,6 +236,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         appointment.setEndTime(startingAt.plusMinutes(appointmentTemplate.getDuration()));
         appointment.setOrganizer(organizer);
         appointment.setColorTheme(appointmentTemplate.getColorTheme());
+        appointment.setAppointmentTemplate(appointmentTemplate);
 
         return getRepository().save(appointment);
     }

@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.repositories;
 
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
+import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.server.persistence.repositories.ElementRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -47,6 +48,14 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @return a list of appointments that contains any of the attendees.
      */
     List<Appointment> findDistinctByAttendeesIn(Collection<UUID> attendeesIds);
+
+    /**
+     * Finds all appointments from a collection of templates.
+     *
+     * @param appointmentTemplates a list of templates
+     * @return a list of appointments that have been generated from a template.
+     */
+    List<Appointment> findByAppointmentTemplateIn(Collection<AppointmentTemplate> appointmentTemplates);
 
     /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.

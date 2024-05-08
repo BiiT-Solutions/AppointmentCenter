@@ -120,6 +120,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "color_theme")
     private String colorTheme;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_template")
+    private AppointmentTemplate appointmentTemplate;
+
     public Appointment() {
         super();
         customProperties = new ArrayList<>();
@@ -189,6 +193,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public void setExaminationType(ExaminationType examinationType) {
         this.examinationType = examinationType;
+    }
+
+    public AppointmentTemplate getAppointmentTemplate() {
+        return appointmentTemplate;
+    }
+
+    public void setAppointmentTemplate(AppointmentTemplate appointmentTemplate) {
+        this.appointmentTemplate = appointmentTemplate;
     }
 
     public boolean isStarted() {

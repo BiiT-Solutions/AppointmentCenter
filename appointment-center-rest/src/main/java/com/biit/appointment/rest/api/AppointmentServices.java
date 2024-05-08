@@ -3,6 +3,7 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.AppointmentController;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
+import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
@@ -13,13 +14,14 @@ import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
 import com.biit.server.rest.SecurityService;
 import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.ISecurityController;
-import com.biit.usermanager.client.provider.UserManagerClient;
-import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -43,14 +46,14 @@ import java.util.UUID;
 public class AppointmentServices extends ElementServices<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter, AppointmentController> {
 
-    private final UserManagerClient userManagerClient;
+    private final IAuthenticatedUserProvider authenticatedUserProvider;
     private final ISecurityController securityController;
     private final SecurityService securityService;
 
-    public AppointmentServices(AppointmentController controller, UserManagerClient userManagerClient,
+    public AppointmentServices(AppointmentController controller, IAuthenticatedUserProvider authenticatedUserProvider,
                                ISecurityController securityController, SecurityService securityService) {
         super(controller);
-        this.userManagerClient = userManagerClient;
+        this.authenticatedUserProvider = authenticatedUserProvider;
         this.securityController = securityController;
         this.securityService = securityService;
     }
@@ -117,7 +120,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds an speaker to an appointment. The speaker must have a Professional Specialization required on the appointment",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/speakers/{speakerUUID}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +131,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds an speaker to an appointment. The speaker must have a Professional Specialization required on the appointment",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "{appointmentId}/speakers/{speakerUUID}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -141,18 +144,41 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Generates an appointment from a template.",
-            security = @SecurityRequirement(name = "bearerAuth"))
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates an appointment from a template.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/starting-time/{startingTime}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment")
-                                       @PathVariable(name = "startingTime") LocalDateTime startingTime,
+    public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment (yyyy-MM-dd hh:mm)")
+                                       @PathVariable(name = "startingTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startingTime,
                                        @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
-        final Optional<IAuthenticatedUser> user = userManagerClient.findByUsername(authentication.getName());
+        final Optional<IAuthenticatedUser> user = authenticatedUserProvider.findByUsername(authentication.getName());
         if (user.isEmpty()) {
             throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.getName() + "'.");
         }
-        return getController().create(appointmentTemplateDTO, startingTime, ((UserDTO) user.get()).getUUID(), authentication.getName());
+        return getController().create(appointmentTemplateDTO, startingTime, UUID.fromString(user.get().getUID()), authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from a template.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/templates/{templateId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getFromTemplate(@Parameter(description = "Template's id")
+                                                @PathVariable(name = "templateId") Long templateId,
+                                                Authentication authentication, HttpServletRequest request) {
+        return getController().findByAppointmentTemplatesIn(Collections.singletonList(templateId));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from a list of templates.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/templates", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getFromTemplateIds(@Parameter(description = "List of templates' ids")
+                                                   @RequestParam(name = "templateId") Optional<Collection<Long>> templateIds,
+                                                   Authentication authentication, HttpServletRequest request) {
+        if (templateIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You need to provide at least one template id!");
+        }
+        return getController().findByAppointmentTemplatesIn(templateIds.get());
     }
 
 
@@ -162,11 +188,11 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public List<AppointmentDTO> getByOrganizer(@Parameter(description = "Id of an existing organizer", required = true)
                                                @PathVariable("organizerUUID") UUID organizerUUID, Authentication authentication, HttpServletRequest request) {
         securityController.checkIfCanSeeUserData(authentication.getName(), organizerUUID, securityService.getAdminPrivilege());
-        return getController().getByorganizer(organizerUUID);
+        return getController().getByOrganizer(organizerUUID);
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all appointments from an organization.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/organizations/{organizationId}"}, produces = {"application/json"})
     public List<AppointmentDTO> getByOrganizationId(@Parameter(description = "Id of an existing organization", required = true)

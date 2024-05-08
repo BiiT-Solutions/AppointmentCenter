@@ -45,7 +45,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId       the organization of the parameters (can be null for any organization).
-     * @param organizer          who must resolve the appointment (can be null for any organizer).
+     * @param organizer            who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
      * @param examinationTypeNames a collection of name of types.
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
@@ -67,7 +67,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizer         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -87,7 +87,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId       the organization of the parameters (can be null for any organization).
-     * @param organizer          who must resolve the appointment (can be null for any organizer).
+     * @param organizer            who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
      * @param examinationTypeNames a collection of name of types.
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
@@ -109,7 +109,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizer         who must resolve the appointment (can be null for any organizer).
+     * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
@@ -148,7 +148,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, organizer, createdBy));
     }
 
-    public List<AppointmentDTO> getByorganizer(UUID organizer) {
+    public List<AppointmentDTO> getByOrganizer(UUID organizer) {
         return convertAll(getProvider().findByorganizer(organizer));
     }
 
@@ -158,6 +158,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     public List<AppointmentDTO> getByAttendeesIds(Collection<UUID> attendeesIds) {
         return convertAll(getProvider().findByAttendeesIn(attendeesIds));
+    }
+
+    public List<AppointmentDTO> findByAppointmentTemplatesIn(Collection<Long> appointmentTemplatesIds) {
+        return convertAll(getProvider().findByAppointmentTemplatesIdsIn(appointmentTemplatesIds));
     }
 }
 
