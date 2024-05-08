@@ -147,7 +147,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates an appointment from a template.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/starting-time/{startingTime}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/templates/starting-time/{startingTime}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment (yyyy-MM-dd hh:mm)")
                                        @PathVariable(name = "startingTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startingTime,
                                        @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
