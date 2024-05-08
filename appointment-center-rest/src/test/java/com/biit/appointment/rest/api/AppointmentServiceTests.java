@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,6 +131,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         //Create the admin user
         admin = authenticatedUserProvider.createUser(USER_NAME, USER_NAME, USER_PASSWORD);
         guest = authenticatedUserProvider.createUser(GUEST_NAME, GUEST_NAME, USER_PASSWORD);
+        authenticatedUserProvider.setRoles(guest, Collections.singleton("GUEST"));
     }
 
     @BeforeClass
@@ -210,14 +212,14 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
     }
 
-    @Test(dependsOnMethods = "setAdminAuthentication", expectedExceptions = ActionNotAllowedException.class)
+    @Test(dependsOnMethods = "setAdminAuthentication")
     public void getOthersAppointmentByOrganizer() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/appointments/organizers/" + guest.getUID())
+                .perform(get("/appointments/organizers/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isForbidden())
                 .andReturn();
     }
 
