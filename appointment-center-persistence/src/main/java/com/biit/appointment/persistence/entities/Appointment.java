@@ -96,7 +96,6 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "cost")
     private Double cost;
 
-    @Convert(converter = BooleanCryptoConverter.class)
     @Column(nullable = false, name = "is_deleted")
     private boolean deleted = false;
 

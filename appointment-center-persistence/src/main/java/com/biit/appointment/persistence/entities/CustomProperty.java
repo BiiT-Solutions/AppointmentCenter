@@ -1,7 +1,9 @@
 package com.biit.appointment.persistence.entities;
 
+import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.StorableObject;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,9 +31,11 @@ public class CustomProperty extends StorableObject {
     private Appointment appointment;
 
     @Column(name = "property_key")
+    @Convert(converter = StringCryptoConverter.class)
     private String key;
 
     @Column(name = "property_value")
+    @Convert(converter = StringCryptoConverter.class)
     private String value;
 
     public CustomProperty() {

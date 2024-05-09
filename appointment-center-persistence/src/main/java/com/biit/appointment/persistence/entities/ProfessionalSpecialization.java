@@ -1,11 +1,8 @@
 package com.biit.appointment.persistence.entities;
 
-import com.biit.database.encryption.StringCryptoConverter;
-import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +33,6 @@ public class ProfessionalSpecialization extends Element<Long> {
     private Long id;
 
     @Column(name = "name", nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -47,7 +43,6 @@ public class ProfessionalSpecialization extends Element<Long> {
     private String organizationId;
 
     @Column(name = "user_uuid", nullable = false)
-    @Convert(converter = UUIDCryptoConverter.class)
     private UUID user;
 
     public ProfessionalSpecialization() {
@@ -70,6 +65,14 @@ public class ProfessionalSpecialization extends Element<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public AppointmentType getAppointmentType() {
