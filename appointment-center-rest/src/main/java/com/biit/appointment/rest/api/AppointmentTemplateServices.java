@@ -3,6 +3,7 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.AppointmentTemplateController;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentTemplateConverterRequest;
+import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateAvailabilityDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
@@ -57,6 +58,15 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
             @RequestParam(value = "templateId") Long[] templatesId,
             HttpServletRequest request) {
         return getController().availability(lowerTimeBoundary, upperTimeBoundary, templatesId);
+    }
+
+
+    @Override
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentTemplateDTO> getAll(HttpServletRequest request) {
+        return super.getAll(request);
     }
 
 
