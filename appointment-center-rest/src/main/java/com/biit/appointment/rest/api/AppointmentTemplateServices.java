@@ -3,7 +3,6 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.AppointmentTemplateController;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentTemplateConverterRequest;
-import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateAvailabilityDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
