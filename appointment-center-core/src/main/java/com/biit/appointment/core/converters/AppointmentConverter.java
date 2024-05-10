@@ -5,6 +5,7 @@ import com.biit.appointment.core.converters.models.CustomPropertyConverterReques
 import com.biit.appointment.core.converters.models.ExaminationTypeConverterRequest;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.AppointmentStatus;
 import com.biit.appointment.core.models.CustomPropertyDTO;
 import com.biit.appointment.core.providers.CustomPropertyProvider;
 import com.biit.appointment.core.providers.RecurrenceProvider;
@@ -54,7 +55,7 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         if (from.getEntity().getSpeakers() != null) {
             appointmentDTO.setSpeakers(new HashSet<>(from.getEntity().getSpeakers()));
         }
-        appointmentDTO.setStatus(from.getEntity().getStatus());
+        appointmentDTO.setStatus(AppointmentStatus.valueOf(from.getEntity().getStatus().name()));
 
         Collection<CustomPropertyDTO> customProperties;
         try {
@@ -97,7 +98,7 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         if (to.getAttendees() != null) {
             appointment.setAttendees(new HashSet<>(to.getAttendees()));
         }
-        appointment.setStatus(to.getStatus());
+        appointment.setStatus(com.biit.appointment.persistence.entities.AppointmentStatus.valueOf(to.getStatus().name()));
         if (to.getSpeakers() != null) {
             appointment.setSpeakers(new HashSet<>(to.getSpeakers()));
         }

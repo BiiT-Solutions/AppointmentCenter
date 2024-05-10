@@ -22,12 +22,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
-            <artifactId>rest-server-definitions</artifactId>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-dto</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>
-            <artifactId>rest-server-dto</artifactId>
+            <artifactId>rest-server-definitions</artifactId>
         </dependency>
         <!-- Kafka -->
         <dependency>

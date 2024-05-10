@@ -1,6 +1,5 @@
 package com.biit.appointment.core.models;
 
-import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.server.controllers.models.ElementDTO;
 
 import java.time.LocalDateTime;
