@@ -62,7 +62,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all, but viewers has permissions", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/viewers", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentTemplateDTO> getAllByViewers(HttpServletRequest request) {
         return super.getAll(request);
     }
