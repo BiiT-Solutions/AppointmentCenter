@@ -149,7 +149,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
     public List<AppointmentDTO> getByOrganizer(UUID organizer) {
-        return convertAll(getProvider().findByorganizer(organizer));
+        return convertAll(getProvider().findByOrganizer(organizer));
     }
 
     public List<AppointmentDTO> getByOrganizationId(String organizationId) {

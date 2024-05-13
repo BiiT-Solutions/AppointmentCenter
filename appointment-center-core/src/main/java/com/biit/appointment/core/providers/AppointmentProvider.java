@@ -51,7 +51,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
      * @param organizer the organizer of the appointment.
      * @return a list of appointments.
      */
-    public List<Appointment> findByorganizer(UUID organizer) {
+    public List<Appointment> findByOrganizer(UUID organizer) {
         if (organizer == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organizer!");
         }
