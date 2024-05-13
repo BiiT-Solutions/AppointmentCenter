@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class AppointmentTemplateController extends ElementController<AppointmentTemplate, Long, AppointmentTemplateDTO, AppointmentTemplateRepository,
@@ -40,6 +41,10 @@ public class AppointmentTemplateController extends ElementController<Appointment
 
     public List<AppointmentTemplateDTO> findByOrganizationId(String organizationId) {
         return convertAll(getProvider().findByOrganizationId(organizationId));
+    }
+
+    public List<AppointmentTemplateDTO> findByAttendeeOnAppointment(UUID attendeeUUID) {
+        return convertAll(getProvider().findByAttendeeOnAppointment(attendeeUUID));
     }
 
 

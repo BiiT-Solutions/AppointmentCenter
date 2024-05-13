@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/appointment-templates")
@@ -42,6 +43,16 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
                                                              @PathVariable(name = "organizationId") String organizationId, HttpServletRequest request) {
         return getController().findByOrganizationId(organizationId);
     }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all templates from an organization.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/appointments/attendee/{attendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentTemplateDTO> findByAttendeeOnAppointment(@Parameter(description = "Id of an existing attendee", required = true)
+                                                                    @PathVariable("attendeeUUID") UUID attendeeUUID, HttpServletRequest request) {
+        return getController().findByAttendeeOnAppointment(attendeeUUID);
+    }
+
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the availability from a collection of templates.", security = @SecurityRequirement(name = "bearerAuth"))

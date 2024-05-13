@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
     private final static String ORGANIZATION_ID = "The Organization";
     private final static UUID ORGANIZER = UUID.randomUUID();
+    private final static UUID ATTENDER = UUID.randomUUID();
     private final static int TEMPLATE_DURATION = 90;
     private final static double TEMPLATE_COST = 100D;
 
@@ -102,6 +104,16 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointment.getDescription(), APPOINTMENT_DESCRIPTION);
         Assert.assertEquals(appointment.getOrganizationId(), ORGANIZATION_ID);
         Assert.assertEquals(appointment.getExaminationType(), type);
+
+        //Add one attendee
+        appointment.addAttendee(ATTENDER);
+        appointmentProvider.save(appointment);
+    }
+
+    @Test(dependsOnMethods = "generateAppointmentFromTemplate")
+    public void findTemplatesByAttendees() {
+        Assert.assertEquals(appointmentTemplateProvider.findByAttendeeOnAppointment(ATTENDER).size(), 1);
+        Assert.assertEquals(appointmentTemplateProvider.findByAttendeeOnAppointment(ORGANIZER).size(), 0);
     }
 
     @AfterClass

@@ -332,6 +332,15 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         return attendances;
     }
 
+    public void setAttendancesByAttendee(Set<UUID> attendees) {
+        if (this.attendances == null) {
+            this.attendances = new HashSet<>();
+        }
+        this.attendances.clear();
+        attendees.forEach(attendee ->
+                this.attendances.add(new Attendance(attendee, this)));
+    }
+
     public void setAttendances(Set<Attendance> attendances) {
         if (this.attendances == null) {
             this.attendances = new HashSet<>();
