@@ -7,6 +7,7 @@ import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class AttendanceProvider extends ElementProvider<Attendance, Long, AttendanceRepository> {
@@ -17,5 +18,9 @@ public class AttendanceProvider extends ElementProvider<Attendance, Long, Attend
 
     public Set<Attendance> findByAppointment(Appointment appointment) {
         return getRepository().findByAppointment(appointment);
+    }
+
+    public Set<Attendance> findByAttendee(UUID attendee) {
+        return getRepository().findByAttendee(attendee);
     }
 }

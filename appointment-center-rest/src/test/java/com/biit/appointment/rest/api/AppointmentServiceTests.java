@@ -2,6 +2,7 @@ package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
+import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
@@ -80,6 +81,9 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private AppointmentProvider appointmentProvider;
+
+    @Autowired
+    private AttendanceProvider attendanceProvider;
 
     private MockMvc mockMvc;
 
@@ -253,6 +257,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
+        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 1);
     }
 
     @Test(dependsOnMethods = "subscribeToAppointment")
@@ -263,6 +269,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
+
+        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(guest.getUID())).size(), 0);
     }
 
     @Test(dependsOnMethods = "attendToAppointment")
@@ -273,6 +281,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
+        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 0);
     }
 
     @Test(dependsOnMethods = "attendToAppointment")
