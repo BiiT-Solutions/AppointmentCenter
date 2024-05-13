@@ -19,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -88,6 +89,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Column(name = "attendee_id")
     private Set<UUID> attendees;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "appointment_attendance", joinColumns = @JoinColumn(name = "appointment_id"), inverseJoinColumns = @JoinColumn(name = "attendance_id"))
+    private Set<Attendance> attendances;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "appointment_status")
     private AppointmentStatus status = AppointmentStatus.NOT_STARTED;
@@ -126,6 +131,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     public Appointment() {
         super();
         customProperties = new ArrayList<>();
+        attendances = new HashSet<>();
     }
 
     @Override
@@ -322,6 +328,18 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         this.allDay = allDay;
     }
 
+    public Set<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(Set<Attendance> attendances) {
+        if (this.attendances == null) {
+            this.attendances = new HashSet<>();
+        }
+        this.attendances.clear();
+        this.attendances.addAll(attendances);
+    }
+
     @Override
     public int compareTo(Appointment appointment) {
         // This comparator is used in the order for FMS charts and BMI.
@@ -350,8 +368,12 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).collect(Collectors.toList());
         customProperties.forEach(customProperty -> customProperty.setAppointment(appointment));
         appointment.setCustomProperties(customProperties);
+        final Set<Attendance> attendances = appointment.getAttendances().stream().map(Attendance::copy).collect(Collectors.toSet());
+        attendances.forEach(attendance -> attendance.setAppointment(appointment));
+        appointment.setAttendances(attendances);
         return appointment;
     }
+
 
     public static Appointment of(Appointment sourceAppointment, LocalDateTime onDate) {
         final Appointment appointment = Appointment.copy(sourceAppointment);
