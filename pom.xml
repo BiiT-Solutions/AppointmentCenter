@@ -16,7 +16,6 @@
     <modules>
         <module>appointment-center-logger</module>
         <module>appointment-center-persistence</module>
-        <module>appointment-center-dto</module>
         <module>appointment-center-core</module>
         <module>appointment-center-rest</module>
     </modules>

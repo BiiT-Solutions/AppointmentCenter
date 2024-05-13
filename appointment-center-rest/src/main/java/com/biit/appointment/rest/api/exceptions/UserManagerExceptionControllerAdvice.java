@@ -3,6 +3,7 @@ package com.biit.appointment.rest.api.exceptions;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AppointmentTypeNotFoundException;
 import com.biit.appointment.core.exceptions.ExaminationTypeNotFoundException;
+import com.biit.appointment.core.exceptions.InvalidFormatException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.InvalidRecurrenceException;
 import com.biit.appointment.core.exceptions.ProfessionalSpecializationNotFoundException;
@@ -65,5 +66,11 @@ public class UserManagerExceptionControllerAdvice extends ServerExceptionControl
     public ResponseEntity<Object> invalidParameterException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage("Parameter invalid!", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<Object> invalidFormatException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
     }
 }

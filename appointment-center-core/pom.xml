@@ -22,18 +22,35 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
-            <artifactId>appointment-center-dto</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.biit</groupId>
+            <artifactId>rest-server-definitions</artifactId>
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>
-            <artifactId>rest-server-definitions</artifactId>
+            <artifactId>rest-server-dto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.biit</groupId>
+            <artifactId>user-manager-system-rest-client</artifactId>
         </dependency>
         <!-- Kafka -->
         <dependency>
             <groupId>com.biit</groupId>
             <artifactId>kafka-client-dto</artifactId>
+        </dependency>
+        <!-- QR reader -->
+        <dependency>
+            <groupId>io.github.simonscholz</groupId>
+            <artifactId>qr-code-with-logo</artifactId>
+        </dependency>
+        <!-- For SVG logs on QR -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-transcoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-codec</artifactId>
         </dependency>
 
         <!--Testing-->
