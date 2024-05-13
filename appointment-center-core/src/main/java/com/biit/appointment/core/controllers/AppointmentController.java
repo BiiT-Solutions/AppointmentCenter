@@ -4,6 +4,7 @@ import com.biit.appointment.core.controllers.kafka.AppointmentEventSender;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
+import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
@@ -13,6 +14,9 @@ import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.kafka.controllers.KafkaElementController;
+import com.biit.server.exceptions.UserNotFoundException;
+import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IAuthenticatedUserProvider;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -27,13 +31,17 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     private final ExaminationTypeProvider examinationTypeProvider;
     private final AppointmentTemplateConverter appointmentTemplateConverter;
 
+    private final IAuthenticatedUserProvider authenticatedUserProvider;
+
     protected AppointmentController(AppointmentProvider provider, AppointmentConverter converter,
                                     ExaminationTypeProvider examinationTypeProvider,
                                     AppointmentEventSender eventSender,
-                                    AppointmentTemplateConverter appointmentTemplateConverter) {
+                                    AppointmentTemplateConverter appointmentTemplateConverter,
+                                    IAuthenticatedUserProvider authenticatedUserProvider) {
         super(provider, converter, eventSender);
         this.examinationTypeProvider = examinationTypeProvider;
         this.appointmentTemplateConverter = appointmentTemplateConverter;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -162,6 +170,28 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     public List<AppointmentDTO> findByAppointmentTemplatesIn(Collection<Long> appointmentTemplatesIds) {
         return convertAll(getProvider().findByAppointmentTemplatesIdsIn(appointmentTemplatesIds));
+    }
+
+    public AppointmentDTO subscribe(Long appointmentId, String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        final Appointment appointment = getProvider().findById(appointmentId).orElseThrow(() ->
+                new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
+
+        appointment.getAttendees().add(UUID.fromString(user.getUID()));
+        return convert(getProvider().save(appointment));
+    }
+
+    public AppointmentDTO unsubscribe(Long appointmentId, String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        final Appointment appointment = getProvider().findById(appointmentId).orElseThrow(() ->
+                new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
+
+        appointment.getAttendees().remove(UUID.fromString(user.getUID()));
+        return convert(getProvider().save(appointment));
     }
 }
 

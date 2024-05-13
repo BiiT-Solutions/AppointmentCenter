@@ -28,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -209,5 +210,23 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                                 @PathVariable("attendeeUUID") UUID attendeeUUID, Authentication authentication, HttpServletRequest request) {
         securityController.checkIfCanSeeUserData(authentication.getName(), attendeeUUID, securityService.getAdminPrivilege());
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from an attendee.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = {"{appointmentId}/attendees/subscribe"}, produces = {"application/json"})
+    public AppointmentDTO subscribe(@Parameter(description = "Id of the appointment.")
+                                    @PathVariable(name = "appointmentId") Long appointmentId,
+                                    Authentication authentication, HttpServletRequest request) {
+        return getController().subscribe(appointmentId, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from an attendee.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = {"{appointmentId}/attendees/unsubscribe"}, produces = {"application/json"})
+    public AppointmentDTO unsubscribe(@Parameter(description = "Id of the appointment.")
+                                      @PathVariable(name = "appointmentId") Long appointmentId,
+                                      Authentication authentication, HttpServletRequest request) {
+        return getController().unsubscribe(appointmentId, authentication.getName());
     }
 }
