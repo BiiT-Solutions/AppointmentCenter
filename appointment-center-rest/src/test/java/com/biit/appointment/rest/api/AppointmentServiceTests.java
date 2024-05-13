@@ -9,7 +9,6 @@ import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.AuthenticatedUserProvider;
 import com.biit.server.security.IAuthenticatedUser;
-import com.biit.server.security.exceptions.ActionNotAllowedException;
 import com.biit.server.security.model.AuthRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,6 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
@@ -214,7 +214,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getOthersAppointmentByOrganizer() throws Exception {
-        final MvcResult createResult = this.mockMvc
+        this.mockMvc
                 .perform(get("/appointments/organizers/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
@@ -225,9 +225,29 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void adminGetOthersAppointmentByOrganizer() throws Exception {
-        final MvcResult createResult = this.mockMvc
+        this.mockMvc
                 .perform(get("/appointments/organizers/" + guest.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void subscribeToAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/subscribe")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "subscribeToAppointment")
+    public void unsubscribeToAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/unsubscribe")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())

@@ -5,6 +5,7 @@ import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
+import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
