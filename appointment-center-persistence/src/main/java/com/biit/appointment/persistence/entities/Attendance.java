@@ -1,6 +1,6 @@
 package com.biit.appointment.persistence.entities;
 
-import com.biit.server.persistence.entities.CreatedElement;
+import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +29,7 @@ import java.util.UUID;
                 @Index(name = "ind_attendee", columnList = "attendee"),
                 @Index(name = "ind_appointment", columnList = "appointment")
         })
-public class Attendance extends CreatedElement implements Serializable {
+public class Attendance extends Element<Long> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

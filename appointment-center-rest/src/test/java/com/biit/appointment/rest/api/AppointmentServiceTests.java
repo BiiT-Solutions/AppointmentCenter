@@ -244,7 +244,50 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
     }
 
+
     @Test(dependsOnMethods = "subscribeToAppointment")
+    public void attendToAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + admin.getUID() + "/attend")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "subscribeToAppointment")
+    public void attendToInvalidAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + guest.getUID() + "/attend")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "attendToAppointment")
+    public void unattendToAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + admin.getUID() + "/unattend")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "attendToAppointment")
+    public void unattendToInvalidAppointment() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + guest.getUID() + "/unattend")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = {"subscribeToAppointment", "attendToAppointment", "attendToInvalidAppointment",
+            "unattendToInvalidAppointment", "unattendToAppointment"})
     public void unsubscribeToAppointment() throws Exception {
         this.mockMvc
                 .perform(put("/appointments/" + appointment.getId() + "/attendees/unsubscribe")

@@ -212,6 +212,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         return getController().getByAttendeesIds(Collections.singletonList(attendeeUUID));
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Subscribes current logged in user into the appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping(value = "/{appointmentId}/attendees/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -221,6 +222,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         return getController().subscribe(appointmentId, authentication.getName());
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Unsubscribes current logged in user from the appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping(value = "/{appointmentId}/attendees/unsubscribe", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -228,5 +230,29 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                       @PathVariable(name = "appointmentId") Long appointmentId,
                                       Authentication authentication, HttpServletRequest request) {
         return getController().unsubscribe(appointmentId, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Mark an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/{appointmentId}/attendees/{attendeeUUID}/attend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO attend(@Parameter(description = "Id of the appointment.")
+                                    @PathVariable(name = "appointmentId") Long appointmentId,
+                                    @Parameter(description = "Id of an existing attendee", required = true)
+                                    @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                    Authentication authentication, HttpServletRequest request) {
+        return getController().attend(appointmentId, attendeeUUID, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Remove an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/{appointmentId}/attendees/{attendeeUUID}/unattend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO unattend(@Parameter(description = "Id of the appointment.")
+                                 @PathVariable(name = "appointmentId") Long appointmentId,
+                                 @Parameter(description = "Id of an existing attendee", required = true)
+                                 @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                 Authentication authentication, HttpServletRequest request) {
+        return getController().unattend(appointmentId, attendeeUUID, authentication.getName());
     }
 }

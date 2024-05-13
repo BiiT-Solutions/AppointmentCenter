@@ -8,6 +8,8 @@ import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.InvalidRecurrenceException;
 import com.biit.appointment.core.exceptions.ProfessionalSpecializationNotFoundException;
 import com.biit.appointment.core.exceptions.RecurrenceNotFoundException;
+import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
+import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.server.exceptions.NotFoundException;
 import com.biit.server.exceptions.ServerExceptionControllerAdvice;
 import com.biit.server.logger.RestServerExceptionLogger;
@@ -72,5 +74,17 @@ public class UserManagerExceptionControllerAdvice extends ServerExceptionControl
     public ResponseEntity<Object> invalidFormatException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(YouAreNotOnThisAppointmentException.class)
+    public ResponseEntity<Object> youAreNotOnThisAppointmentException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(YouAreAlreadyOnThisAppointmentException.class)
+    public ResponseEntity<Object> youAreAlreadyOnThisAppointmentException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.CONFLICT);
     }
 }
