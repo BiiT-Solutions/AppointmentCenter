@@ -28,7 +28,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.springframework.beans.BeanUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -364,7 +363,22 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public static Appointment copy(Appointment sourceAppointment) {
         final Appointment appointment = new Appointment();
-        BeanUtils.copyProperties(sourceAppointment, appointment);
+
+        appointment.setId(null);
+        appointment.setTitle(sourceAppointment.getTitle());
+        appointment.setDescription(sourceAppointment.getDescription());
+        appointment.setCost(sourceAppointment.getCost());
+        appointment.setStatus(sourceAppointment.getStatus());
+        appointment.setOrganizer(sourceAppointment.getOrganizer());
+        appointment.setStartTime(sourceAppointment.getStartTime());
+        appointment.setEndTime(sourceAppointment.getEndTime());
+        appointment.setOrganizationId(sourceAppointment.getOrganizationId());
+        appointment.setDeleted(sourceAppointment.isDeleted());
+        appointment.setFinishedTime(sourceAppointment.getFinishedTime());
+        appointment.setAllDay(sourceAppointment.isAllDay());
+        appointment.setColorTheme(sourceAppointment.getColorTheme());
+        appointment.setRecurrence(sourceAppointment.getRecurrence());
+
         appointment.setExaminationType(sourceAppointment.getExaminationType());
         if (sourceAppointment.getAttendees() != null) {
             appointment.setAttendees(new HashSet<>(sourceAppointment.getAttendees()));
@@ -372,8 +386,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         if (sourceAppointment.getSpeakers() != null) {
             appointment.setSpeakers(new HashSet<>(sourceAppointment.getSpeakers()));
         }
-        appointment.setStatus(sourceAppointment.getStatus());
-        appointment.setId(null);
+
         final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).collect(Collectors.toList());
         customProperties.forEach(customProperty -> customProperty.setAppointment(appointment));
         appointment.setCustomProperties(customProperties);
