@@ -225,7 +225,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.size(), 1);
         //Check that is Monday also.
         Assert.assertEquals(appointments.get(0).getStartTime().getDayOfWeek(), DayOfWeek.MONDAY);
-        //Check is third week also.
+        //Check is the third week also.
         Assert.assertEquals(appointments.get(0).getStartTime().get(ChronoField.ALIGNED_WEEK_OF_MONTH), 3);
 
         //Check also with January
@@ -234,7 +234,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.size(), 2);
         //Check that is Monday also.
         Assert.assertEquals(appointments.get(1).getStartTime().getDayOfWeek(), DayOfWeek.MONDAY);
-        //Check is third week also.
+        //Check is the third week also.
         Assert.assertEquals(appointments.get(1).getStartTime().get(ChronoField.ALIGNED_WEEK_OF_MONTH), 3);
     }
 
@@ -267,7 +267,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
         recurrenceProvider.addAppointmentException(recurrence.getId(), appointmentException, null);
         List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
                 LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(7), null);
-        //9 appointments. One is stored on database as is the exception.
+        //9 appointments. One is stored in a database as is the exception.
         Assert.assertEquals(appointments.size(), 9);
         Assert.assertNotNull(appointments.get(1).getId());
         Assert.assertEquals(appointments.get(1).getStartTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(2).truncatedTo(ChronoUnit.HOURS));
@@ -276,7 +276,7 @@ public class RecurrenceTest extends AbstractTestNGSpringContextTests {
 
         appointments = appointmentProvider.findBy(null, null, null, null, null,
                 LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), null);
-        //9 appointments. One is stored on database as is the exception.
+        //9 appointments. One is stored in a database as is the exception.
         Assert.assertEquals(appointments.size(), 15);
         Assert.assertNotNull(appointments.get(7).getId());
         Assert.assertEquals(appointments.get(7).getStartTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(2).truncatedTo(ChronoUnit.HOURS));

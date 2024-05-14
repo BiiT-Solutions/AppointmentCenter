@@ -9,6 +9,7 @@ import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentExcept
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
+import com.biit.appointment.core.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
@@ -204,6 +205,14 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
         appointment.getAttendees().remove(UUID.fromString(user.getUID()));
         return convert(getProvider().save(appointment));
+    }
+
+    public AppointmentDTO attend(String attendanceRequest, String createdBy) {
+        return attend(AttendanceRequest.decode(attendanceRequest), createdBy);
+    }
+
+    public AppointmentDTO attend(AttendanceRequest attendanceRequest, String createdBy) {
+        return attend(attendanceRequest.getAppointmentId(), attendanceRequest.getAttender(), createdBy);
     }
 
     public AppointmentDTO attend(Long appointmentId, UUID userUUID, String createdBy) {

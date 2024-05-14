@@ -1,5 +1,6 @@
 package com.biit.appointment.core.controllers;
 
+import com.biit.appointment.core.models.AttendanceRequest;
 import com.biit.appointment.core.models.QrCodeDTO;
 import com.biit.appointment.core.providers.QrProvider;
 import com.biit.server.exceptions.UnexpectedValueException;
@@ -14,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class QrController {
@@ -25,15 +27,15 @@ public class QrController {
 
     private final QrProvider qrProvider;
 
-    private final IAuthenticatedUserProvider userManagerClient;
+    private final IAuthenticatedUserProvider authenticatedUserProvider;
 
-    public QrController(QrProvider qrProvider, IAuthenticatedUserProvider userManagerClient) {
+    public QrController(QrProvider qrProvider, IAuthenticatedUserProvider authenticatedUserProvider) {
         this.qrProvider = qrProvider;
-        this.userManagerClient = userManagerClient;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     public QrCodeDTO generateUserAppointmentAttendanceCode(String username, Long appointmentId) {
-        final Optional<IAuthenticatedUser> user = this.userManagerClient.findByUsername(username);
+        final Optional<IAuthenticatedUser> user = this.authenticatedUserProvider.findByUsername(username);
         if (user.isPresent()) {
             return generateUserAppointmentAttendanceCode(user.get(), appointmentId);
         }
@@ -42,15 +44,26 @@ public class QrController {
 
     public QrCodeDTO generateUserAppointmentAttendanceCode(IAuthenticatedUser user, Long appointmentId) {
         try {
-            final String link = "not-implemented";
-            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final String content = generateAttendanceRequest(user, appointmentId);
+            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
-            qrCodeDTO.setLink(link);
+            qrCodeDTO.setContent(content);
             return qrCodeDTO;
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
+    }
+
+    /**
+     * Attendance request is stored as string in Base64.
+     *
+     * @param user          The attender.
+     * @param appointmentId Which appointment is attending.
+     * @return the codified attendance request.
+     */
+    private String generateAttendanceRequest(IAuthenticatedUser user, Long appointmentId) {
+        return new AttendanceRequest(appointmentId, UUID.fromString(user.getUID())).code();
     }
 
     // convert BufferedImage to byte[]

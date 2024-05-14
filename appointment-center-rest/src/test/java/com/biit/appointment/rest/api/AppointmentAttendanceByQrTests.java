@@ -1,5 +1,7 @@
 package com.biit.appointment.rest.api;
 
+import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.models.QrCodeDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
@@ -42,16 +44,15 @@ import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"appointmentServiceTests"})
-public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
+@Test(groups = {"appointmentAttendanceByQrTests"})
+public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
     private final static String GUEST_NAME = "guest";
     private final static String USER_PASSWORD = "password";
@@ -97,6 +98,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     private IAuthenticatedUser admin;
     private IAuthenticatedUser guest;
 
+    private QrCodeDTO qrCodeDTO;
+
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -130,6 +133,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .build();
     }
 
+
     @BeforeClass
     public void addUser() {
         //Create the admin user
@@ -137,6 +141,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         guest = authenticatedUserProvider.createUser(GUEST_NAME, GUEST_NAME, USER_PASSWORD);
         authenticatedUserProvider.setRoles(guest, Collections.singleton("GUEST"));
     }
+
 
     @BeforeClass
     public void createAppointment() {
@@ -148,11 +153,13 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         this.appointment = appointmentProvider.save(appointment);
     }
 
+
     @Test
     public void checkAuthentication() {
         //Check the admin user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, JWT_SALT + USER_PASSWORD));
     }
+
 
     @Test
     public void setAdminAuthentication() throws Exception {
@@ -173,6 +180,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(adminJwtToken);
     }
 
+
     @Test
     public void setGuestAuthentication() throws Exception {
         AuthRequest request = new AuthRequest();
@@ -192,57 +200,12 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(guestJwtToken);
     }
 
-    @Test(dependsOnMethods = "setAdminAuthentication")
-    public void checkAppointmentTimeFormat() throws Exception {
-        this.mockMvc
-                .perform(get("/appointments/" + appointment.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().json("{'startTime':'2024-03-27T16:38:03Z'}"))
-                .andExpect(content().json("{'endTime':'2024-03-27T18:38:03Z'}"))
-                .andReturn();
-    }
 
-    @Test(dependsOnMethods = "setAdminAuthentication")
-    public void getOwnAppointmentByOrganizer() throws Exception {
-        this.mockMvc
-                .perform(get("/appointments/organizers/" + admin.getUID())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-    }
-
-    @Test(dependsOnMethods = "setAdminAuthentication")
-    public void getOthersAppointmentByOrganizer() throws Exception {
-        this.mockMvc
-                .perform(get("/appointments/organizers/" + admin.getUID())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isForbidden())
-                .andReturn();
-    }
-
-    @Test(dependsOnMethods = "setAdminAuthentication")
-    public void adminGetOthersAppointmentByOrganizer() throws Exception {
-        this.mockMvc
-                .perform(get("/appointments/organizers/" + guest.getUID())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-    }
-
-    @Test(dependsOnMethods = "setAdminAuthentication")
+    @Test(dependsOnMethods = "setGuestAuthentication")
     public void subscribeToAppointment() throws Exception {
         this.mockMvc
                 .perform(put("/appointments/" + appointment.getId() + "/attendees/subscribe")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -250,64 +213,35 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
 
     @Test(dependsOnMethods = "subscribeToAppointment")
-    public void attendToAppointment() throws Exception {
-        this.mockMvc
-                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + admin.getUID() + "/attend")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+    public void generateQrAttendanceCode() throws Exception {
+        final MvcResult qrCode = this.mockMvc
+                .perform(get("/qr/appointment/" + appointment.getId() + "/attendance")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 1);
+        qrCodeDTO = fromJson(qrCode.getResponse().getContentAsString(), QrCodeDTO.class);
+        final AttendanceRequest attendanceRequest = AttendanceRequest.decode(qrCodeDTO.getContent());
+        Assert.assertEquals(attendanceRequest.getAppointmentId(), appointment.getId());
+        Assert.assertEquals(attendanceRequest.getAttender(), UUID.fromString(guest.getUID()));
     }
 
 
-    @Test(dependsOnMethods = "subscribeToAppointment")
-    public void attendToInvalidAppointment() throws Exception {
+    @Test(dependsOnMethods = "generateQrAttendanceCode")
+    public void attendToAppointmentUsingQrCode() throws Exception {
         this.mockMvc
-                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + guest.getUID() + "/attend")
+                .perform(put("/appointments/attend/text")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-
-        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(guest.getUID())).size(), 0);
-    }
-
-
-    @Test(dependsOnMethods = "attendToAppointment")
-    public void unattendToAppointment() throws Exception {
-        this.mockMvc
-                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + admin.getUID() + "/unattend")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(qrCodeDTO.getContent())
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
+        //Check user is marked as attending the process.
+        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(guest.getUID())).size(), 1);
         Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 0);
-    }
-
-
-    @Test(dependsOnMethods = "attendToAppointment")
-    public void unattendToInvalidAppointment() throws Exception {
-        this.mockMvc
-                .perform(put("/appointments/" + appointment.getId() + "/attendees/" + guest.getUID() + "/unattend")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-    }
-
-
-    @Test(dependsOnMethods = {"subscribeToAppointment", "attendToAppointment", "attendToInvalidAppointment",
-            "unattendToInvalidAppointment", "unattendToAppointment"})
-    public void unsubscribeToAppointment() throws Exception {
-        this.mockMvc
-                .perform(put("/appointments/" + appointment.getId() + "/attendees/unsubscribe")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
     }
 
 }

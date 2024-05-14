@@ -9,11 +9,13 @@
             <run>
                 <include name="appointmentTemplatesServiceTests"/>
                 <include name="appointmentServiceTests"/>
+                <include name="appointmentAttendanceByQrTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.appointment.rest.api.AppointmentTemplatesServiceTests"/>
             <class name="com.biit.appointment.rest.api.AppointmentServiceTests"/>
+            <class name="com.biit.appointment.rest.api.AppointmentAttendanceByQrTests"/>
         </classes>
     </test>
 </suite>

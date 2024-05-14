@@ -28,4 +28,8 @@ public class InvalidParameterException extends LoggedException {
     public InvalidParameterException(Class<?> clazz, Throwable e) {
         super(clazz, e);
     }
+
+    public InvalidParameterException(Class<?> clazz, String message, Throwable e) {
+        super(clazz, message, e);
+    }
 }
