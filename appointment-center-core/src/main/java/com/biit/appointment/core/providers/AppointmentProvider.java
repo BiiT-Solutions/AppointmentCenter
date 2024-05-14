@@ -98,6 +98,23 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     }
 
     /**
+     * Finds all appointments from a collection of attendees and a template
+     *
+     * @param attendeesIds         a list of attendees
+     * @param appointmentTemplates the templates to filter.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    public List<Appointment> findByAttendeesInAndAppointmentTemplateIn(Collection<UUID> attendeesIds, Collection<AppointmentTemplate> appointmentTemplates) {
+        if (attendeesIds == null || attendeesIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
+        }
+        if (appointmentTemplates == null) {
+            return findByAttendeesIn(attendeesIds);
+        }
+        return getRepository().findDistinctByAttendeesInAndAppointmentTemplateIn(attendeesIds, appointmentTemplates);
+    }
+
+    /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).

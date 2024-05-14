@@ -215,6 +215,30 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from an attendee.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/attendees/{attendeeUUID}/template/{appointmentTemplateId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getByAttendeeIdAndTemplate(@Parameter(description = "Id of an existing attendee", required = true)
+                                                           @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                                           @Parameter(description = "Id of an existing template", required = true)
+                                                           @PathVariable("appointmentTemplateId") Long appointmentTemplateId,
+                                                           Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.getName(), attendeeUUID, securityService.getAdminPrivilege());
+        return getController().getByAttendeesIdsAndTemplates(Collections.singleton(attendeeUUID), Collections.singleton(appointmentTemplateId));
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets current appointment from the user. If one appointment is currently on execution, get this one, "
+            + "if not, get the last one at the past, if not the first one at the future.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/template/{appointmentTemplateId}/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getByAttendeeIdAndTemplateCurrent(@Parameter(description = "Id of an existing template", required = true)
+                                                            @PathVariable("appointmentTemplateId") Long appointmentTemplateId,
+                                                            Authentication authentication, HttpServletRequest request) {
+        return getController().getCurrentByUsernameAndTemplates(authentication.getName(), Collections.singleton(appointmentTemplateId));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Subscribes current logged in user into the appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping(value = "/{appointmentId}/attendees/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO subscribe(@Parameter(description = "Id of the appointment.")

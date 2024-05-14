@@ -11,6 +11,7 @@ import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
+import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.Appointment;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,17 +47,20 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     private final AttendanceProvider attendanceProvider;
 
+    private final AppointmentTemplateProvider appointmentTemplateProvider;
+
     protected AppointmentController(AppointmentProvider provider, AppointmentConverter converter,
                                     ExaminationTypeProvider examinationTypeProvider,
                                     AppointmentEventSender eventSender,
                                     AppointmentTemplateConverter appointmentTemplateConverter,
                                     IAuthenticatedUserProvider authenticatedUserProvider,
-                                    AttendanceProvider attendanceProvider) {
+                                    AttendanceProvider attendanceProvider, AppointmentTemplateProvider appointmentTemplateProvider) {
         super(provider, converter, eventSender);
         this.examinationTypeProvider = examinationTypeProvider;
         this.appointmentTemplateConverter = appointmentTemplateConverter;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.attendanceProvider = attendanceProvider;
+        this.appointmentTemplateProvider = appointmentTemplateProvider;
     }
 
     @Override
@@ -179,6 +185,49 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     public List<AppointmentDTO> getByAttendeesIds(Collection<UUID> attendeesIds) {
         return convertAll(getProvider().findByAttendeesIn(attendeesIds));
+    }
+
+    public List<AppointmentDTO> getByAttendeesIdsAndTemplates(Collection<UUID> attendeesIds, Collection<Long> templatesIds) {
+        return convertAll(getProvider().findByAttendeesInAndAppointmentTemplateIn(attendeesIds,
+                appointmentTemplateProvider.findByIdIn(templatesIds)));
+    }
+
+    /**
+     * If one appointment is currently on execution, get this one,
+     * if not, get the last one at the past, if not the first one at the future.
+     */
+    public AppointmentDTO getCurrentByUsernameAndTemplates(String username, Collection<Long> templatesIds) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
+                Collections.singleton(UUID.fromString(user.getUID())),
+                appointmentTemplateProvider.findByIdIn(templatesIds));
+
+        appointmentsFromUserInTemplates.sort(Comparator.comparing(Appointment::getStartTime));
+
+
+        final List<Appointment> appointmentsInThePast = appointmentsFromUserInTemplates.stream().filter(appointment ->
+                appointment.getEndTime().isBefore(LocalDateTime.now())).toList();
+        final List<Appointment> appointmentsAtThePresent = appointmentsFromUserInTemplates.stream().filter(appointment ->
+                appointment.getStartTime().isBefore(LocalDateTime.now()) && appointment.getEndTime().isAfter(LocalDateTime.now())).toList();
+        final List<Appointment> appointmentsAtTheFuture = appointmentsFromUserInTemplates.stream().filter(appointment ->
+                appointment.getStartTime().isAfter(LocalDateTime.now())).toList();
+
+        //If one is at the present, get this one, if not, get the one at the past, if not the one at the future.
+        if (!appointmentsAtThePresent.isEmpty()) {
+            return convert(appointmentsAtThePresent.get(0));
+        }
+
+        if (!appointmentsInThePast.isEmpty()) {
+            return convert(appointmentsInThePast.get(appointmentsInThePast.size() - 1));
+        }
+
+        if (!appointmentsAtTheFuture.isEmpty()) {
+            return convert(appointmentsAtTheFuture.get(0));
+        }
+
+        return null;
     }
 
     public List<AppointmentDTO> findByAppointmentTemplatesIn(Collection<Long> appointmentTemplatesIds) {

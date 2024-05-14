@@ -22,6 +22,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-dto</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.biit</groupId>
             <artifactId>rest-server-definitions</artifactId>
         </dependency>
