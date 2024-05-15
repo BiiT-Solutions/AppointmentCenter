@@ -31,7 +31,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "appointment_templates", uniqueConstraints = {@UniqueConstraint(columnNames = {"title", "organization_id"})},
         indexes = {
-                @Index(name = "ind_name", columnList = "name"),
+                @Index(name = "ind_title", columnList = "title"),
                 @Index(name = "ind_organization", columnList = "organization_id"),
         })
 @Cacheable
