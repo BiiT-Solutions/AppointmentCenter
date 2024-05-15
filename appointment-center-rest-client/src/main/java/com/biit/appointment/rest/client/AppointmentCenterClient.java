@@ -36,13 +36,34 @@ public class AppointmentCenterClient {
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
-    public Optional<AppointmentDTO> getByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
+    public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
         try {
             try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
                     appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateId, userUUID))) {
                 AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
                         appointmentUrlConstructor.getAppointmentCenterServerUrl()
                                 + appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateId, userUUID),
+                        response.getStatus());
+                return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
+            }
+        } catch (JsonProcessingException e) {
+            throw new InvalidResponseException(e);
+        } catch (EmptyResultException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * If one appointment is currently on execution, get this one,
+     * if not, get the last one at the past, if not the first one at the future.
+     */
+    public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, String appointmentTemplateName) {
+        try {
+            try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                    appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateName, userUUID))) {
+                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                                + appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateName, userUUID),
                         response.getStatus());
                 return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
             }

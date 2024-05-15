@@ -8,8 +8,10 @@ import com.biit.appointment.persistence.repositories.AppointmentTemplateReposito
 import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,20 @@ public class AppointmentTemplateProvider extends ElementProvider<AppointmentTemp
         }
         return getRepository().findByOrganizationId(organizationId);
     }
+
+
+    public Optional<AppointmentTemplate> findByTitleOrganizationId(String title, String organizationId) {
+        if (organizationId == null) {
+            throw new InvalidParameterException(this.getClass(), "You must select an organization!");
+        }
+        return getRepository().findByTitleAndOrganizationId(title, organizationId);
+    }
+
+
+    public List<AppointmentTemplate> findByTitleIn(Collection<String> titles) {
+        return getRepository().findByTitleIn(titles);
+    }
+
 
     public List<AppointmentTemplate> findByAttendeeOnAppointment(UUID attendeeUUID) {
         final List<Appointment> appointments = appointmentRepository.findDistinctByAttendeesIn(Collections.singletonList(attendeeUUID));

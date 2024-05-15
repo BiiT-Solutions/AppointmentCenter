@@ -4,7 +4,9 @@ import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.server.persistence.repositories.ElementRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AppointmentTemplateRepository extends ElementRepository<AppointmentTemplate, Long> {
@@ -17,5 +19,7 @@ public interface AppointmentTemplateRepository extends ElementRepository<Appoint
      */
     List<AppointmentTemplate> findByOrganizationId(String organizationId);
 
+    Optional<AppointmentTemplate> findByTitleAndOrganizationId(String title, String organizationId);
 
+    List<AppointmentTemplate> findByTitleIn(Collection<String> title);
 }

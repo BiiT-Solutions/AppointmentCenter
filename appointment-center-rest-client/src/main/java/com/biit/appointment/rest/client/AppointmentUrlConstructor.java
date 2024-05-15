@@ -25,4 +25,8 @@ public class AppointmentUrlConstructor {
     public String getByAttendeeIdAndTemplateCurrent(Long appointmentTemplateId, UUID attendeeUUID) {
         return getAppointments() + "/template/" + appointmentTemplateId + "/attendee/" + attendeeUUID + "/next";
     }
+
+    public String getByAttendeeIdAndTemplateCurrent(String appointmentTemplateName, UUID attendeeUUID) {
+        return getAppointments() + "/template/name/" + appointmentTemplateName + "/attendee/" + attendeeUUID + "/next";
+    }
 }

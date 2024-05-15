@@ -203,6 +203,19 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
 
+    public AppointmentDTO getCurrentByAttendeeAndTemplatesNames(UUID attendeeUUID, Collection<String> templatesNames) {
+        //Get organization by user.
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'."));
+
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
+                Collections.singleton(UUID.fromString(user.getUID())),
+                appointmentTemplateProvider.findByTitleIn(templatesNames));
+
+        return getCurrentByAttendeeAndAppointments(user, appointmentsFromUserInTemplates);
+    }
+
+
     public AppointmentDTO getCurrentByAttendeeAndTemplates(UUID attendeeUUID, Collection<Long> templatesIds) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'."));
@@ -211,15 +224,20 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
 
+    public AppointmentDTO getCurrentByAttendeeAndTemplates(IAuthenticatedUser user, Collection<Long> templatesIds) {
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
+                Collections.singleton(UUID.fromString(user.getUID())),
+                appointmentTemplateProvider.findByIdIn(templatesIds));
+
+        return getCurrentByAttendeeAndAppointments(user, appointmentsFromUserInTemplates);
+    }
+
+
     /**
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
-    public AppointmentDTO getCurrentByAttendeeAndTemplates(IAuthenticatedUser user, Collection<Long> templatesIds) {
-
-        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
-                Collections.singleton(UUID.fromString(user.getUID())),
-                appointmentTemplateProvider.findByIdIn(templatesIds));
+    public AppointmentDTO getCurrentByAttendeeAndAppointments(IAuthenticatedUser user, List<Appointment> appointmentsFromUserInTemplates) {
 
         appointmentsFromUserInTemplates.sort(Comparator.comparing(Appointment::getStartTime));
 

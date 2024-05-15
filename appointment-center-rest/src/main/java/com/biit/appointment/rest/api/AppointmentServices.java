@@ -253,6 +253,20 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets current appointment from a selected user. If one appointment is currently on execution, get this one, "
+            + "if not, get the last one at the past, if not the first one at the future.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/template/title/{appointmentTemplateTitle}/attendee/{attendeeUUID}/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getByAttendeeNameAndTemplateCurrent(@Parameter(description = "Name of an existing template", required = true)
+                                                              @PathVariable("appointmentTemplateTitle") String appointmentTemplateTitle,
+                                                              @Parameter(description = "Id of an existing attendee", required = true)
+                                                              @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                                              Authentication authentication, HttpServletRequest request) {
+        return getController().getCurrentByAttendeeAndTemplatesNames(attendeeUUID, Collections.singleton(appointmentTemplateTitle));
+    }
+
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Subscribes current logged in user into the appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping(value = "/{appointmentId}/attendees/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
