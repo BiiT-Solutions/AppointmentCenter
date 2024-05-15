@@ -3,9 +3,11 @@ package com.biit.appointment.rest.client;
 
 import com.biit.appointment.core.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component
 public class AppointmentUrlConstructor {
 
     @Value("${appointments.server.url:#{null}}")

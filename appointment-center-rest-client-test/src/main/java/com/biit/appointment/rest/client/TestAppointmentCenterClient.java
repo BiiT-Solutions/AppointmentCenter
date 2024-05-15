@@ -16,7 +16,7 @@ import java.util.UUID;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Qualifier("appointmentCenterRestClient")
 public class TestAppointmentCenterClient implements IAppointmentCenterRestClient {
-    private static final int STARTED_TIME_PASSED = 15;
+    private static final int STARTED_TIME_PASSED = 45;
     private static final int APPOINTMENT_DURATION = 120;
 
     public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
