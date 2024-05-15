@@ -226,6 +226,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
         return getController().getByAttendeesIdsAndTemplates(Collections.singleton(attendeeUUID), Collections.singleton(appointmentTemplateId));
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets current appointment from the user. If one appointment is currently on execution, get this one, "
             + "if not, get the last one at the past, if not the first one at the future.",
@@ -234,7 +235,21 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public AppointmentDTO getByAttendeeIdAndTemplateCurrent(@Parameter(description = "Id of an existing template", required = true)
                                                             @PathVariable("appointmentTemplateId") Long appointmentTemplateId,
                                                             Authentication authentication, HttpServletRequest request) {
-        return getController().getCurrentByUsernameAndTemplates(authentication.getName(), Collections.singleton(appointmentTemplateId));
+        return getController().getCurrentByAttendeeAndTemplates(authentication.getName(), Collections.singleton(appointmentTemplateId));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets current appointment from a selected user. If one appointment is currently on execution, get this one, "
+            + "if not, get the last one at the past, if not the first one at the future.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/template/{appointmentTemplateId}/attendee/{attendeeUUID}/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getByAttendeeNameAndTemplateCurrent(@Parameter(description = "Id of an existing template", required = true)
+                                                              @PathVariable("appointmentTemplateId") Long appointmentTemplateId,
+                                                              @Parameter(description = "Id of an existing attendee", required = true)
+                                                              @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                                              Authentication authentication, HttpServletRequest request) {
+        return getController().getCurrentByAttendeeAndTemplates(attendeeUUID, Collections.singleton(appointmentTemplateId));
     }
 
 

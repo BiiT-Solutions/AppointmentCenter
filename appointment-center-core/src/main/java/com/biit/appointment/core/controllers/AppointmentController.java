@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 public class AppointmentController extends KafkaElementController<Appointment, Long, AppointmentDTO, AppointmentRepository,
         AppointmentProvider, AppointmentConverterRequest, AppointmentConverter> {
 
+    private static final int MINUTES_TO_CONSIDER_FUTURE_APPOINTMENT = 30;
+
     private final ExaminationTypeProvider examinationTypeProvider;
     private final AppointmentTemplateConverter appointmentTemplateConverter;
 
@@ -192,13 +194,28 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 appointmentTemplateProvider.findByIdIn(templatesIds)));
     }
 
+
+    public AppointmentDTO getCurrentByAttendeeAndTemplates(String username, Collection<Long> templatesIds) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        return getCurrentByAttendeeAndTemplates(user, templatesIds);
+    }
+
+
+    public AppointmentDTO getCurrentByAttendeeAndTemplates(UUID attendeeUUID, Collection<Long> templatesIds) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'."));
+
+        return getCurrentByAttendeeAndTemplates(user, templatesIds);
+    }
+
+
     /**
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
-    public AppointmentDTO getCurrentByUsernameAndTemplates(String username, Collection<Long> templatesIds) {
-        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+    public AppointmentDTO getCurrentByAttendeeAndTemplates(IAuthenticatedUser user, Collection<Long> templatesIds) {
 
         final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
                 Collections.singleton(UUID.fromString(user.getUID())),
@@ -217,6 +234,13 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         //If one is at the present, get this one, if not, get the one at the past, if not the one at the future.
         if (!appointmentsAtThePresent.isEmpty()) {
             return convert(appointmentsAtThePresent.get(0));
+        }
+
+        //If one at the future is going to almost start.
+        if (!appointmentsAtTheFuture.isEmpty()) {
+            if (appointmentsAtTheFuture.get(0).getStartTime().isAfter(LocalDateTime.now().minusMinutes(MINUTES_TO_CONSIDER_FUTURE_APPOINTMENT))) {
+                return convert(appointmentsAtTheFuture.get(0));
+            }
         }
 
         if (!appointmentsInThePast.isEmpty()) {

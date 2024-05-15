@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-logger</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.biit</groupId>
             <artifactId>rest-server-dto</artifactId>
         </dependency>

@@ -1,5 +1,6 @@
 package com.biit.appointment.core.models;
 
+
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
