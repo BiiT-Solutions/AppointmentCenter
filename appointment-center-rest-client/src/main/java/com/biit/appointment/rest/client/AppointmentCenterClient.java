@@ -2,6 +2,7 @@ package com.biit.appointment.rest.client;
 
 
 import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.IAppointmentCenterRestClient;
 import com.biit.appointment.logger.AppointmentCenterClientLogger;
 import com.biit.rest.exceptions.EmptyResultException;
 import com.biit.rest.exceptions.InvalidResponseException;
@@ -18,8 +19,8 @@ import java.util.UUID;
 
 @Service
 @Order(2)
-@Qualifier("appointmentCenterClient")
-public class AppointmentCenterClient {
+@Qualifier("appointmentCenterRestClient")
+public class AppointmentCenterClient implements IAppointmentCenterRestClient {
 
     private final SecurityClient securityClient;
     private final AppointmentUrlConstructor appointmentUrlConstructor;
@@ -36,6 +37,7 @@ public class AppointmentCenterClient {
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
+    @Override
     public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
         try {
             try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
@@ -57,6 +59,7 @@ public class AppointmentCenterClient {
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
+    @Override
     public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, String appointmentTemplateName) {
         try {
             try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),

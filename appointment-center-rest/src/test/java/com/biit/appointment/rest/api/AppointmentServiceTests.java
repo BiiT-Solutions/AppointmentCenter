@@ -290,12 +290,14 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "attendToAppointment")
     public void unattendToInvalidAppointment() throws Exception {
+        System.out.println(" #------------------------------------ Expected Exception ----------------------------");
         this.mockMvc
                 .perform(put("/appointments/" + appointment.getId() + "/attendees/" + guest.getUID() + "/unattend")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
+        System.out.println(" #--------------------------------- End of Expected Exception -------------------------");
     }
 
 

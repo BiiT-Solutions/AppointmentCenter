@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class AppointmentUrlConstructor {
 
-    @Value("${appointmentCenter.server.url:#{null}}")
+    @Value("${appointments.server.url:#{null}}")
     private String appointmentCenterServerUrl;
 
     public String getAppointmentCenterServerUrl() {

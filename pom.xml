@@ -20,6 +20,7 @@
         <module>appointment-center-core</module>
         <module>appointment-center-rest</module>
         <module>appointment-center-rest-client</module>
+        <module>appointment-center-rest-client-test</module>
     </modules>
 
     <scm>
