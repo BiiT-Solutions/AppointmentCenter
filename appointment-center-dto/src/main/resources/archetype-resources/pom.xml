@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>$com.biit.appointment</groupId>
   <artifactId>$appointment-center-dto</artifactId>
-  <version>1.5.96-SNAPSHOT</version>
+  <version>1.5.97-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
