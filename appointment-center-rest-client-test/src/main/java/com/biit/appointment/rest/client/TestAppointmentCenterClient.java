@@ -21,15 +21,15 @@ public class TestAppointmentCenterClient implements IAppointmentCenterRestClient
     private static final int STARTED_TIME_PASSED = 45;
     private static final int APPOINTMENT_DURATION = 120;
 
-    private int statedTimePassed = STARTED_TIME_PASSED;
-    private int appointmentDuration = APPOINTMENT_DURATION;
+    private LocalDateTime startTime = LocalDateTime.now().minusMinutes(STARTED_TIME_PASSED);
+    private LocalDateTime endTime = LocalDateTime.now().plusMinutes(APPOINTMENT_DURATION - STARTED_TIME_PASSED);
 
     public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
         final AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setAttendees(Collections.singleton(userUUID));
         appointmentDTO.setAppointmentTemplateId(appointmentTemplateId);
-        appointmentDTO.setStartTime(LocalDateTime.now().minusMinutes(statedTimePassed));
-        appointmentDTO.setEndTime(LocalDateTime.now().plusMinutes(appointmentDuration - statedTimePassed));
+        appointmentDTO.setStartTime(startTime);
+        appointmentDTO.setEndTime(endTime);
 
         return Optional.of(appointmentDTO);
     }
@@ -38,25 +38,25 @@ public class TestAppointmentCenterClient implements IAppointmentCenterRestClient
         final AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setAttendees(Collections.singleton(userUUID));
         appointmentDTO.setAppointmentTemplateId(1L);
-        appointmentDTO.setStartTime(LocalDateTime.now().minusMinutes(statedTimePassed));
-        appointmentDTO.setEndTime(LocalDateTime.now().plusMinutes(appointmentDuration - statedTimePassed));
+        appointmentDTO.setStartTime(startTime);
+        appointmentDTO.setEndTime(endTime);
 
         return Optional.of(appointmentDTO);
     }
 
-    public int getStatedTimePassed() {
-        return statedTimePassed;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setStatedTimePassed(int statedTimePassed) {
-        this.statedTimePassed = statedTimePassed;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
-    public int getAppointmentDuration() {
-        return appointmentDuration;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
-    public void setAppointmentDuration(int appointmentDuration) {
-        this.appointmentDuration = appointmentDuration;
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }

@@ -13,7 +13,7 @@ import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
-import com.biit.server.security.AuthenticatedUserProvider;
+import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.biit.server.security.model.AuthRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
