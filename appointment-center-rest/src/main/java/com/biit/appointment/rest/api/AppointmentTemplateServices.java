@@ -55,6 +55,15 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all templates from an attendee.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/appointments/nonattendee/{nonattendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentTemplateDTO> findByNonAttendeeOnAppointment(@Parameter(description = "Id of an existing nonattendee", required = true)
+                                                                    @PathVariable("nonattendeeUUID") UUID attendeeUUID, HttpServletRequest request) {
+        return getController().findByNonAttendeeOnAppointment(attendeeUUID);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the availability from a collection of templates.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/lower-time-boundary/{lowerTimeBoundary}/upper-time-boundary/{upperTimeBoundary}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentTemplateAvailabilityDTO> availability(

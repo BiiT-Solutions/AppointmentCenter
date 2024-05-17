@@ -47,6 +47,10 @@ public class AppointmentTemplateController extends ElementController<Appointment
         return convertAll(getProvider().findByAttendeeOnAppointment(attendeeUUID));
     }
 
+    public List<AppointmentTemplateDTO> findByNonAttendeeOnAppointment(UUID attendeeUUID) {
+        return convertAll(getProvider().findByNonAttendeeOnAppointment(attendeeUUID));
+    }
+
 
     @Override
     public void delete(AppointmentTemplateDTO entity, String deletedBy) {

@@ -60,4 +60,10 @@ public class AppointmentTemplateProvider extends ElementProvider<AppointmentTemp
                 appointment.getAppointmentTemplate().getId()).collect(Collectors.toSet()));
     }
 
+    public List<AppointmentTemplate> findByNonAttendeeOnAppointment(UUID attendeeUUID) {
+        final List<Appointment> appointments = appointmentRepository.findDistinctByAttendeesNotIn(Collections.singletonList(attendeeUUID));
+        return getRepository().findAllById(appointments.stream().map(appointment ->
+                appointment.getAppointmentTemplate().getId()).collect(Collectors.toSet()));
+    }
+
 }
