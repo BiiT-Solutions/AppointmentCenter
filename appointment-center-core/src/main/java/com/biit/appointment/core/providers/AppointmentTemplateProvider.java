@@ -1,7 +1,6 @@
 package com.biit.appointment.core.providers;
 
 import com.biit.appointment.core.exceptions.InvalidParameterException;
-import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
@@ -9,11 +8,9 @@ import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AppointmentTemplateProvider extends ElementProvider<AppointmentTemplate, Long, AppointmentTemplateRepository> {
@@ -55,15 +52,11 @@ public class AppointmentTemplateProvider extends ElementProvider<AppointmentTemp
 
 
     public List<AppointmentTemplate> findByAttendeeOnAppointment(UUID attendeeUUID) {
-        final List<Appointment> appointments = appointmentRepository.findDistinctByAttendeesIn(Collections.singletonList(attendeeUUID));
-        return getRepository().findAllById(appointments.stream().map(appointment ->
-                appointment.getAppointmentTemplate().getId()).collect(Collectors.toSet()));
+        return getRepository().findDistinctByAttendeeIn(attendeeUUID);
     }
 
     public List<AppointmentTemplate> findByNonAttendeeOnAppointment(UUID attendeeUUID) {
-        final List<Appointment> appointments = appointmentRepository.findDistinctByAttendeesNotIn(Collections.singletonList(attendeeUUID));
-        return getRepository().findAllById(appointments.stream().map(appointment ->
-                appointment.getAppointmentTemplate().getId()).collect(Collectors.toSet()));
+        return getRepository().findDistinctByAttendeeNotIn(attendeeUUID);
     }
 
 }

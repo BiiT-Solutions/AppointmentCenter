@@ -116,6 +116,12 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointmentTemplateProvider.findByAttendeeOnAppointment(ORGANIZER).size(), 0);
     }
 
+    @Test(dependsOnMethods = "generateAppointmentFromTemplate")
+    public void findTemplatesByNonAttendees() {
+        Assert.assertEquals(appointmentTemplateProvider.findByNonAttendeeOnAppointment(ATTENDER).size(), 0);
+        Assert.assertEquals(appointmentTemplateProvider.findByNonAttendeeOnAppointment(ORGANIZER).size(), 1);
+    }
+
     @AfterClass
     public void cleanDatabase() {
         appointmentProvider.deleteAll();

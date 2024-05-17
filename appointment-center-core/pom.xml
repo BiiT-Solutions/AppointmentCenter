@@ -32,10 +32,6 @@
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>
-            <artifactId>rest-server-dto</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.biit</groupId>
             <artifactId>user-manager-system-rest-client</artifactId>
         </dependency>
         <!-- Kafka -->
