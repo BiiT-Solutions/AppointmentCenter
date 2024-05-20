@@ -27,13 +27,13 @@ public interface AppointmentTemplateRepository extends ElementRepository<Appoint
 
     @Query("""
             SELECT t FROM AppointmentTemplate t WHERE EXISTS
-                (SELECT a.id FROM Appointment a WHERE a.appointmentTemplate = t AND :attendeeUUID MEMBER a.attendees)
-            """)
+                (SELECT a.id FROM Appointment a WHERE a.appointmentTemplate = t AND :attendeeUUID MEMBER OF a.attendees)
+             """)
     List<AppointmentTemplate> findDistinctByAttendeeIn(UUID attendeeUUID);
 
     @Query("""
             SELECT t FROM AppointmentTemplate t WHERE NOT EXISTS
-                (SELECT a FROM Appointment a WHERE a.appointmentTemplate = t AND :attendeeUUID MEMBER a.attendees)
+                (SELECT a FROM Appointment a WHERE a.appointmentTemplate = t AND :attendeeUUID MEMBER OF a.attendees)
             """)
     List<AppointmentTemplate> findDistinctByAttendeeNotIn(UUID attendeeUUID);
 }
