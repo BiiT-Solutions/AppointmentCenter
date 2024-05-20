@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.repositories;
 
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.server.persistence.repositories.ElementRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Repository
+@Transactional
 public interface AppointmentTemplateRepository extends ElementRepository<AppointmentTemplate, Long> {
 
     /**
