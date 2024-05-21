@@ -15,6 +15,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private String description;
 
+    private String address;
+
     private UUID organizer;
 
     private LocalDateTime startTime;
@@ -199,5 +201,13 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setAppointmentTemplateId(Long appointmentTemplateId) {
         this.appointmentTemplateId = appointmentTemplateId;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

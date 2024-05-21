@@ -2,6 +2,7 @@ package com.biit.appointment.rest.api.exceptions;
 
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AppointmentTypeNotFoundException;
+import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.ExaminationTypeNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidFormatException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
@@ -86,5 +87,11 @@ public class UserManagerExceptionControllerAdvice extends ServerExceptionControl
     public ResponseEntity<Object> youAreAlreadyOnThisAppointmentException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AttendanceNotFoundException.class)
+    public ResponseEntity<Object> attendanceNotFoundException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.NOT_FOUND);
     }
 }

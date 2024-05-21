@@ -5,6 +5,7 @@ import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
+import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AppointmentDTO;
@@ -329,6 +330,35 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         attendances.add(attendance);
         appointment.setAttendances(attendances);
         return convert(getProvider().save(appointment));
+    }
+
+
+    public void isAttending(Long appointmentId, String username) {
+        if (username == null) {
+            throw new UserNotFoundException(this.getClass(), "Username cannot be null.");
+        }
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+        isAttending(appointmentId, user);
+    }
+
+
+    public void isAttending(Long appointmentId, UUID userUUID) {
+        if (userUUID == null) {
+            throw new UserNotFoundException(this.getClass(), "UUID cannot be null.");
+        }
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUID(userUUID.toString()).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with UUID '" + userUUID + "'."));
+        isAttending(appointmentId, user);
+    }
+
+
+    public void isAttending(Long appointmentId, IAuthenticatedUser user) {
+        final Appointment appointment = getProvider().findById(appointmentId).orElseThrow(() ->
+                new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
+
+        attendanceProvider.findBy(UUID.fromString(user.getUID()), appointment).orElseThrow(() ->
+                new AttendanceNotFoundException(this.getClass(), "User '" + user + "' has not passed the QR code."));
     }
 
 

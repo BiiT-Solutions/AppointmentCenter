@@ -6,6 +6,7 @@ import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,5 +23,9 @@ public class AttendanceProvider extends ElementProvider<Attendance, Long, Attend
 
     public Set<Attendance> findByAttendee(UUID attendee) {
         return getRepository().findByAttendee(attendee);
+    }
+
+    public Optional<Attendance> findBy(UUID attendee, Appointment appointment) {
+        return getRepository().findByAttendeeAndAppointment(attendee, appointment);
     }
 }

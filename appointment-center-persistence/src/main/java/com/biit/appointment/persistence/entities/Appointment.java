@@ -59,6 +59,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @Convert(converter = StringCryptoConverter.class)
     private String description;
 
+    @Column(name = "address")
+    @Convert(converter = StringCryptoConverter.class)
+    private String address;
+
     // who must resolve the appointment (can be null for any organizer).
     @Column(name = "organizer")
     private UUID organizer;
@@ -209,6 +213,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
 
     public boolean isStarted() {
         return status.isStatusPassed(AppointmentStatus.STARTED);
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override

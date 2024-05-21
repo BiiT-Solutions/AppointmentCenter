@@ -308,6 +308,30 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Checks if current logged in user is already attending the event.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = "/{appointmentId}/attending", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void isAttending(@Parameter(description = "Id of the appointment.")
+                            @PathVariable(name = "appointmentId") Long appointmentId,
+                            Authentication authentication, HttpServletRequest request) {
+        getController().isAttending(appointmentId, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Checks if a user is already attending the event.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = "/{appointmentId}/attending/{attendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void isAttending(@Parameter(description = "Id of the appointment.")
+                            @PathVariable(name = "appointmentId") Long appointmentId,
+                            @Parameter(description = "Id of an existing attendee", required = true)
+                            @PathVariable("attendeeUUID") UUID attendeeUUID,
+                            Authentication authentication, HttpServletRequest request) {
+        getController().isAttending(appointmentId, attendeeUUID);
+    }
+
+
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Mark an attendee as has been present on an appointment. Using the codified information from the QR.",
             security = {@SecurityRequirement(name = "bearerAuth")})

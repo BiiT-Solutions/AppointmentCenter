@@ -10,9 +10,9 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
-import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
+import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,9 +44,9 @@ import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
@@ -229,6 +229,17 @@ public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextT
 
 
     @Test(dependsOnMethods = "generateQrAttendanceCode")
+    public void checkThatIAmNotAttendingTheAppointment() throws Exception {
+        this.mockMvc
+                .perform(get("/appointments/" + appointment.getId() + "/attending")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "checkThatIAmNotAttendingTheAppointment")
     public void attendToAppointmentUsingQrCode() throws Exception {
         this.mockMvc
                 .perform(put("/appointments/attend/text")
@@ -242,6 +253,17 @@ public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextT
         //Check user is marked as attending the process.
         Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(guest.getUID())).size(), 1);
         Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 0);
+    }
+
+
+    @Test(dependsOnMethods = "attendToAppointmentUsingQrCode")
+    public void checkThatIAmAttendingTheAppointment() throws Exception {
+        this.mockMvc
+                .perform(get("/appointments/" + appointment.getId() + "/attending")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andReturn();
     }
 
 }
