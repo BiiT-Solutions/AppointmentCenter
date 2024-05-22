@@ -20,10 +20,12 @@ import java.util.UUID;
 @Controller
 public class QrController {
 
-    private static final String LOGO_RESOURCE = "/biiticon.svg";
+    private static final String LOGO_RESOURCE = "/BIITicon.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
-    private static final Color QR_COLOR = Color.decode("#F20D5E");
+    private static final Color QR_COLOR = Color.decode("#000000");
+    private static final Color QR_BACKGROUND = Color.decode("#ffffff");
+    private static final Color QR_BORDER = Color.decode("#B49057");
 
     private final QrProvider qrProvider;
 
@@ -45,7 +47,7 @@ public class QrController {
     public QrCodeDTO generateUserAppointmentAttendanceCode(IAuthenticatedUser user, Long appointmentId) {
         try {
             final String content = generateAttendanceRequest(user, appointmentId);
-            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setContent(content);

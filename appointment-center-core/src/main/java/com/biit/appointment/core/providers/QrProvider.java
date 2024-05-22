@@ -38,6 +38,7 @@ public class QrProvider {
     private static final float DEFAULT_SVG_SIZE = 200F;
     private static final double BORDER_RELATIVE_SIZE = 0.02d;
     private static final double BORDER_RADIUS = 0.03d;
+    private static final double SQUARES_BORDER_RADIUS = 0.05d;
     private static BufferedImage qrLogo;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
@@ -79,6 +80,12 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo) {
         return getQr(content, size, color, resourceLogo, true);
+    }
+
+    public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
+        return getQr(content, size, borderColor, ink, background, resourceLogo, crateSquareConfig(false, SQUARES_BORDER_RADIUS,
+                        ink, background, background, ink),
+                null);
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, boolean circleShaped) {
