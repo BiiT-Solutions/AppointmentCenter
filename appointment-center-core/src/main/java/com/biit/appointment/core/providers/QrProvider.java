@@ -1,6 +1,7 @@
 package com.biit.appointment.core.providers;
 
 import com.biit.appointment.logger.AttendanceMonitoringLogger;
+import io.github.simonscholz.qrcode.LogoShape;
 import io.github.simonscholz.qrcode.QrCodeApi;
 import io.github.simonscholz.qrcode.QrCodeConfig;
 import io.github.simonscholz.qrcode.QrCodeDotStyler;
@@ -84,7 +85,7 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
         return getQr(content, size, borderColor, ink, background, resourceLogo, crateSquareConfig(false, SQUARES_BORDER_RADIUS,
-                        ink, background, background, ink),
+                        ink, background, ink, background),
                 null);
     }
 
@@ -131,7 +132,7 @@ public class QrProvider {
                     logoImage = readImageResource(resourceLogo);
                 }
                 if (logoImage != null) {
-                    builder = builder.qrLogoConfig(logoImage);
+                    builder = builder.qrLogoConfig(logoImage, 0.2, background, LogoShape.CIRCLE);
                 }
             } catch (Exception e) {
                 AttendanceMonitoringLogger.errorMessage(this.getClass(), e);
