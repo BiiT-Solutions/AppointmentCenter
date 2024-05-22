@@ -18,7 +18,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,6 +41,15 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         this.customPropertyProvider = customPropertyProvider;
         this.recurrenceProvider = recurrenceProvider;
         this.appointmentTemplateRepository = appointmentTemplateRepository;
+    }
+
+    @Override
+    public List<AppointmentDTO> convertAll(Collection<AppointmentConverterRequest> from) {
+        if (from == null) {
+            return new ArrayList<>();
+        }
+        return from.stream().map(this::convert).sorted(Comparator.comparing(AppointmentDTO::getStartTime,
+                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
