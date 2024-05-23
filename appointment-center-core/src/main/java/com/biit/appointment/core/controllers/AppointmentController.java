@@ -358,7 +358,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
 
         attendanceProvider.findBy(UUID.fromString(user.getUID()), appointment).orElseThrow(() ->
-                new AttendanceNotFoundException(this.getClass(), "User '" + user + "' has not passed the QR code."));
+                new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code."));
     }
 
 

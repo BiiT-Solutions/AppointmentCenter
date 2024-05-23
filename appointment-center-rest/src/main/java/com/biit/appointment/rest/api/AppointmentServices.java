@@ -310,7 +310,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Checks if current logged in user is already attending the event.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = "/{appointmentId}/attending", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{appointmentId}/attending")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void isAttending(@Parameter(description = "Id of the appointment.")
                             @PathVariable(name = "appointmentId") Long appointmentId,

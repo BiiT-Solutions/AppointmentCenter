@@ -37,9 +37,10 @@ import java.util.Scanner;
 public class QrProvider {
 
     private static final float DEFAULT_SVG_SIZE = 200F;
-    private static final double BORDER_RELATIVE_SIZE = 0.02d;
-    private static final double BORDER_RADIUS = 0.03d;
-    private static final double SQUARES_BORDER_RADIUS = 0.05d;
+    private static final double BORDER_RELATIVE_SIZE = 0.05d;
+    private static final double BORDER_RADIUS = 0.08d;
+    private static final double SQUARES_BORDER_RADIUS = 0.5d;
+    private static final double LOGO_SIZE = 0.1d;
     private static BufferedImage qrLogo;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
@@ -132,7 +133,7 @@ public class QrProvider {
                     logoImage = readImageResource(resourceLogo);
                 }
                 if (logoImage != null) {
-                    builder = builder.qrLogoConfig(logoImage);
+                    builder = builder.qrLogoConfig(logoImage, LOGO_SIZE, Color.white, LogoShape.SQUARE);
                 }
             } catch (Exception e) {
                 AttendanceMonitoringLogger.errorMessage(this.getClass(), e);
@@ -177,8 +178,8 @@ public class QrProvider {
             final Transcoder pngTranscoder = new PNGTranscoder();
 
             // Set the transcoding hints.
-            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 2);
-            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 2);
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 3);
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 3);
             // Create the transcoder input.
             final TranscoderInput input = new TranscoderInput(svgDocument);
 

@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 411 332" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(1,0,0,1,-292.366,-3566.12)">
-        <g transform="matrix(1,0,0,1,-1026.61,3231.23)">
-            <g transform="matrix(1,0,0,1,0,-257.882)">
-                <g transform="matrix(-0.187381,0.982287,-0.982287,-0.187381,2095.4,1349.14)">
-                    <path d="M-606.156,797.042L-626.623,751.63L-475.504,580.693L-455.373,625.362L-566.733,751.418L-566.332,752.309L-398.066,752.519L-378.001,797.042L-606.156,797.042Z" style="fill:rgb(242,13,94);"/>
+<svg
+   width="610.44098"
+   height="531.15192"
+   viewBox="0 0 610.44098 531.15192"
+   version="1.1"
+   xml:space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"
+   id="svg16"
+   sodipodi:docname="BIITicon.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs20" /><sodipodi:namedview
+   id="namedview18"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   fit-margin-top="100"
+   fit-margin-left="100"
+   fit-margin-bottom="100"
+   fit-margin-right="100"
+   inkscape:zoom="0.92648027"
+   inkscape:cx="307.61583"
+   inkscape:cy="424.72572"
+   inkscape:window-width="1850"
+   inkscape:window-height="1016"
+   inkscape:window-x="70"
+   inkscape:window-y="1107"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg16" />
+    <g
+   transform="translate(-192.362,-3466.1228)"
+   id="g14">
+        <g
+   transform="translate(-1026.61,3231.23)"
+   id="g12">
+            <g
+   transform="translate(0,-257.882)"
+   id="g10">
+                <g
+   transform="rotate(100.79998,489.64728,1541.3032)"
+   id="g4">
+                    <path
+   d="m -606.156,797.042 -20.467,-45.412 151.119,-170.937 20.131,44.669 -111.36,126.056 0.401,0.891 168.266,0.21 20.065,44.523 z"
+   style="fill:#f20d5e"
+   id="path2" />
                 </g>
-                <g transform="matrix(1,0,0,1,873.583,-38.5703)">
-                    <path d="M445.389,913.119L843.976,913.119L855.83,962.497L457.244,962.497L445.389,913.119Z" style="fill:rgb(242,13,94);"/>
+                <g
+   transform="translate(873.583,-38.5703)"
+   id="g8">
+                    <path
+   d="m 445.389,913.119 h 398.587 l 11.854,49.378 H 457.244 Z"
+   style="fill:#f20d5e"
+   id="path6" />
                 </g>
             </g>
         </g>

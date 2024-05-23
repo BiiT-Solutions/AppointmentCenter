@@ -24,8 +24,8 @@ public class QrController {
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
     private static final Color QR_COLOR = Color.decode("#000000");
-    private static final Color QR_BACKGROUND = Color.decode("#ffffff");
-    private static final Color QR_BORDER = Color.decode("#B49057");
+    private static final Color QR_BACKGROUND = null;
+    private static final Color QR_BORDER = null;
 
     private final QrProvider qrProvider;
 

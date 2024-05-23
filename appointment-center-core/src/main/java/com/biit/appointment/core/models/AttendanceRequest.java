@@ -43,8 +43,9 @@ public class AttendanceRequest {
 
     public String code() {
         try {
-            return Base64.getEncoder().encodeToString(ObjectMapperFactory.getObjectMapper().writeValueAsString(this)
-                    .getBytes(StandardCharsets.UTF_8));
+            return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
+//            return Base64.getEncoder().encodeToString(ObjectMapperFactory.getObjectMapper().writeValueAsString(this)
+//                    .getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException e) {
             throw new InvalidParameterException(this.getClass(), "AttendanceRequest cannot be coded!", e);
         }
