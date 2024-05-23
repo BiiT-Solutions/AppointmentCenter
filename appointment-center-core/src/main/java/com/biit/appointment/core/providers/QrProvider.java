@@ -132,7 +132,7 @@ public class QrProvider {
                     logoImage = readImageResource(resourceLogo);
                 }
                 if (logoImage != null) {
-                    builder = builder.qrLogoConfig(logoImage, 0.2, background, LogoShape.CIRCLE);
+                    builder = builder.qrLogoConfig(logoImage);
                 }
             } catch (Exception e) {
                 AttendanceMonitoringLogger.errorMessage(this.getClass(), e);

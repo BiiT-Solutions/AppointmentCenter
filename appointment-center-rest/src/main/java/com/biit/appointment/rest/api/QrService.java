@@ -34,11 +34,22 @@ public class QrService {
     public QrCodeDTO generateQrForAttendance(@Parameter(description = "Id of an existing appointment", required = true)
                                              @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
                                              HttpServletResponse response, HttpServletRequest request) {
+        return qrController.generateUserAppointmentAttendanceCode(authentication.getName(), appointmentId);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates a QR code with the credentials to access to a workshop.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/appointment/{appointmentId}/attendance/image", produces = MediaType.APPLICATION_JSON_VALUE)
+    public byte[] generateQrForAttendanceImage(@Parameter(description = "Id of an existing appointment", required = true)
+                                             @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
+                                             HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Appointment Attendance - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateUserAppointmentAttendanceCode(authentication.getName(), appointmentId);
+        return qrController.generateUserAppointmentAttendanceCode(authentication.getName(), appointmentId).getData();
     }
 }
