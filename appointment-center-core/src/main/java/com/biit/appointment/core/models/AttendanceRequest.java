@@ -5,11 +5,11 @@ import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.database.encryption.ChaCha20CipherEngine;
 import com.biit.database.encryption.InvalidEncryptionException;
+import com.biit.database.encryption.KeyProperty;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class AttendanceRequest {
@@ -48,7 +48,10 @@ public class AttendanceRequest {
     public String code() {
         try {
             final String jsonCode = ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
-            return CHA_CHA_20_CIPHER_ENGINE.encrypt(jsonCode);
+            if (KeyProperty.getEncryptionKey() != null) {
+                return CHA_CHA_20_CIPHER_ENGINE.encrypt(jsonCode);
+            }
+            return jsonCode;
         } catch (JsonProcessingException | InvalidEncryptionException e) {
             throw new InvalidParameterException(this.getClass(), "AttendanceRequest cannot be coded!", e);
         }
@@ -56,9 +59,13 @@ public class AttendanceRequest {
 
     public static AttendanceRequest decode(String code) {
         try {
-            final String jsonCode = CHA_CHA_20_CIPHER_ENGINE.decrypt(code);
-            AppointmentCenterLogger.debug(AttendanceRequest.class, "Received codified code is '{}'.", jsonCode);
-            return ObjectMapperFactory.getObjectMapper().readValue(jsonCode, AttendanceRequest.class);
+            if (KeyProperty.getEncryptionKey() != null) {
+                final String jsonCode = CHA_CHA_20_CIPHER_ENGINE.decrypt(code);
+                AppointmentCenterLogger.debug(AttendanceRequest.class, "Received codified code is '{}'.", jsonCode);
+                return ObjectMapperFactory.getObjectMapper().readValue(jsonCode, AttendanceRequest.class);
+            } else {
+                return ObjectMapperFactory.getObjectMapper().readValue(code, AttendanceRequest.class);
+            }
         } catch (IOException e) {
             throw new InvalidParameterException(AttendanceRequest.class, "AttendanceRequest cannot be decoded!", e);
         }
