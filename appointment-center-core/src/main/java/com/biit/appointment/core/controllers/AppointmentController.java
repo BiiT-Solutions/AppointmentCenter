@@ -77,7 +77,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param organizationId       the organization of the parameters (can be null for any organization).
      * @param organizer            who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
-     * @param examinationTypeNames a collection of name of types.
+     * @param examinationTypeNames a collection of type's names.
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
      * @param lowerTimeBoundary    the lower limit on time for searching an appointment  (can be null for no limit).
      * @param upperTimeBoundary    the upper limit on time for searching an appointment  (can be null for no limit).
@@ -99,7 +99,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param organizationId      the organization of the parameters (can be null for any organization).
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
-     * @param examinationTypes    a collection of types of the appointment (can be null for any type).
+     * @param examinationTypes    a collection of appointment's types (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
      * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
      * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
@@ -119,7 +119,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param organizationId       the organization of the parameters (can be null for any organization).
      * @param organizer            who must resolve the appointment (can be null for any organizer).
      * @param attendee             the id of one attendee.
-     * @param examinationTypeNames a collection of name of types.
+     * @param examinationTypeNames a collection types' names
      * @param appointmentStatuses  the status of the appointment (can be null for any status).
      * @param lowerTimeBoundary    the lower limit on time for searching an appointment  (can be null for no limit).
      * @param upperTimeBoundary    the upper limit on time for searching an appointment  (can be null for no limit).
@@ -141,7 +141,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param organizationId      the organization of the parameters (can be null for any organization).
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            the id of one attendee.
-     * @param examinationTypes    a collection of types of the appointment (can be null for any type).
+     * @param examinationTypes    a collection appointment's types (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
      * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
      * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).

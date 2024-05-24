@@ -41,6 +41,7 @@ public class QrProvider {
     private static final double BORDER_RADIUS = 0.08d;
     private static final double SQUARES_BORDER_RADIUS = 0.5d;
     private static final double LOGO_SIZE = 0.1d;
+    private static final int LOGO_FRACTION = 3;
     private static BufferedImage qrLogo;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
@@ -178,8 +179,8 @@ public class QrProvider {
             final Transcoder pngTranscoder = new PNGTranscoder();
 
             // Set the transcoding hints.
-            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 3);
-            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 3);
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / LOGO_FRACTION);
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / LOGO_FRACTION);
             // Create the transcoder input.
             final TranscoderInput input = new TranscoderInput(svgDocument);
 
