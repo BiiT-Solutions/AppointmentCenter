@@ -39,7 +39,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}/viewers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AppointmentTemplateDTO get(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Long id,
+    public AppointmentTemplateDTO getByViewers(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Long id,
                                       Authentication authentication, HttpServletRequest request) {
         return getController().get(id);
     }
