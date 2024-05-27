@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,14 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
 
     public AppointmentTemplateServices(AppointmentTemplateController controller) {
         super(controller);
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets an entity.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentTemplateDTO get(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Long id,
+                                      Authentication authentication, HttpServletRequest request) {
+        return getController().get(id);
     }
 
 
@@ -58,7 +67,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     @Operation(summary = "Gets all templates from an attendee.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/appointments/nonattendee/{nonattendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentTemplateDTO> findByNonAttendeeOnAppointment(@Parameter(description = "Id of an existing nonattendee", required = true)
-                                                                    @PathVariable("nonattendeeUUID") UUID attendeeUUID, HttpServletRequest request) {
+                                                                       @PathVariable("nonattendeeUUID") UUID attendeeUUID, HttpServletRequest request) {
         return getController().findByNonAttendeeOnAppointment(attendeeUUID);
     }
 
