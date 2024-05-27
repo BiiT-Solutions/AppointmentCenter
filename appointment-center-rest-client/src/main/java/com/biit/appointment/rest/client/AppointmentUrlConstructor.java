@@ -5,6 +5,8 @@ import com.biit.appointment.core.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Component
@@ -29,6 +31,7 @@ public class AppointmentUrlConstructor {
     }
 
     public String getByAttendeeIdAndTemplateCurrent(String appointmentTemplateName, UUID attendeeUUID) {
-        return getAppointments() + "/template/name/" + appointmentTemplateName + "/attendee/" + attendeeUUID + "/next";
+        return getAppointments() + "/template/name/" + URLEncoder.encode(appointmentTemplateName, StandardCharsets.UTF_8) + "/attendee/"
+                + attendeeUUID + "/next";
     }
 }
