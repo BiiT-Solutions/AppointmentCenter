@@ -194,7 +194,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all appointments from an organization.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/organizations/{organizationId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getByOrganizationId(@Parameter(description = "Id of an existing organization", required = true)
