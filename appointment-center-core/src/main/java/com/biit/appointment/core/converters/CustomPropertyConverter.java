@@ -5,11 +5,12 @@ import com.biit.appointment.core.converters.models.CustomPropertyConverterReques
 import com.biit.appointment.core.models.CustomPropertyDTO;
 import com.biit.appointment.persistence.entities.CustomProperty;
 import com.biit.server.controller.converters.ElementConverter;
+import com.biit.server.controller.converters.SimpleConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomPropertyConverter extends ElementConverter<CustomProperty, CustomPropertyDTO, CustomPropertyConverterRequest> {
+public class CustomPropertyConverter extends SimpleConverter<CustomProperty, CustomPropertyDTO, CustomPropertyConverterRequest> {
 
 
     @Override
