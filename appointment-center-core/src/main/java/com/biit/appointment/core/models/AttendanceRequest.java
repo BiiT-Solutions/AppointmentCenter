@@ -48,7 +48,7 @@ public class AttendanceRequest {
     public String code() {
         try {
             final String jsonCode = ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
-            if (KeyProperty.getEncryptionKey() != null) {
+            if (KeyProperty.getEncryptionKey() != null && !KeyProperty.getEncryptionKey().isBlank()) {
                 return CHA_CHA_20_CIPHER_ENGINE.encrypt(jsonCode);
             }
             return jsonCode;
@@ -59,7 +59,7 @@ public class AttendanceRequest {
 
     public static AttendanceRequest decode(String code) {
         try {
-            if (KeyProperty.getEncryptionKey() != null) {
+            if (KeyProperty.getEncryptionKey() != null && !KeyProperty.getEncryptionKey().isBlank()) {
                 final String jsonCode = CHA_CHA_20_CIPHER_ENGINE.decrypt(code);
                 AppointmentCenterLogger.debug(AttendanceRequest.class, "Received codified code is '{}'.", jsonCode);
                 return ObjectMapperFactory.getObjectMapper().readValue(jsonCode, AttendanceRequest.class);
