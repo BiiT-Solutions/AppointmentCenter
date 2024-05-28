@@ -210,4 +210,20 @@ public class AppointmentDTO extends ElementDTO<Long> {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "AppointmentDTO{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", attendees=" + attendees
+                + ", speakers=" + speakers
+                + ", organizer=" + organizer
+                + ", startTime=" + startTime
+                + ", endTime=" + endTime
+                + ", organizationId='" + organizationId + '\''
+                + ", status=" + status
+                + ", appointmentTemplateId=" + appointmentTemplateId
+                + '}';
+    }
 }
