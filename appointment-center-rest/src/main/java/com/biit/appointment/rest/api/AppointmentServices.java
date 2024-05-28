@@ -36,6 +36,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -263,7 +266,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                                               @Parameter(description = "Id of an existing attendee", required = true)
                                                               @PathVariable("attendeeUUID") UUID attendeeUUID,
                                                               Authentication authentication, HttpServletRequest request) {
-        return getController().getCurrentByAttendeeAndTemplatesNames(attendeeUUID, Collections.singleton(appointmentTemplateTitle));
+        return getController().getCurrentByAttendeeAndTemplatesNames(attendeeUUID, Collections.singleton(URLDecoder.decode(appointmentTemplateTitle,
+                StandardCharsets.UTF_8)));
     }
 
 
