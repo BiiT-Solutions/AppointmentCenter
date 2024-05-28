@@ -204,14 +204,14 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
 
-    public AppointmentDTO getCurrentByAttendeeAndTemplatesNames(UUID attendeeUUID, Collection<String> templatesNames) {
+    public AppointmentDTO getCurrentByAttendeeAndTemplatesNames(UUID attendeeUUID, Collection<String> templatesTitle) {
         //Get organization by user.
-        final IAuthenticatedUser user = authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
+        authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'."));
 
         final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
-                Collections.singleton(UUID.fromString(user.getUID())),
-                appointmentTemplateProvider.findByTitleIn(templatesNames));
+                Collections.singleton(attendeeUUID),
+                appointmentTemplateProvider.findByTitleIn(templatesTitle));
 
         return getCurrentByAttendeeAndAppointments(appointmentsFromUserInTemplates);
     }
