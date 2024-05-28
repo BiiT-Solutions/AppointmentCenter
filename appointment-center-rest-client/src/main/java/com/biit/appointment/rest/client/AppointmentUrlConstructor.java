@@ -31,7 +31,7 @@ public class AppointmentUrlConstructor {
     }
 
     public String getByAttendeeIdAndTemplateCurrent(String appointmentTemplateName, UUID attendeeUUID) {
-        return getAppointments() + "/template/name/" + URLEncoder.encode(appointmentTemplateName, StandardCharsets.UTF_8) + "/attendee/"
+        return getAppointments() + "/template/title/" + URLEncoder.encode(appointmentTemplateName, StandardCharsets.UTF_8) + "/attendee/"
                 + attendeeUUID + "/next";
     }
 }
