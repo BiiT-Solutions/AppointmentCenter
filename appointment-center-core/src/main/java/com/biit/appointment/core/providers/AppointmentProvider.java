@@ -16,7 +16,9 @@ import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -84,6 +86,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().findDistinctBySpeakersIn(speakerIds);
     }
 
+
     /**
      * Finds all appointments from a collection of attendees.
      *
@@ -96,6 +99,22 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         }
         return getRepository().findDistinctByAttendeesIn(attendeesIds);
     }
+
+
+    /**
+     * Finds all appointments from a collection of attendees.
+     *
+     * @param attendeesIds a list of attendees
+     * @return a list of appointments that contains any of the attendees.
+     */
+    public List<Appointment> findByAttendeesInAndToday(Collection<UUID> attendeesIds) {
+        if (attendeesIds == null || attendeesIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
+        }
+        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(attendeesIds,
+                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
+    }
+
 
     /**
      * Finds all appointments from a collection of attendees and a template

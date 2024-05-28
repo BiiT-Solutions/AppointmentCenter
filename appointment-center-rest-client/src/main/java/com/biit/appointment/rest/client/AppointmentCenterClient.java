@@ -46,6 +46,9 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
                         appointmentUrlConstructor.getAppointmentCenterServerUrl()
                                 + appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateId, userUUID),
                         response.getStatus());
+                if (response.getLength() == 0) {
+                    return Optional.empty();
+                }
                 return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
             }
         } catch (JsonProcessingException e) {
@@ -68,6 +71,9 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
                         appointmentUrlConstructor.getAppointmentCenterServerUrl()
                                 + appointmentUrlConstructor.getByAttendeeIdAndTemplateCurrent(appointmentTemplateName, userUUID),
                         response.getStatus());
+                if (response.getLength() == 0) {
+                    return Optional.empty();
+                }
                 return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
             }
         } catch (JsonProcessingException e) {

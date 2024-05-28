@@ -57,6 +57,15 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param attendeesIds a list of attendees
      * @return a list of appointments that contains any of the attendees.
      */
+    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(
+            Collection<UUID> attendeesIds, LocalDateTime lowerBound, LocalDateTime upperBound);
+
+    /**
+     * Finds all appointments from a collection of attendees.
+     *
+     * @param attendeesIds a list of attendees
+     * @return a list of appointments that contains any of the attendees.
+     */
     List<Appointment> findDistinctByAttendeesNotIn(Collection<UUID> attendeesIds);
 
 

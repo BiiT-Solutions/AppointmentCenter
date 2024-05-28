@@ -268,6 +268,25 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets next appointment on the future from a selected user. If one appointment is currently on execution, get this one, "
+            + "if not, get the last one at the past, if not the first one at the future.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/future/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getNextAtFuture(Authentication authentication, HttpServletRequest request) {
+        return getController().getNextAppointmentOnFuture(authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from today.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/today"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getCurrent(Authentication authentication, HttpServletRequest request) {
+        return getController().getAppointmentsOnToday(authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Subscribes current logged in user into the appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping(value = "/{appointmentId}/attendees/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO subscribe(@Parameter(description = "Id of the appointment.")

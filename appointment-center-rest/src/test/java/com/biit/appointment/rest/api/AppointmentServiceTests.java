@@ -1,5 +1,6 @@
 package com.biit.appointment.rest.api;
 
+import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
@@ -8,9 +9,9 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.Server;
-import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
+import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -59,6 +61,8 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     private final static String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
     private static final String APPOINTMENT_TITLE = "The Appointment";
+    private static final String APPOINTMENT_2_TITLE = "The Appointment 2";
+    private static final String APPOINTMENT_3_TITLE = "The Appointment 2";
     private static final String APPOINTMENT_SPECIALTY = "Physical";
 
     @Autowired
@@ -148,11 +152,37 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         this.appointment = appointmentProvider.save(appointment);
     }
 
+
+    @BeforeClass
+    public void createTodayAppointment() {
+        final Appointment appointment = new Appointment();
+        appointment.setTitle(APPOINTMENT_2_TITLE);
+        appointment.setStartTime(LocalDateTime.now());
+        appointment.setEndTime(LocalDateTime.now().plusHours(2));
+        appointment.setOrganizer(UUID.fromString(admin.getUID()));
+        appointment.addAttendee(UUID.fromString(admin.getUID()));
+        appointmentProvider.save(appointment);
+    }
+
+
+    @BeforeClass
+    public void createFutureAppointment() {
+        final Appointment appointment = new Appointment();
+        appointment.setTitle(APPOINTMENT_3_TITLE);
+        appointment.setStartTime(LocalDateTime.now().plusDays(1));
+        appointment.setEndTime(LocalDateTime.now().plusDays(1).plusHours(2));
+        appointment.setOrganizer(UUID.fromString(admin.getUID()));
+        appointment.addAttendee(UUID.fromString(admin.getUID()));
+        appointmentProvider.save(appointment);
+    }
+
+
     @Test
     public void checkAuthentication() {
         //Check the admin user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, JWT_SALT + USER_PASSWORD));
     }
+
 
     @Test
     public void setAdminAuthentication() throws Exception {
@@ -173,6 +203,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(adminJwtToken);
     }
 
+
     @Test
     public void setGuestAuthentication() throws Exception {
         AuthRequest request = new AuthRequest();
@@ -192,6 +223,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(guestJwtToken);
     }
 
+
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void checkAppointmentTimeFormat() throws Exception {
         this.mockMvc
@@ -205,6 +237,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
     }
 
+
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getOwnAppointmentByOrganizer() throws Exception {
         this.mockMvc
@@ -215,6 +248,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
+
 
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getOthersAppointmentByOrganizer() throws Exception {
@@ -227,6 +261,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
     }
 
+
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void adminGetOthersAppointmentByOrganizer() throws Exception {
         this.mockMvc
@@ -237,6 +272,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
+
 
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void subscribeToAppointment() throws Exception {
@@ -310,6 +346,68 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void getAdminAppointmentsFromToday() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/today")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> adminAppointmentsOnToday =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(adminAppointmentsOnToday.size(), 1);
+    }
+
+
+    @Test(dependsOnMethods = "setGuestAuthentication")
+    public void getGuestAppointmentsFromToday() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/today")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> guestAppointmentsOnToday =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(guestAppointmentsOnToday.size(), 0);
+    }
+
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void getAdminAppointmentsFromFuture() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/future/next")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final AppointmentDTO adminNextAppointment =
+                objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO.class);
+        Assert.assertEquals(adminNextAppointment.getTitle(), APPOINTMENT_3_TITLE);
+    }
+
+
+    @Test(dependsOnMethods = "setGuestAuthentication")
+    public void getGuestAppointmentsFromFuture() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/future/next")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Assert.assertTrue(createResult.getResponse().getContentAsString().isBlank());
     }
 
 }

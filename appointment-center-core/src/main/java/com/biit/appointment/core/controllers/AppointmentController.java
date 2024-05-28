@@ -213,7 +213,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 Collections.singleton(UUID.fromString(user.getUID())),
                 appointmentTemplateProvider.findByTitleIn(templatesNames));
 
-        return getCurrentByAttendeeAndAppointments(user, appointmentsFromUserInTemplates);
+        return getCurrentByAttendeeAndAppointments(appointmentsFromUserInTemplates);
     }
 
 
@@ -230,7 +230,33 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 Collections.singleton(UUID.fromString(user.getUID())),
                 appointmentTemplateProvider.findByIdIn(templatesIds));
 
-        return getCurrentByAttendeeAndAppointments(user, appointmentsFromUserInTemplates);
+        return getCurrentByAttendeeAndAppointments(appointmentsFromUserInTemplates);
+    }
+
+    public List<AppointmentDTO> getAppointmentsOnToday(String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        return getAppointmentsOnToday(user);
+    }
+
+    public List<AppointmentDTO> getAppointmentsOnToday(IAuthenticatedUser user) {
+        return convertAll(getProvider().findByAttendeesInAndToday(
+                Collections.singleton(UUID.fromString(user.getUID()))));
+    }
+
+    public AppointmentDTO getNextAppointmentOnFuture(String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        return getNextAppointmentOnFuture(user);
+    }
+
+    public AppointmentDTO getNextAppointmentOnFuture(IAuthenticatedUser user) {
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesIn(
+                Collections.singleton(UUID.fromString(user.getUID())));
+
+        return getFirstOnTheFuture(appointmentsFromUserInTemplates);
     }
 
 
@@ -238,7 +264,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * If one appointment is currently on execution, get this one,
      * if not, get the last one at the past, if not the first one at the future.
      */
-    public AppointmentDTO getCurrentByAttendeeAndAppointments(IAuthenticatedUser user, List<Appointment> appointmentsFromUserInTemplates) {
+    private AppointmentDTO getCurrentByAttendeeAndAppointments(List<Appointment> appointmentsFromUserInTemplates) {
 
         appointmentsFromUserInTemplates.sort(Comparator.comparing(Appointment::getStartTime));
 
@@ -272,6 +298,20 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
         return null;
     }
+
+    /**
+     * Gets the first appointment that starts after today.
+     */
+    private AppointmentDTO getFirstOnTheFuture(List<Appointment> appointmentsFromUserInTemplates) {
+        appointmentsFromUserInTemplates.sort(Comparator.comparing(Appointment::getStartTime));
+        final List<Appointment> appointmentsAtTheFuture = appointmentsFromUserInTemplates.stream().filter(appointment ->
+                appointment.getStartTime().isAfter(LocalDateTime.now())).toList();
+        if (!appointmentsAtTheFuture.isEmpty()) {
+            return convert(appointmentsAtTheFuture.get(0));
+        }
+        return null;
+    }
+
 
     public List<AppointmentDTO> findByAppointmentTemplatesIn(Collection<Long> appointmentTemplatesIds) {
         return convertAll(getProvider().findByAppointmentTemplatesIdsIn(appointmentTemplatesIds));
