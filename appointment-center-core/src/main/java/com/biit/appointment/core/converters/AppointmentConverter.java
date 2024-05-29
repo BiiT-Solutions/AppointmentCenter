@@ -95,6 +95,11 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
             appointmentDTO.setAppointmentTemplateId(from.getEntity().getAppointmentTemplate().getId());
         }
 
+        //If no infographic template is defined, user title.
+        if (from.getEntity().getInfographicTemplate() == null) {
+            appointmentDTO.setInfographicTemplate(from.getEntity().getTitle());
+        }
+
         return appointmentDTO;
     }
 

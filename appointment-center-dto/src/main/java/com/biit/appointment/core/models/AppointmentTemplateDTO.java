@@ -25,6 +25,8 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private String colorTheme;
 
+    private String infographicTemplate;
+
     @Override
     public Long getId() {
         return id;
@@ -97,5 +99,13 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     public void setColorTheme(String colorTheme) {
         this.colorTheme = colorTheme;
+    }
+
+    public String getInfographicTemplate() {
+        return infographicTemplate;
+    }
+
+    public void setInfographicTemplate(String infographicTemplate) {
+        this.infographicTemplate = infographicTemplate;
     }
 }

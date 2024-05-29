@@ -131,6 +131,10 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     @JoinColumn(name = "appointment_template")
     private AppointmentTemplate appointmentTemplate;
 
+    @Convert(converter = StringCryptoConverter.class)
+    @Column(name = "infographic_template")
+    private String infographicTemplate;
+
     public Appointment() {
         super();
         customProperties = new ArrayList<>();
@@ -358,6 +362,14 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
         }
         this.attendances.clear();
         this.attendances.addAll(attendances);
+    }
+
+    public String getInfographicTemplate() {
+        return infographicTemplate;
+    }
+
+    public void setInfographicTemplate(String infographicTemplate) {
+        this.infographicTemplate = infographicTemplate;
     }
 
     @Override

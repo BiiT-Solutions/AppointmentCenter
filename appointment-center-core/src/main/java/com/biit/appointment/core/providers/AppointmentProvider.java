@@ -284,6 +284,11 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         appointment.setOrganizer(organizer);
         appointment.setColorTheme(appointmentTemplate.getColorTheme());
         appointment.setAppointmentTemplate(appointmentTemplate);
+        if (appointmentTemplate.getInfographicTemplate() != null) {
+            appointment.setInfographicTemplate(appointmentTemplate.getInfographicTemplate());
+        } else {
+            appointment.setInfographicTemplate(appointmentTemplate.getTitle());
+        }
 
         return getRepository().save(appointment);
     }

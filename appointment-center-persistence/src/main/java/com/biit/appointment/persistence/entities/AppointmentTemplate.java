@@ -78,6 +78,10 @@ public class AppointmentTemplate extends Element<Long> {
     @Column(name = "color_theme")
     private String colorTheme;
 
+    @Convert(converter = StringCryptoConverter.class)
+    @Column(name = "infographic_template")
+    private String infographicTemplate;
+
 
     @Override
     public Long getId() {
@@ -95,6 +99,9 @@ public class AppointmentTemplate extends Element<Long> {
 
     public void setTitle(String title) {
         this.title = title;
+        if (infographicTemplate == null) {
+            setInfographicTemplate(infographicTemplate);
+        }
     }
 
     public String getDescription() {
@@ -151,5 +158,13 @@ public class AppointmentTemplate extends Element<Long> {
 
     public void setColorTheme(String colorTheme) {
         this.colorTheme = colorTheme;
+    }
+
+    public String getInfographicTemplate() {
+        return infographicTemplate;
+    }
+
+    public void setInfographicTemplate(String infographicTemplate) {
+        this.infographicTemplate = infographicTemplate;
     }
 }

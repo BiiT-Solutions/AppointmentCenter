@@ -49,6 +49,8 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long appointmentTemplateId;
 
+    private String infographicTemplate;
+
     @Override
     public Long getId() {
         return id;
@@ -209,6 +211,14 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getInfographicTemplate() {
+        return infographicTemplate;
+    }
+
+    public void setInfographicTemplate(String infographicTemplate) {
+        this.infographicTemplate = infographicTemplate;
     }
 
     @Override
