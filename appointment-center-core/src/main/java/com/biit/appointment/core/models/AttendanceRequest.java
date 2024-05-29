@@ -10,6 +10,8 @@ import com.biit.kafka.config.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.UUID;
 
 public class AttendanceRequest {
@@ -51,7 +53,7 @@ public class AttendanceRequest {
             if (KeyProperty.getEncryptionKey() != null && !KeyProperty.getEncryptionKey().isBlank()) {
                 return CHA_CHA_20_CIPHER_ENGINE.encrypt(jsonCode);
             }
-            return jsonCode;
+            return Base64.getEncoder().encodeToString(jsonCode.getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException | InvalidEncryptionException e) {
             throw new InvalidParameterException(this.getClass(), "AttendanceRequest cannot be coded!", e);
         }
@@ -64,7 +66,7 @@ public class AttendanceRequest {
                 AppointmentCenterLogger.debug(AttendanceRequest.class, "Received codified code is '{}'.", jsonCode);
                 return ObjectMapperFactory.getObjectMapper().readValue(jsonCode, AttendanceRequest.class);
             } else {
-                return ObjectMapperFactory.getObjectMapper().readValue(code, AttendanceRequest.class);
+                return ObjectMapperFactory.getObjectMapper().readValue(Base64.getDecoder().decode(code), AttendanceRequest.class);
             }
         } catch (IOException e) {
             throw new InvalidParameterException(AttendanceRequest.class, "AttendanceRequest cannot be decoded!", e);
