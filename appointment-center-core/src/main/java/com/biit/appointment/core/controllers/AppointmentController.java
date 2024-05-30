@@ -6,6 +6,7 @@ import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
+import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AppointmentDTO;
@@ -339,20 +340,26 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convert(getProvider().save(appointment));
     }
 
-    public AppointmentDTO attend(String attendanceRequest, String createdBy) {
-        return attend(AttendanceRequest.decode(attendanceRequest), createdBy);
+    public AppointmentDTO attend(Long appointmentId, String attendanceRequest, String createdBy) {
+        return attend(appointmentId, AttendanceRequest.decode(attendanceRequest), createdBy);
     }
 
-    public AppointmentDTO attend(AttendanceRequest attendanceRequest, String createdBy) {
-        return attend(attendanceRequest.getAppointmentId(), attendanceRequest.getAttender(), createdBy);
+    public AppointmentDTO attend(Long appointmentId, AttendanceRequest attendanceRequest, String createdBy) {
+        return attend(appointmentId, attendanceRequest.getAppointmentId(), attendanceRequest.getAttender(), createdBy);
     }
 
-    public AppointmentDTO attend(Long appointmentId, UUID userUUID, String createdBy) {
+    public AppointmentDTO attend(Long currentAppointmentId, Long appointmentToAttendId, UUID userUUID, String createdBy) {
+
+        if (!Objects.equals(currentAppointmentId, appointmentToAttendId)) {
+            throw new InvalidParameterException(this.getClass(), "The QR obtained (" + appointmentToAttendId + ") is not valid for the selected appointment ("
+                    + currentAppointmentId + ")!");
+        }
+
         final IAuthenticatedUser user = authenticatedUserProvider.findByUID(userUUID.toString()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with UUID '" + userUUID + "'."));
 
-        final Appointment appointment = getProvider().findById(appointmentId).orElseThrow(() ->
-                new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
+        final Appointment appointment = getProvider().findById(appointmentToAttendId).orElseThrow(() ->
+                new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentToAttendId + "'."));
 
         if (!appointment.getAttendees().contains(userUUID)) {
             throw new YouAreNotOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' is not on the attendees list!");

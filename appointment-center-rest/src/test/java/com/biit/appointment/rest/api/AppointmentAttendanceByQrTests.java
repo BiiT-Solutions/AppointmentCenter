@@ -240,9 +240,22 @@ public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextT
 
 
     @Test(dependsOnMethods = "checkThatIAmNotAttendingTheAppointment")
+    public void attendToDifferentAppointmentUsingQrCode() throws Exception {
+        this.mockMvc
+                .perform(put("/appointments/42/attend/text")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(qrCodeDTO.getContent())
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "attendToDifferentAppointmentUsingQrCode")
     public void attendToAppointmentUsingQrCode() throws Exception {
         this.mockMvc
-                .perform(put("/appointments/attend/text")
+                .perform(put("/appointments/" + appointment.getId() + "/attend/text")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(qrCodeDTO.getContent())

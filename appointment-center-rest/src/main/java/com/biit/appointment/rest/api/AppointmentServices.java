@@ -317,16 +317,18 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                  @Parameter(description = "Id of an existing attendee", required = true)
                                  @PathVariable("attendeeUUID") UUID attendeeUUID,
                                  Authentication authentication, HttpServletRequest request) {
-        return getController().attend(appointmentId, attendeeUUID, authentication.getName());
+        return getController().attend(appointmentId, appointmentId, attendeeUUID, authentication.getName());
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Mark an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @PutMapping(value = "/attend", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AppointmentDTO attend(@RequestBody AttendanceRequest attendanceRequest,
+    @PutMapping(value = "/{appointmentId}/attend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO attend(@Parameter(description = "Id of the appointment to check.")
+                                 @PathVariable(name = "appointmentId") Long appointmentId,
+                                 @RequestBody AttendanceRequest attendanceRequest,
                                  Authentication authentication, HttpServletRequest request) {
-        return getController().attend(attendanceRequest, authentication.getName());
+        return getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
 
 
@@ -357,10 +359,12 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Mark an attendee as has been present on an appointment. Using the codified information from the QR.",
             security = {@SecurityRequirement(name = "bearerAuth")})
-    @PutMapping(value = "/attend/text", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
-    public AppointmentDTO attend(@RequestBody String attendanceRequest,
+    @PutMapping(value = "/{appointmentId}/attend/text", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
+    public AppointmentDTO attend(@Parameter(description = "Id of the appointment to check.")
+                                 @PathVariable(name = "appointmentId") Long appointmentId,
+                                 @RequestBody String attendanceRequest,
                                  Authentication authentication, HttpServletRequest request) {
-        return getController().attend(attendanceRequest, authentication.getName());
+        return getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
 
 
