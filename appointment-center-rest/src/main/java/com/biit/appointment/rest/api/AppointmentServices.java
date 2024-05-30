@@ -280,12 +280,35 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @Operation(summary = "Gets next appointment on the future from a selected organization. If one appointment is currently on execution, get this one, "
+            + "if not, get the last one at the past, if not the first one at the future.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/future/next/organizations/{organizationId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getNextAtFutureByOrganization(@Parameter(description = "Id of an existing organization", required = true)
+                                                        @PathVariable("organizationId") String organizationId,
+                                                        Authentication authentication, HttpServletRequest request) {
+        return getController().getNextAppointmentOnFutureByOrganization(organizationId);
+    }
+
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets all appointments from today.",
+    @Operation(summary = "Gets my appointments from today.",
             security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/today"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getCurrent(Authentication authentication, HttpServletRequest request) {
         return getController().getAppointmentsOnToday(authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all organizations' appointments that are planned today.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/today/organizations/{organizationId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getCurrentByOrganization(@Parameter(description = "Id of an existing organization", required = true)
+                                                         @PathVariable("organizationId") String organizationId,
+                                                         Authentication authentication, HttpServletRequest request) {
+        return getController().getAppointmentsOnTodayByOrganization(organizationId);
     }
 
 

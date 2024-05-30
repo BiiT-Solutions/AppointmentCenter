@@ -52,19 +52,22 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     private final AttendanceProvider attendanceProvider;
 
     private final AppointmentTemplateProvider appointmentTemplateProvider;
+    private final AppointmentProvider appointmentProvider;
 
     protected AppointmentController(AppointmentProvider provider, AppointmentConverter converter,
                                     ExaminationTypeProvider examinationTypeProvider,
                                     AppointmentEventSender eventSender,
                                     AppointmentTemplateConverter appointmentTemplateConverter,
                                     IAuthenticatedUserProvider authenticatedUserProvider,
-                                    AttendanceProvider attendanceProvider, AppointmentTemplateProvider appointmentTemplateProvider) {
+                                    AttendanceProvider attendanceProvider, AppointmentTemplateProvider appointmentTemplateProvider,
+                                    AppointmentProvider appointmentProvider) {
         super(provider, converter, eventSender);
         this.examinationTypeProvider = examinationTypeProvider;
         this.appointmentTemplateConverter = appointmentTemplateConverter;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.attendanceProvider = attendanceProvider;
         this.appointmentTemplateProvider = appointmentTemplateProvider;
+        this.appointmentProvider = appointmentProvider;
     }
 
     @Override
@@ -234,6 +237,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return getCurrentByAttendeeAndAppointments(appointmentsFromUserInTemplates);
     }
 
+    public List<AppointmentDTO> getAppointmentsOnTodayByOrganization(String organizationId) {
+        return convertAll(appointmentProvider.findByOrganizationIdAndToday(organizationId));
+    }
+
     public List<AppointmentDTO> getAppointmentsOnToday(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
@@ -246,12 +253,20 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 Collections.singleton(UUID.fromString(user.getUID()))));
     }
 
+
     public AppointmentDTO getNextAppointmentOnFuture(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
 
         return getNextAppointmentOnFuture(user);
     }
+
+
+    public AppointmentDTO getNextAppointmentOnFutureByOrganization(String organizationId) {
+        final List<Appointment> appointmentsFromOrganizationInTemplates = getProvider().findByOrganizationId(organizationId);
+        return getFirstOnTheFuture(appointmentsFromOrganizationInTemplates);
+    }
+
 
     public AppointmentDTO getNextAppointmentOnFuture(IAuthenticatedUser user) {
         final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesIn(

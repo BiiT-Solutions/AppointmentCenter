@@ -38,7 +38,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from a group of speakers.
      *
-     * @param speakerIds a list of speakers
+     * @param speakerIds a list of speakers.
      * @return a list of appointments that contains any of the speakers.
      */
     List<Appointment> findDistinctBySpeakersIn(Collection<UUID> speakerIds);
@@ -46,15 +46,25 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from a collection of attendees.
      *
-     * @param attendeesIds a list of attendees
+     * @param attendeesIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
     List<Appointment> findDistinctByAttendeesIn(Collection<UUID> attendeesIds);
 
+
     /**
-     * Finds all appointments from a collection of attendees.
+     * Finds all appointments that will be celebrated today
      *
-     * @param attendeesIds a list of attendees
+     * @param organizationId the organization to search.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(
+            String organizationId, LocalDateTime lowerBound, LocalDateTime upperBound);
+
+    /**
+     * Finds all appointments that will be celebrated today
+     *
+     * @param attendeesIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
     List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(
@@ -63,7 +73,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from a collection of attendees.
      *
-     * @param attendeesIds a list of attendees
+     * @param attendeesIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
     List<Appointment> findDistinctByAttendeesNotIn(Collection<UUID> attendeesIds);
@@ -72,7 +82,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from a collection of attendees and a template
      *
-     * @param attendeesIds         a list of attendees
+     * @param attendeesIds         a list of attendees.
      * @param appointmentTemplates the templates to filter.
      * @return a list of appointments that contains any of the attendees.
      */
@@ -81,7 +91,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     /**
      * Finds all appointments from a collection of templates.
      *
-     * @param appointmentTemplates a list of templates
+     * @param appointmentTemplates a list of templates.
      * @return a list of appointments that have been generated from a template.
      */
     List<Appointment> findByAppointmentTemplateIn(Collection<AppointmentTemplate> appointmentTemplates);

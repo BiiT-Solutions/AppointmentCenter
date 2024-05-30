@@ -117,6 +117,21 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
 
 
     /**
+     * Finds all appointments from organization.
+     *
+     * @param organizationId the id from the organization.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    public List<Appointment> findByOrganizationIdAndToday(String organizationId) {
+        if (organizationId == null) {
+            throw new InvalidParameterException(this.getClass(), "You must select an organization!");
+        }
+        return getRepository().findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(organizationId,
+                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
+    }
+
+
+    /**
      * Finds all appointments from a collection of attendees and a template
      *
      * @param attendeesIds         a list of attendees
