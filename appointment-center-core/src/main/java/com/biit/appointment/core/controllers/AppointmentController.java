@@ -27,7 +27,9 @@ import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -321,7 +323,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     private AppointmentDTO getFirstOnTheFuture(List<Appointment> appointmentsFromUserInTemplates) {
         appointmentsFromUserInTemplates.sort(Comparator.comparing(Appointment::getStartTime));
         final List<Appointment> appointmentsAtTheFuture = appointmentsFromUserInTemplates.stream().filter(appointment ->
-                appointment.getStartTime().isAfter(LocalDateTime.now())).toList();
+                appointment.getStartTime().isAfter(LocalDate.now().atTime(LocalTime.MAX))).toList();
         if (!appointmentsAtTheFuture.isEmpty()) {
             return convert(appointmentsAtTheFuture.get(0));
         }

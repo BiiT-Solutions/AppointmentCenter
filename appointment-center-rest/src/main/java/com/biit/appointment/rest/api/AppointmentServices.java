@@ -271,8 +271,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets next appointment on the future from a selected user. If one appointment is currently on execution, get this one, "
-            + "if not, get the last one at the past, if not the first one at the future.",
+    @Operation(summary = "Gets next appointment that starts from tomorrow.",
             security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/future/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO getNextAtFuture(Authentication authentication, HttpServletRequest request) {
@@ -281,8 +280,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
-    @Operation(summary = "Gets next appointment on the future from a selected organization. If one appointment is currently on execution, get this one, "
-            + "if not, get the last one at the past, if not the first one at the future.",
+    @Operation(summary = "Gets next organization appointment that starts from tomorrow.",
             security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/future/next/organizations/{organizationId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO getNextAtFutureByOrganization(@Parameter(description = "Id of an existing organization", required = true)
