@@ -5,13 +5,10 @@ import com.biit.server.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.Serial;
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class AttendanceNotFoundException extends NotFoundException {
 
-    @Serial
-    private static final long serialVersionUID = 8372498526771191395L;
+    private static final long serialVersionUID = -8319496008771191852L;
 
     public AttendanceNotFoundException(Class<?> clazz, String message, ExceptionType type) {
         super(clazz, message, type);
