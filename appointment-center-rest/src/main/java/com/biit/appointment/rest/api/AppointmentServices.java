@@ -279,7 +279,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets next organization appointment that starts from tomorrow.",
             security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/future/next/organizations/{organizationId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
