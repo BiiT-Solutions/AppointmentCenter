@@ -389,10 +389,11 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         if (currenAttendance.isPresent()) {
             throw new YouAreAlreadyOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' has already attended this appointment!");
         }
-        final Attendance attendance = new Attendance(userUUID, appointment);
+        Attendance attendance = new Attendance(userUUID, appointment);
         attendance.setCreatedBy(createdBy);
+        attendance = attendanceProvider.save(attendance);
+
         attendances.add(attendance);
-        appointment.setAttendances(attendances);
         return convert(getProvider().save(appointment));
     }
 
