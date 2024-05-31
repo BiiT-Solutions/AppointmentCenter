@@ -4,6 +4,7 @@ import com.biit.appointment.core.controllers.AttendanceController;
 import com.biit.appointment.core.converters.AttendanceConverter;
 import com.biit.appointment.core.converters.models.AttendanceConverterRequest;
 import com.biit.appointment.core.models.AttendanceDTO;
+import com.biit.appointment.core.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Attendance;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -81,6 +83,81 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
                                 @Parameter(description = "Id of the appointment")
                                 @PathVariable(name = "appointmentId") Long appointmentId) {
         return getController().findBy(attendee, appointmentId);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Mark an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/appointments/{appointmentId}/attendees/{attendeeUUID}/attend", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void attend(@Parameter(description = "Id of the appointment.")
+                       @PathVariable(name = "appointmentId") Long appointmentId,
+                       @Parameter(description = "Id of an existing attendee", required = true)
+                       @PathVariable("attendeeUUID") UUID attendeeUUID,
+                       Authentication authentication, HttpServletRequest request) {
+        getController().attend(appointmentId, appointmentId, attendeeUUID, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Mark an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/appointments/{appointmentId}/attend", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void attend(@Parameter(description = "Id of the appointment to check.")
+                       @PathVariable(name = "appointmentId") Long appointmentId,
+                       @RequestBody AttendanceRequest attendanceRequest,
+                       Authentication authentication, HttpServletRequest request) {
+        getController().attend(appointmentId, attendanceRequest, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Checks if current logged in user is already attending the event.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = "/appointments/{appointmentId}/attending")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void isAttending(@Parameter(description = "Id of the appointment.")
+                            @PathVariable(name = "appointmentId") Long appointmentId,
+                            Authentication authentication, HttpServletRequest request) {
+        getController().isAttending(appointmentId, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Checks if a user is already attending the event.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = "/appointments/{appointmentId}/attending/{attendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void isAttending(@Parameter(description = "Id of the appointment.")
+                            @PathVariable(name = "appointmentId") Long appointmentId,
+                            @Parameter(description = "Id of an existing attendee", required = true)
+                            @PathVariable("attendeeUUID") UUID attendeeUUID,
+                            Authentication authentication, HttpServletRequest request) {
+        getController().isAttending(appointmentId, attendeeUUID);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Mark an attendee as has been present on an appointment. Using the codified information from the QR.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/appointments/{appointmentId}/attend/text", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void attend(@Parameter(description = "Id of the appointment to check.")
+                       @PathVariable(name = "appointmentId") Long appointmentId,
+                       @RequestBody String attendanceRequest,
+                       Authentication authentication, HttpServletRequest request) {
+        getController().attend(appointmentId, attendanceRequest, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Remove an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/appointments/{appointmentId}/attendees/{attendeeUUID}/unattend", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unattend(@Parameter(description = "Id of the appointment.")
+                         @PathVariable(name = "appointmentId") Long appointmentId,
+                         @Parameter(description = "Id of an existing attendee", required = true)
+                         @PathVariable("attendeeUUID") UUID attendeeUUID,
+                         Authentication authentication, HttpServletRequest request) {
+        getController().unattend(appointmentId, attendeeUUID, authentication.getName());
     }
 
 
