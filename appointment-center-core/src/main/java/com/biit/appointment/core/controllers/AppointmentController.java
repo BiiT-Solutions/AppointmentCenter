@@ -441,8 +441,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         final Set<Attendance> attendances = attendanceProvider.findByAppointment(appointment);
 
         //Check you are attending!
-        attendances.stream().filter(attendance -> Objects.equals(attendance.getAttendee(), userUUID)).findFirst().orElseThrow(() ->
-                new YouAreNotOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' is not attending this appointment!"));
+        final Attendance userAttendance = attendances.stream().filter(attendance -> Objects.equals(attendance.getAttendee(), userUUID)).findFirst()
+                .orElseThrow(() -> new YouAreNotOnThisAppointmentException(this.getClass(),
+                        "User '" + user.getName() + "' is not attending this appointment!"));
+        attendanceProvider.delete(userAttendance);
 
         appointment.setAttendances(attendances.stream().filter(
                 attendance -> !Objects.equals(attendance.getAttendee(), userUUID)
