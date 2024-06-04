@@ -51,7 +51,7 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the attendance from an appointment.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/appointments/{appointmentId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/appointments/{appointmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AttendanceDTO> findByAppointment(@Parameter(description = "Id of the appointment")
                                                  @PathVariable(name = "appointmentId") Long appointmentId) {
         return getController().findByAppointment(appointmentId);
