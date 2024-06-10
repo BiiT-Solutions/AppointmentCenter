@@ -192,6 +192,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convertAll(getProvider().findByOrganizationId(organizationId));
     }
 
+    public List<AppointmentDTO> getBySpeakerIds(Collection<UUID> speakerIds) {
+        return convertAll(getProvider().findBySpeakers(speakerIds));
+    }
+
     public List<AppointmentDTO> getByAttendeesIds(Collection<UUID> attendeesIds) {
         return convertAll(getProvider().findByAttendeesIn(attendeesIds));
     }

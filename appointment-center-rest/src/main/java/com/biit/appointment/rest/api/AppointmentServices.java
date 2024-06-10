@@ -217,6 +217,16 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments from a speaker.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/speakers/{speakerUUID}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getBySpeakersId(@Parameter(description = "Id of an existing user", required = true)
+                                                @PathVariable("speakerUUID") UUID speakerUUID, Authentication authentication, HttpServletRequest request) {
+        securityController.checkIfCanSeeUserData(authentication.getName(), speakerUUID, securityService.getEditorPrivilege());
+        return getController().getBySpeakerIds(Collections.singletonList(speakerUUID));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all appointments from an attendee.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/attendees/{attendeeUUID}/template/{appointmentTemplateId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getByAttendeeIdAndTemplate(@Parameter(description = "Id of an existing attendee", required = true)
