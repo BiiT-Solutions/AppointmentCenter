@@ -104,17 +104,13 @@ public class AttendanceController extends ElementController<Attendance, Long, At
             throw new YouAreNotOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' is not on the attendees list!");
         }
 
-        final Set<Attendance> attendances = getProvider().findByAppointment(appointment);
-        //Check you are not attended yet!
-        final Optional<Attendance> currenAttendance = attendances.stream().filter(attendance ->
-                !Objects.equals(attendance.getAttendee(), userUUID)).findFirst();
+        final Optional<Attendance> currenAttendance = getProvider().findBy(userUUID, appointment);
         if (currenAttendance.isPresent()) {
             throw new YouAreAlreadyOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' has already attended this appointment!");
         }
-        Attendance attendance = new Attendance(userUUID, appointment);
+        final Attendance attendance = new Attendance(userUUID, appointment);
         attendance.setCreatedBy(createdBy);
-        attendance = getProvider().save(attendance);
-        attendances.add(attendance);
+        getProvider().save(attendance);
     }
 
 
