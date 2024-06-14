@@ -283,7 +283,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets next appointment that starts from tomorrow.",
             security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/future/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/future/next/users/current"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO getNextAtFuture(Authentication authentication, HttpServletRequest request) {
         return getController().getNextAppointmentOnFuture(authentication.getName());
     }
@@ -300,10 +300,21 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets next appointment that starts from tomorrow.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/future/next"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppointmentDTO getAllNextAtFuture(
+            Authentication authentication, HttpServletRequest request) {
+        return getController().getNextAppointmentOnFuture();
+    }
+
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets my appointments from today.",
             security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/today"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/today/users/current"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> getCurrent(Authentication authentication, HttpServletRequest request) {
         return getController().getAppointmentsOnToday(authentication.getName());
     }
@@ -317,6 +328,17 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                                          @PathVariable("organizationId") String organizationId,
                                                          Authentication authentication, HttpServletRequest request) {
         return getController().getAppointmentsOnTodayByOrganization(organizationId);
+    }
+
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments that are planned today.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/today"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> getAllCurrent(
+            Authentication authentication, HttpServletRequest request) {
+        return getController().getAppointmentsOnToday();
     }
 
 

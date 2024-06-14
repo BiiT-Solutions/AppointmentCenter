@@ -61,6 +61,31 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
     List<Appointment> findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(
             String organizationId, LocalDateTime lowerBound, LocalDateTime upperBound);
 
+
+    /**
+     * Finds all appointments that will be celebrated today
+     *
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findDistinctByStartTimeGreaterThanAndStartTimeLessThan(LocalDateTime lowerBound, LocalDateTime upperBound);
+
+
+    /**
+     * Finds all appointments that will be celebrated today
+     *
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findByStartTimeGreaterThan(LocalDateTime lowerBound);
+
+    /**
+     * Finds all appointments that will be celebrated today
+     *
+     * @param attendeesIds a list of attendees.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThan(
+            Collection<UUID> attendeesIds, LocalDateTime lowerBound);
+
     /**
      * Finds all appointments that will be celebrated today
      *

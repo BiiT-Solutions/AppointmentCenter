@@ -100,6 +100,17 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().findDistinctByAttendeesIn(attendeesIds);
     }
 
+    public List<Appointment> findNextByAttendeesIn(Collection<UUID> attendeesIds) {
+        if (attendeesIds == null || attendeesIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
+        }
+        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThan(attendeesIds, LocalDate.now().atStartOfDay());
+    }
+
+    public List<Appointment> findNext() {
+        return getRepository().findByStartTimeGreaterThan(LocalDate.now().atStartOfDay());
+    }
+
 
     /**
      * Finds all appointments from a collection of attendees.
@@ -127,6 +138,15 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
         return getRepository().findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(organizationId,
+                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
+    }
+
+    /**
+     * Finds all appointments on today.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    public List<Appointment> findByToday() {
+        return getRepository().findDistinctByStartTimeGreaterThanAndStartTimeLessThan(
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 

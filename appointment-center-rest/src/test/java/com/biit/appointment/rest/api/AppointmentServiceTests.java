@@ -352,7 +352,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getAdminAppointmentsFromToday() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/appointments/today")
+                .perform(get("/appointments/today/users/current")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
@@ -368,7 +368,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setGuestAuthentication")
     public void getGuestAppointmentsFromToday() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/appointments/today")
+                .perform(get("/appointments/today/users/current")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))
@@ -384,7 +384,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getAdminAppointmentsFromFuture() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/appointments/future/next")
+                .perform(get("/appointments/future/next/users/current")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
@@ -400,7 +400,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setGuestAuthentication")
     public void getGuestAppointmentsFromFuture() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/appointments/future/next")
+                .perform(get("/appointments/future/next/users/current")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))

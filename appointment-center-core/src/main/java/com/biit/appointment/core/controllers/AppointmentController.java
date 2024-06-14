@@ -259,6 +259,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 Collections.singleton(UUID.fromString(user.getUID()))));
     }
 
+    public List<AppointmentDTO> getAppointmentsOnToday() {
+        return convertAll(getProvider().findByToday());
+    }
+
 
     public AppointmentDTO getNextAppointmentOnFuture(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
@@ -275,10 +279,15 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
 
     public AppointmentDTO getNextAppointmentOnFuture(IAuthenticatedUser user) {
-        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesIn(
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findNextByAttendeesIn(
                 Collections.singleton(UUID.fromString(user.getUID())));
 
         return getFirstOnTheFuture(appointmentsFromUserInTemplates);
+    }
+
+    public AppointmentDTO getNextAppointmentOnFuture() {
+        final List<Appointment> appointments = getProvider().findNext();
+        return getFirstOnTheFuture(appointments);
     }
 
 
