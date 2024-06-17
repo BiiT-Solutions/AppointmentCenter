@@ -107,6 +107,13 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThan(attendeesIds, LocalDate.now().atStartOfDay());
     }
 
+    public List<Appointment> findNextBySpeakersIn(Collection<UUID> speakersIds) {
+        if (speakersIds == null || speakersIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select a speaker!");
+        }
+        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThan(speakersIds, LocalDate.now().atStartOfDay());
+    }
+
     public List<Appointment> findNext() {
         return getRepository().findByStartTimeGreaterThan(LocalDate.now().atStartOfDay());
     }
@@ -123,6 +130,21 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
             throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
         }
         return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(attendeesIds,
+                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
+    }
+
+
+    /**
+     * Finds all appointments from a collection of speakers.
+     *
+     * @param speakersIds a list of speakers
+     * @return a list of appointments that contains any of the speakers.
+     */
+    public List<Appointment> findBySpeakersInAndToday(Collection<UUID> speakersIds) {
+        if (speakersIds == null || speakersIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select a speaker!");
+        }
+        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThanAndStartTimeLessThan(speakersIds,
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 

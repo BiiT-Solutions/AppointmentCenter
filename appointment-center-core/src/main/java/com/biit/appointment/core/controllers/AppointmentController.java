@@ -72,10 +72,12 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         this.appointmentProvider = appointmentProvider;
     }
 
+
     @Override
     protected AppointmentConverterRequest createConverterRequest(Appointment appointment) {
         return new AppointmentConverterRequest(appointment);
     }
+
 
     /**
      * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
@@ -118,6 +120,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convertAll(getProvider().findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted));
     }
+
 
     /**
      * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
@@ -176,25 +179,31 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convert(getProvider().addSpeaker(appointmentId, speakerId, updatedBy));
     }
 
+
     public AppointmentDTO addSpeaker(AppointmentDTO appointment, UUID speakerId, String updatedBy) {
         return convert(getProvider().addSpeaker(reverse(appointment), speakerId, updatedBy));
     }
+
 
     public AppointmentDTO create(AppointmentTemplateDTO appointmentTemplateDTO, LocalDateTime startingAt, UUID organizer, String createdBy) {
         return convert(getProvider().create(appointmentTemplateConverter.reverse(appointmentTemplateDTO), startingAt, organizer, createdBy));
     }
 
+
     public List<AppointmentDTO> getByOrganizer(UUID organizer) {
         return convertAll(getProvider().findByOrganizer(organizer));
     }
+
 
     public List<AppointmentDTO> getByOrganizationId(String organizationId) {
         return convertAll(getProvider().findByOrganizationId(organizationId));
     }
 
+
     public List<AppointmentDTO> getBySpeakerIds(Collection<UUID> speakerIds) {
         return convertAll(getProvider().findBySpeakers(speakerIds));
     }
+
 
     public List<AppointmentDTO> getByAttendeesIds(Collection<UUID> attendeesIds) {
         return convertAll(getProvider().findByAttendeesIn(attendeesIds));
@@ -243,32 +252,57 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return getCurrentByAttendeeAndAppointments(appointmentsFromUserInTemplates);
     }
 
+
     public List<AppointmentDTO> getAppointmentsOnTodayByOrganization(String organizationId) {
         return convertAll(appointmentProvider.findByOrganizationIdAndToday(organizationId));
     }
 
-    public List<AppointmentDTO> getAppointmentsOnToday(String username) {
+
+    public List<AppointmentDTO> getAttendeesAppointmentsOnToday(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
 
-        return getAppointmentsOnToday(user);
+        return getAttendeesAppointmentsOnToday(user);
     }
 
-    public List<AppointmentDTO> getAppointmentsOnToday(IAuthenticatedUser user) {
+
+    public List<AppointmentDTO> getSpeakersAppointmentsOnToday(String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+
+        return getSpeakersAppointmentsOnToday(user);
+    }
+
+
+    public List<AppointmentDTO> getAttendeesAppointmentsOnToday(IAuthenticatedUser user) {
         return convertAll(getProvider().findByAttendeesInAndToday(
                 Collections.singleton(UUID.fromString(user.getUID()))));
     }
 
-    public List<AppointmentDTO> getAppointmentsOnToday() {
+
+    public List<AppointmentDTO> getSpeakersAppointmentsOnToday(IAuthenticatedUser user) {
+        return convertAll(getProvider().findBySpeakersInAndToday(
+                Collections.singleton(UUID.fromString(user.getUID()))));
+    }
+
+
+    public List<AppointmentDTO> getAttendeesAppointmentsOnToday() {
         return convertAll(getProvider().findByToday());
     }
 
 
-    public AppointmentDTO getNextAppointmentOnFuture(String username) {
+    public AppointmentDTO getAttendeesNextAppointmentOnFuture(String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
 
-        return getNextAppointmentOnFuture(user);
+        return getAttendeesNextAppointmentOnFuture(user);
+    }
+
+
+    public AppointmentDTO getSpeakersNextAppointmentOnFuture(String username) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
+        return getSpeakersNextAppointmentOnFuture(user);
     }
 
 
@@ -278,8 +312,16 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
 
-    public AppointmentDTO getNextAppointmentOnFuture(IAuthenticatedUser user) {
+    public AppointmentDTO getAttendeesNextAppointmentOnFuture(IAuthenticatedUser user) {
         final List<Appointment> appointmentsFromUserInTemplates = getProvider().findNextByAttendeesIn(
+                Collections.singleton(UUID.fromString(user.getUID())));
+
+        return getFirstOnTheFuture(appointmentsFromUserInTemplates);
+    }
+
+
+    public AppointmentDTO getSpeakersNextAppointmentOnFuture(IAuthenticatedUser user) {
+        final List<Appointment> appointmentsFromUserInTemplates = getProvider().findNextBySpeakersIn(
                 Collections.singleton(UUID.fromString(user.getUID())));
 
         return getFirstOnTheFuture(appointmentsFromUserInTemplates);
@@ -330,6 +372,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return null;
     }
 
+
     /**
      * Gets the first appointment that starts after today.
      */
@@ -348,6 +391,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convertAll(getProvider().findByAppointmentTemplatesIdsIn(appointmentTemplatesIds));
     }
 
+
     public AppointmentDTO subscribe(Long appointmentId, String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'."));
@@ -358,6 +402,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         appointment.getAttendees().add(UUID.fromString(user.getUID()));
         return convert(getProvider().save(appointment));
     }
+
 
     public AppointmentDTO unsubscribe(Long appointmentId, String username) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
@@ -370,13 +415,16 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         return convert(getProvider().save(appointment));
     }
 
+
     public AppointmentDTO attend(Long appointmentId, String attendanceRequest, String createdBy) {
         return attend(appointmentId, AttendanceRequest.decode(attendanceRequest), createdBy);
     }
 
+
     public AppointmentDTO attend(Long appointmentId, AttendanceRequest attendanceRequest, String createdBy) {
         return attend(appointmentId, attendanceRequest.getAppointmentId(), attendanceRequest.getAttender(), createdBy);
     }
+
 
     public AppointmentDTO attend(Long currentAppointmentId, Long appointmentToAttendId, UUID userUUID, String createdBy) {
 
