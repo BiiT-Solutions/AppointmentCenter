@@ -8,7 +8,7 @@
     <parent>
         <artifactId>appointment-center</artifactId>
         <groupId>com.biit.appointment</groupId>
-        <version>1.5.159</version>
+        <version>1.5.160-SNAPSHOT</version>
     </parent>
 
     <properties>
