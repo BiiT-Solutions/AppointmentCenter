@@ -57,16 +57,7 @@ public class QrController {
     }
 
     public QrCodeDTO generateUserAppointmentAttendanceCode(IAuthenticatedUser user, Long appointmentId) {
-        try {
-            final String content = generateAttendanceRequest(user, appointmentId);
-            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
-            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
-            qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
-            qrCodeDTO.setContent(content);
-            return qrCodeDTO;
-        } catch (IOException e) {
-            throw new UnexpectedValueException(this.getClass(), e);
-        }
+        return generateQrCode(generateAttendanceRequest(user, appointmentId));
     }
 
     /**
