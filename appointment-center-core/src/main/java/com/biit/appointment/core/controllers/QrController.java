@@ -36,6 +36,18 @@ public class QrController {
         this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
+    public QrCodeDTO generateQrCode(String content) {
+        try {
+            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
+            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+            qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
+            qrCodeDTO.setContent(content);
+            return qrCodeDTO;
+        } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
+
     public QrCodeDTO generateUserAppointmentAttendanceCode(String username, Long appointmentId) {
         final Optional<IAuthenticatedUser> user = this.authenticatedUserProvider.findByUsername(username);
         if (user.isPresent()) {

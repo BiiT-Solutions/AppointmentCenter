@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,5 +53,19 @@ public class QrService {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
         return qrController.generateUserAppointmentAttendanceCode(authentication.getName(), appointmentId).getData();
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates a QR code with the content.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "", produces = MediaType.IMAGE_PNG_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
+    public byte[] generateQrForAttendanceImage(@RequestBody String content,
+                                               HttpServletResponse response, HttpServletRequest request) {
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename("QR.png").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+
+        return qrController.generateQrCode(content).getData();
     }
 }
