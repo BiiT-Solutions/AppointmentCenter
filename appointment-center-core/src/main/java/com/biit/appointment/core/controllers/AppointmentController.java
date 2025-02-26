@@ -11,7 +11,7 @@ import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentExcept
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
-import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;

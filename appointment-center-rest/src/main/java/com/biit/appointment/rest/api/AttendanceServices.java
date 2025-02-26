@@ -4,7 +4,7 @@ import com.biit.appointment.core.controllers.AttendanceController;
 import com.biit.appointment.core.converters.AttendanceConverter;
 import com.biit.appointment.core.converters.models.AttendanceConverterRequest;
 import com.biit.appointment.core.models.AttendanceDTO;
-import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Attendance;

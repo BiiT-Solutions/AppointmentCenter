@@ -8,7 +8,7 @@ import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AttendanceDTO;
-import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.persistence.entities.Appointment;

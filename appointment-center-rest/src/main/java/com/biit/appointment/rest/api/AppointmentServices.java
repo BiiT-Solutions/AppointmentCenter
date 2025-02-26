@@ -6,7 +6,7 @@ import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
-import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;

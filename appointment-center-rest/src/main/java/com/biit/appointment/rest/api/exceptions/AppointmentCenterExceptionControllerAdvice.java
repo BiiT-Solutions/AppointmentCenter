@@ -11,6 +11,7 @@ import com.biit.appointment.core.exceptions.ProfessionalSpecializationNotFoundEx
 import com.biit.appointment.core.exceptions.RecurrenceNotFoundException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
+import com.biit.appointment.persistence.exceptions.InvalidAvailabilityException;
 import com.biit.server.exceptions.ErrorResponse;
 import com.biit.server.exceptions.NotFoundException;
 import com.biit.server.exceptions.ServerExceptionControllerAdvice;
@@ -94,5 +95,11 @@ public class AppointmentCenterExceptionControllerAdvice extends ServerExceptionC
     public ResponseEntity<Object> attendanceNotFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "attendance_not_found", ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidAvailabilityException.class)
+    public ResponseEntity<Object> invalidAvailabilityException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_availability_range", ex), HttpStatus.BAD_REQUEST);
     }
 }

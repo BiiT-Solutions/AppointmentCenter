@@ -9,9 +9,11 @@
             <run>
                 <include name="appointmentRepository"/>
                 <include name="examinationTypeRepository"/>
+                <include name="availability"/>
             </run>
         </groups>
         <classes>
+            <class name="com.biit.appointment.persistence.entities.AvailabilityRange"/>
             <class name="com.biit.appointment.persistence.repositories.AppointmentRepositoryTests"/>
             <class name="com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests"/>
         </classes>

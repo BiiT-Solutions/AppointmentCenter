@@ -1,6 +1,6 @@
 package com.biit.appointment.core.controllers;
 
-import com.biit.appointment.core.models.AttendanceRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.models.QrCodeDTO;
 import com.biit.appointment.core.providers.QrProvider;
 import com.biit.server.exceptions.UnexpectedValueException;

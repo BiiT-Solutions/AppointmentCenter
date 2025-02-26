@@ -2,12 +2,16 @@ package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 public class AppointmentDTO extends ElementDTO<Long> {
+
+    @Serial
+    private static final long serialVersionUID = 5413364485893123000L;
 
     private Long id;
 

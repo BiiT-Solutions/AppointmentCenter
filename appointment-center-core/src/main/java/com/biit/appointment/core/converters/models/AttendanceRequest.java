@@ -1,4 +1,4 @@
-package com.biit.appointment.core.models;
+package com.biit.appointment.core.converters.models;
 
 
 import com.biit.appointment.core.exceptions.InvalidParameterException;
