@@ -13,15 +13,19 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "availability_ranges")
-public class AvailabilityRange extends Element<Long> implements Comparable<AvailabilityRange> {
+@Table(name = "schedule_ranges")
+public class ScheduleRange extends Element<Long> implements Comparable<ScheduleRange> {
     private static final int HASH_KEY = 31;
+
+    @Serial
+    private static final long serialVersionUID = -1642402680251221768L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +51,11 @@ public class AvailabilityRange extends Element<Long> implements Comparable<Avail
         this.id = id;
     }
 
-    public AvailabilityRange() {
+    public ScheduleRange() {
         super();
     }
 
-    public AvailabilityRange(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public ScheduleRange(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this();
         setDayOfWeek(dayOfWeek);
         setStartTime(startTime);
@@ -84,20 +88,20 @@ public class AvailabilityRange extends Element<Long> implements Comparable<Avail
 
 
     @Override
-    public int compareTo(AvailabilityRange availabilityRange) {
-        if (dayOfWeek != availabilityRange.dayOfWeek) {
-            return dayOfWeek.compareTo(availabilityRange.dayOfWeek);
+    public int compareTo(ScheduleRange scheduleRange) {
+        if (dayOfWeek != scheduleRange.dayOfWeek) {
+            return dayOfWeek.compareTo(scheduleRange.dayOfWeek);
         }
-        if (startTime != availabilityRange.startTime) {
-            return startTime.compareTo(availabilityRange.startTime);
+        if (startTime != scheduleRange.startTime) {
+            return startTime.compareTo(scheduleRange.startTime);
         }
-        return endTime.compareTo(availabilityRange.endTime);
+        return endTime.compareTo(scheduleRange.endTime);
     }
 
 
     @Override
     public String toString() {
-        return "AvailabilityRange{"
+        return "ScheduleRange{"
                 + "dayOfWeek=" + dayOfWeek
                 + ", startTime=" + startTime
                 + ", endTime=" + endTime
@@ -106,7 +110,7 @@ public class AvailabilityRange extends Element<Long> implements Comparable<Avail
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof AvailabilityRange that)) {
+        if (!(o instanceof ScheduleRange that)) {
             return false;
         }
         if (!super.equals(o)) {
@@ -124,11 +128,11 @@ public class AvailabilityRange extends Element<Long> implements Comparable<Avail
         return result;
     }
 
-    public AvailabilityRange copy() {
-        final AvailabilityRange availabilityRange = new AvailabilityRange();
-        availabilityRange.setDayOfWeek(dayOfWeek);
-        availabilityRange.setStartTime(startTime);
-        availabilityRange.setEndTime(endTime);
-        return availabilityRange;
+    public ScheduleRange copy() {
+        final ScheduleRange scheduleRange = new ScheduleRange();
+        scheduleRange.setDayOfWeek(dayOfWeek);
+        scheduleRange.setStartTime(startTime);
+        scheduleRange.setEndTime(endTime);
+        return scheduleRange;
     }
 }

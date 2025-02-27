@@ -190,7 +190,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
     }
 
     @Test(dependsOnMethods = "setAuthentication")
-    public void getDefaultAvailability() throws Exception {
+    public void getDefaultSchedule() throws Exception {
         //Range is one week
         final LocalDateTime lowerTimeBoundary = LocalDateTime.of(2024, 2, 12, 0, 0);
         final LocalDateTime upperTimeBoundary = LocalDateTime.of(2024, 2, 18, 23, 59);
@@ -208,18 +208,18 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final List<AppointmentTemplateAvailabilityDTO> appointmentTemplateAvailabilityDTOS =
+        final List<AppointmentTemplateAvailabilityDTO> appointmentTemplateScheduleDTOS =
                 Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentTemplateAvailabilityDTO[].class));
 
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().size(), 1);
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).upperBound(), upperTimeBoundary);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().size(), 1);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(0).upperBound(), upperTimeBoundary);
     }
 
 
-    @Test(dependsOnMethods = "getDefaultAvailability")
-    public void getAvailabilityWithExistingAppointment() throws Exception {
+    @Test(dependsOnMethods = "getDefaultSchedule")
+    public void getScheduleWithExistingAppointment() throws Exception {
         //Set an existing appointment
         final Appointment existingAppointment = new Appointment();
         existingAppointment.setStartTime(LocalDateTime.of(2124, 2, 15, 17, 0));
@@ -232,7 +232,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
         final Appointment anotherExistingAppointment = new Appointment();
         anotherExistingAppointment.setStartTime(LocalDateTime.of(2124, 2, 15, 10, 0));
         anotherExistingAppointment.setEndTime(LocalDateTime.of(2124, 2, 15, 12, 0));
-        //No speaker is also present on this appointment. Must not change the availability ranges.
+        //No speaker is also present on this appointment. Must not change the schedule ranges.
         anotherExistingAppointment.setSpeakers(Collections.singleton(UUID.randomUUID()));
         appointmentProvider.save(anotherExistingAppointment);
 
@@ -253,15 +253,15 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final List<AppointmentTemplateAvailabilityDTO> appointmentTemplateAvailabilityDTOS =
+        final List<AppointmentTemplateAvailabilityDTO> appointmentTemplateScheduleDTOS =
                 Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentTemplateAvailabilityDTO[].class));
 
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().size(), 2);
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(0).upperBound(), LocalDateTime.of(2124, 2, 15, 17, 0));
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).lowerBound(), LocalDateTime.of(2124, 2, 15, 19, 30));
-        Assert.assertEquals(appointmentTemplateAvailabilityDTOS.get(0).getAvailability().get(1).upperBound(), upperTimeBoundary);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAppointmentTemplate().getId(), appointmentTemplate.getId());
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().size(), 2);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(0).lowerBound(), lowerTimeBoundary);
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(0).upperBound(), LocalDateTime.of(2124, 2, 15, 17, 0));
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(1).lowerBound(), LocalDateTime.of(2124, 2, 15, 19, 30));
+        Assert.assertEquals(appointmentTemplateScheduleDTOS.get(0).getAvailability().get(1).upperBound(), upperTimeBoundary);
     }
 
 
@@ -318,7 +318,7 @@ public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContex
     }
 
 
-    @Test(dependsOnMethods = {"getAppointmentFromTemplate", "getAppointmentFromTemplateList", "getAvailabilityWithExistingAppointment"})
+    @Test(dependsOnMethods = {"getAppointmentFromTemplate", "getAppointmentFromTemplateList", "getScheduleWithExistingAppointment"})
     public void deletingATemplateDoesNotDeleteTheAppointment() throws Exception {
         mockMvc.perform(
                         delete("/appointment-templates/" + appointmentTemplate.getId())

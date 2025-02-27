@@ -9,14 +9,14 @@
             <run>
                 <include name="appointmentRepository"/>
                 <include name="examinationTypeRepository"/>
-                <include name="availability"/>
+                <include name="schedule"/>
             </run>
         </groups>
         <classes>
-            <class name="com.biit.appointment.persistence.entities.AvailabilityRange"/>
+            <class name="com.biit.appointment.persistence.entities.ScheduleRange"/>
             <class name="com.biit.appointment.persistence.repositories.AppointmentRepositoryTests"/>
             <class name="com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests"/>
-            <class name="com.biit.appointment.persistence.repositories.AvailabilityRepositoryTests"/>
+            <class name="com.biit.appointment.persistence.repositories.ScheduleRepositoryTests"/>
         </classes>
     </test>
 </suite>

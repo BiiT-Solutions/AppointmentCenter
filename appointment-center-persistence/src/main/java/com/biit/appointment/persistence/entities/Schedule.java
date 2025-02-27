@@ -1,7 +1,7 @@
 package com.biit.appointment.persistence.entities;
 
 
-import com.biit.appointment.persistence.exceptions.InvalidAvailabilityException;
+import com.biit.appointment.persistence.exceptions.InvalidScheduleException;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -29,8 +29,8 @@ import java.util.UUID;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "availability")
-public class Availability extends Element<Long> {
+@Table(name = "schedule")
+public class Schedule extends Element<Long> {
 
     @Serial
     private static final long serialVersionUID = 3461399669106878590L;
@@ -43,15 +43,15 @@ public class Availability extends Element<Long> {
     private UUID user;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "ranges", joinColumns = @JoinColumn(name = "range_id"), inverseJoinColumns = @JoinColumn(name = "availability_id"))
+    @JoinTable(name = "ranges", joinColumns = @JoinColumn(name = "range_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
     @OrderColumn(name = "range_index")
-    private List<AvailabilityRange> ranges;
+    private List<ScheduleRange> ranges;
 
-    public Availability() {
+    public Schedule() {
         ranges = new ArrayList<>();
     }
 
-    public Availability(UUID user) {
+    public Schedule(UUID user) {
         this();
         setUser(user);
     }
@@ -72,7 +72,7 @@ public class Availability extends Element<Long> {
         this.user = user;
     }
 
-    public List<AvailabilityRange> getRanges() {
+    public List<ScheduleRange> getRanges() {
         if (this.ranges == null) {
             return new ArrayList<>();
         }
@@ -80,7 +80,7 @@ public class Availability extends Element<Long> {
     }
 
 
-    public void addRange(AvailabilityRange range) {
+    public void addRange(ScheduleRange range) {
         if (range == null) {
             return;
         }
@@ -88,19 +88,19 @@ public class Availability extends Element<Long> {
             ranges = new ArrayList<>();
         }
         ranges.add(range);
-        this.ranges.sort(AvailabilityRange::compareTo);
+        this.ranges.sort(ScheduleRange::compareTo);
         simplifyRanges();
     }
 
 
-    public void setRanges(List<AvailabilityRange> ranges) {
+    public void setRanges(List<ScheduleRange> ranges) {
         if (this.ranges != null) {
             this.ranges.clear();
             this.ranges.addAll(ranges);
         } else {
             this.ranges = ranges;
         }
-        this.ranges.sort(AvailabilityRange::compareTo);
+        this.ranges.sort(ScheduleRange::compareTo);
         simplifyRanges();
     }
 
@@ -110,11 +110,11 @@ public class Availability extends Element<Long> {
             return;
         }
 
-        final List<AvailabilityRange> finalRanges = new ArrayList<>();
-        final Iterator<AvailabilityRange> comparing = this.ranges.iterator();
-        AvailabilityRange compare1 = comparing.next();
+        final List<ScheduleRange> finalRanges = new ArrayList<>();
+        final Iterator<ScheduleRange> comparing = this.ranges.iterator();
+        ScheduleRange compare1 = comparing.next();
         while (comparing.hasNext()) {
-            final List<AvailabilityRange> simplifiedRanges = simplify(compare1, comparing.next());
+            final List<ScheduleRange> simplifiedRanges = simplify(compare1, comparing.next());
             //Has been simplified?
             if (simplifiedRanges.size() == 1) {
                 //Use simplified one.
@@ -139,7 +139,7 @@ public class Availability extends Element<Long> {
     }
 
 
-    public void removeRange(AvailabilityRange range) {
+    public void removeRange(ScheduleRange range) {
         if (range == null) {
             return;
         }
@@ -147,47 +147,47 @@ public class Availability extends Element<Long> {
             ranges = new ArrayList<>();
         }
         //Remove any time range that overlaps with the desired one.
-        for (AvailabilityRange availabilityRange : new ArrayList<>(ranges)) {
-            final AvailabilityRange originalRange = availabilityRange.copy();
-            if (Objects.equals(availabilityRange, range)) {
-                ranges.remove(availabilityRange);
+        for (ScheduleRange scheduleRange : new ArrayList<>(ranges)) {
+            final ScheduleRange originalRange = scheduleRange.copy();
+            if (Objects.equals(scheduleRange, range)) {
+                ranges.remove(scheduleRange);
                 break;
             }
-            if (availabilityRange.getDayOfWeek().compareTo(range.getDayOfWeek()) == 0) {
-                if (availabilityRange.getStartTime().isBefore(range.getStartTime())
-                        && availabilityRange.getEndTime().isAfter(range.getStartTime())) {
-                    //  availability time        /----------/
+            if (scheduleRange.getDayOfWeek().compareTo(range.getDayOfWeek()) == 0) {
+                if (scheduleRange.getStartTime().isBefore(range.getStartTime())
+                        && scheduleRange.getEndTime().isAfter(range.getStartTime())) {
+                    //  schedule time        /----------/
                     //  removed time                    /------/
-                    if (availabilityRange.getEndTime().isBefore(range.getEndTime())
-                            || availabilityRange.getEndTime().equals(range.getEndTime())) {
-                        availabilityRange.setEndTime(range.getStartTime());
+                    if (scheduleRange.getEndTime().isBefore(range.getEndTime())
+                            || scheduleRange.getEndTime().equals(range.getEndTime())) {
+                        scheduleRange.setEndTime(range.getStartTime());
                         //  result               /-----/
                         continue;
                     }
-                    //  availability time        /--------------------/
+                    //  schedule time        /--------------------/
                     //  removed time                    /------/
-                    if (availabilityRange.getEndTime().isAfter(range.getEndTime())) {
-                        availabilityRange.setEndTime(range.getStartTime());
+                    if (scheduleRange.getEndTime().isAfter(range.getEndTime())) {
+                        scheduleRange.setEndTime(range.getStartTime());
                         //  result               /-----/       /------/
-                        ranges.add(new AvailabilityRange(availabilityRange.getDayOfWeek(), range.getEndTime(), originalRange.getEndTime()));
+                        ranges.add(new ScheduleRange(scheduleRange.getDayOfWeek(), range.getEndTime(), originalRange.getEndTime()));
                     }
                 }
-                if (availabilityRange.getStartTime().isAfter(range.getStartTime()) || availabilityRange.getStartTime().equals(range.getStartTime())
-                        && availabilityRange.getStartTime().isBefore(range.getEndTime())) {
-                    //  availability time                  /----------/
+                if (scheduleRange.getStartTime().isAfter(range.getStartTime()) || scheduleRange.getStartTime().equals(range.getStartTime())
+                        && scheduleRange.getStartTime().isBefore(range.getEndTime())) {
+                    //  schedule time                  /----------/
                     //  removed time                    /------/
-                    if (availabilityRange.getEndTime().isAfter(range.getEndTime())
-                            || availabilityRange.getEndTime().equals(range.getEndTime())) {
+                    if (scheduleRange.getEndTime().isAfter(range.getEndTime())
+                            || scheduleRange.getEndTime().equals(range.getEndTime())) {
                         //  result                             /------/
-                        availabilityRange.setStartTime(range.getEndTime());
+                        scheduleRange.setStartTime(range.getEndTime());
                         continue;
                     }
-                    //  availability time                  /---/
+                    //  schedule time                  /---/
                     //  removed time                    /------/
-                    if (availabilityRange.getEndTime().isBefore(range.getEndTime())
-                            || availabilityRange.getEndTime().equals(range.getEndTime())) {
+                    if (scheduleRange.getEndTime().isBefore(range.getEndTime())
+                            || scheduleRange.getEndTime().equals(range.getEndTime())) {
                         //  result                       <<empty>>
-                        ranges.remove(availabilityRange);
+                        ranges.remove(scheduleRange);
                     }
                 }
                 //Out of boundaries, Do nothing.
@@ -196,18 +196,18 @@ public class Availability extends Element<Long> {
     }
 
 
-    private List<AvailabilityRange> simplify(AvailabilityRange range1, AvailabilityRange range2) {
-        final List<AvailabilityRange> finalRanges = new ArrayList<>();
+    private List<ScheduleRange> simplify(ScheduleRange range1, ScheduleRange range2) {
+        final List<ScheduleRange> finalRanges = new ArrayList<>();
         if (range1 != null && range2 != null) {
             //On different days.
             if (range1.getDayOfWeek().compareTo(range2.getDayOfWeek()) == 0) {
                 //Must be sorted!
                 if (range1.getStartTime().isAfter(range2.getStartTime())) {
-                    throw new InvalidAvailabilityException(this.getClass(), "Ranges must be sorted before simplifying!");
+                    throw new InvalidScheduleException(this.getClass(), "Ranges must be sorted before simplifying!");
                 }
                 //Overlaps!
                 if (Objects.equals(range1.getEndTime(), range2.getStartTime()) || range1.getEndTime().isAfter(range2.getStartTime())) {
-                    finalRanges.add(new AvailabilityRange(range1.getDayOfWeek(), range1.getStartTime(), range2.getEndTime()));
+                    finalRanges.add(new ScheduleRange(range1.getDayOfWeek(), range1.getStartTime(), range2.getEndTime()));
                     return finalRanges;
                 }
             }
@@ -224,7 +224,7 @@ public class Availability extends Element<Long> {
 
     @Override
     public String toString() {
-        return "Availability{"
+        return "Schedule{"
                 + "id=" + id
                 + ", user=" + user
                 + ", ranges=" + ranges

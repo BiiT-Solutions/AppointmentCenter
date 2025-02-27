@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AvailabilityDTO extends ElementDTO<Long> {
+public class ScheduleDTO extends ElementDTO<Long> {
 
     @Serial
     private static final long serialVersionUID = -33032948107713785L;
@@ -16,7 +16,7 @@ public class AvailabilityDTO extends ElementDTO<Long> {
 
     private UUID user;
 
-    private List<AvailabilityRangeDTO> ranges;
+    private List<ScheduleRangeDTO> ranges;
 
     @Override
     public Long getId() {
@@ -36,18 +36,18 @@ public class AvailabilityDTO extends ElementDTO<Long> {
         this.user = user;
     }
 
-    public List<AvailabilityRangeDTO> getRanges() {
+    public List<ScheduleRangeDTO> getRanges() {
         if (this.ranges == null) {
             return new ArrayList<>();
         }
         return ranges;
     }
 
-    public void setRanges(List<AvailabilityRangeDTO> ranges) {
+    public void setRanges(List<ScheduleRangeDTO> ranges) {
         this.ranges = ranges;
     }
 
-    public void addRange(AvailabilityRangeDTO range) {
+    public void addRange(ScheduleRangeDTO range) {
         if (this.ranges == null) {
             this.ranges = new ArrayList<>();
         }

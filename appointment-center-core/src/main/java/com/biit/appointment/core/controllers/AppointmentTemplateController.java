@@ -85,32 +85,32 @@ public class AppointmentTemplateController extends ElementController<Appointment
     }
 
 
-    public List<AppointmentTemplateAvailabilityDTO> availability(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Long[] templatesId) {
-        final List<AppointmentTemplateAvailabilityDTO> availability = new ArrayList<>();
+    public List<AppointmentTemplateAvailabilityDTO> schedule(LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Long[] templatesId) {
+        final List<AppointmentTemplateAvailabilityDTO> schedule = new ArrayList<>();
         for (final Long templateId : templatesId) {
             final Optional<AppointmentTemplate> template = getProvider().findById(templateId);
             if (template.isPresent()) {
-                final AppointmentTemplateAvailabilityDTO appointmentTemplateAvailabilityDTO = new AppointmentTemplateAvailabilityDTO(convert(template.get()));
-                appointmentTemplateAvailabilityDTO.setAvailability(calculateAvailability(new LocalDateTimeRange(lowerTimeBoundary, upperTimeBoundary),
-                        appointmentTemplateAvailabilityDTO.getAppointmentTemplate()));
-                availability.add(appointmentTemplateAvailabilityDTO);
+                final AppointmentTemplateAvailabilityDTO appointmentTemplateScheduleDTO = new AppointmentTemplateAvailabilityDTO(convert(template.get()));
+                appointmentTemplateScheduleDTO.setAvailability(calculateSchedule(new LocalDateTimeRange(lowerTimeBoundary, upperTimeBoundary),
+                        appointmentTemplateScheduleDTO.getAppointmentTemplate()));
+                schedule.add(appointmentTemplateScheduleDTO);
             }
         }
-        return availability;
+        return schedule;
     }
 
-    private List<LocalDateTimeRange> calculateAvailability(LocalDateTimeRange range, AppointmentTemplateDTO appointmentTemplateDTO) {
+    private List<LocalDateTimeRange> calculateSchedule(LocalDateTimeRange range, AppointmentTemplateDTO appointmentTemplateDTO) {
         List<LocalDateTimeRange> ranges = new ArrayList<>();
         ranges.add(range);
         //Get office hours.
 
-        //Limit by speakers' availability.
+        //Limit by speakers' schedule.
         final List<Appointment> appointmentsWithSpeakers = appointmentProvider.findBySpeakers(appointmentTemplateDTO.getSpeakers());
         for (Appointment appointment : appointmentsWithSpeakers) {
             ranges = LocalDateTimeRangeUtils.removeRange(ranges, new LocalDateTimeRange(appointment.getStartTime(), appointment.getEndTime()));
         }
 
-        //Limit by room's availability.
+        //Limit by room's schedule.
 
         //Remove already hours used by different appointments.
 

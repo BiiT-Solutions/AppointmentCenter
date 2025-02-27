@@ -73,9 +73,9 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the availability from a collection of templates.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets the schedule from a collection of templates.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/lower-time-boundary/{lowerTimeBoundary}/upper-time-boundary/{upperTimeBoundary}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<AppointmentTemplateAvailabilityDTO> availability(
+    public List<AppointmentTemplateAvailabilityDTO> schedule(
             @Parameter(description = "Minimum time for the appointment (yyyy-MM-dd hh:mm).")
             @PathVariable(name = "lowerTimeBoundary") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
             LocalDateTime lowerTimeBoundary,
@@ -85,7 +85,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
             @Parameter(description = "List of templates' ids.")
             @RequestParam(value = "templateId") Long[] templatesId,
             HttpServletRequest request) {
-        return getController().availability(lowerTimeBoundary, upperTimeBoundary, templatesId);
+        return getController().schedule(lowerTimeBoundary, upperTimeBoundary, templatesId);
     }
 
 

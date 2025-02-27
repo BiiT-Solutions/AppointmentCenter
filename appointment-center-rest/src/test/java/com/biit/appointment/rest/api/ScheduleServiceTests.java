@@ -1,7 +1,7 @@
 package com.biit.appointment.rest.api;
 
-import com.biit.appointment.core.models.AvailabilityDTO;
-import com.biit.appointment.core.models.AvailabilityRangeDTO;
+import com.biit.appointment.core.models.ScheduleDTO;
+import com.biit.appointment.core.models.ScheduleRangeDTO;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.IAuthenticatedUser;
@@ -46,8 +46,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"availabilityServiceTests"})
-public class AvailabilityServiceTests extends AbstractTestNGSpringContextTests {
+@Test(groups = {"scheduleServiceTests"})
+public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
     private final static String JWT_SALT = "4567";
@@ -129,139 +129,139 @@ public class AvailabilityServiceTests extends AbstractTestNGSpringContextTests {
 
 
     @Test(dependsOnMethods = "setAdminAuthentication")
-    public void setUserAvailability() throws Exception {
+    public void setUserSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(post("/availabilities/users/" + admin.getUID())
+                .perform(post("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(List.of(new AvailabilityRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(9, 0), LocalTime.of(13, 0)))))
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(9, 0), LocalTime.of(13, 0)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 1);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 1);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
     }
 
 
-    @Test(dependsOnMethods = "setUserAvailability")
-    public void addExtraAvailability() throws Exception {
+    @Test(dependsOnMethods = "setUserSchedule")
+    public void addExtraSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(put("/availabilities/users/" + admin.getUID())
+                .perform(put("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(List.of(new AvailabilityRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(15, 0), LocalTime.of(17, 0)))))
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(15, 0), LocalTime.of(17, 0)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 2);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
     }
 
 
-    @Test(dependsOnMethods = "setUserAvailability")
-    public void getAvailability() throws Exception {
+    @Test(dependsOnMethods = "setUserSchedule")
+    public void getSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/availabilities/users")
+                .perform(get("/schedules/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 2);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
     }
 
 
-    @Test(dependsOnMethods = "setUserAvailability")
-    public void getAvailabilityFromUser() throws Exception {
+    @Test(dependsOnMethods = "setUserSchedule")
+    public void getScheduleFromUser() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/availabilities/users/" + admin.getUID())
+                .perform(get("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 2);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
     }
 
 
-    @Test(dependsOnMethods = "setUserAvailability")
-    public void getAvailabilityFromInvalidUser() throws Exception {
+    @Test(dependsOnMethods = "setUserSchedule")
+    public void getScheduleFromInvalidUser() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/availabilities/users/" + UUID.randomUUID())
+                .perform(get("/schedules/users/" + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getRanges().size(), 0);
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getRanges().size(), 0);
     }
 
 
-    @Test(dependsOnMethods = {"addExtraAvailability", "getAvailability", "getAvailabilityFromUser"})
-    public void removeAvailabilityRange() throws Exception {
+    @Test(dependsOnMethods = {"addExtraSchedule", "getSchedule", "getScheduleFromUser"})
+    public void removeScheduleRange() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(delete("/availabilities/users/" + admin.getUID())
+                .perform(delete("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(List.of(new AvailabilityRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(12, 0), LocalTime.of(16, 0)))))
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(12, 0), LocalTime.of(16, 0)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 2);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
-        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
-        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
     }
 
 
-    @Test(dependsOnMethods = "removeAvailabilityRange")
-    public void removeAllAvailabilityRange() throws Exception {
+    @Test(dependsOnMethods = "removeScheduleRange")
+    public void removeAllScheduleRange() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(delete("/availabilities/users/" + admin.getUID() + "/all")
+                .perform(delete("/schedules/users/" + admin.getUID() + "/all")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
-        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userAvailability.getRanges().size(), 0);
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 0);
     }
 
 

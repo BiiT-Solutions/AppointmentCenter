@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-public class AvailabilityRangeDTO extends ElementDTO<Long> {
+public class ScheduleRangeDTO extends ElementDTO<Long> {
 
     @Serial
     private static final long serialVersionUID = -323630447006629107L;
@@ -27,11 +27,11 @@ public class AvailabilityRangeDTO extends ElementDTO<Long> {
         this.id = id;
     }
 
-    public AvailabilityRangeDTO() {
+    public ScheduleRangeDTO() {
         super();
     }
 
-    public AvailabilityRangeDTO(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public ScheduleRangeDTO(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this();
         setDayOfWeek(dayOfWeek);
         setStartTime(startTime);
