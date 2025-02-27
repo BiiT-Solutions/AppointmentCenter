@@ -11,6 +11,7 @@ import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.Availability;
 import com.biit.appointment.persistence.repositories.AvailabilityRepository;
 import com.biit.kafka.controllers.KafkaElementController;
+import com.biit.server.exceptions.ValidateBadRequestException;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -34,23 +35,56 @@ public class AvailabilityController extends KafkaElementController<Availability,
     }
 
 
-    public AvailabilityDTO add(Collection<AvailabilityRangeDTO> availabilityRanges, UUID user, String createdBy) {
-        AppointmentCenterLogger.info(this.getClass(), "User '{}' has added availabilities '{}' to user '{}'.",
+    public AvailabilityDTO set(Collection<AvailabilityRangeDTO> availabilityRanges, UUID user, String createdBy) {
+        AppointmentCenterLogger.info(this.getClass(), "User '{}' has added availabilities '{}' from user '{}'.",
                 createdBy, availabilityRanges, user);
-        return convert(getProvider().add(availabilityRangeConverter.reverseAll(availabilityRanges), user));
+        return convert(getProvider().set(availabilityRangeConverter.reverseAll(availabilityRanges), user));
+    }
+
+
+    public AvailabilityDTO add(Collection<AvailabilityRangeDTO> availabilityRanges, UUID user, String createdBy) {
+        AvailabilityDTO availabilityDTO = null;
+        for (AvailabilityRangeDTO availabilityRange : availabilityRanges) {
+            availabilityDTO = add(availabilityRange, user, createdBy);
+        }
+        return availabilityDTO;
     }
 
 
     public AvailabilityDTO add(AvailabilityRangeDTO availabilityRange, UUID user, String createdBy) {
-        AppointmentCenterLogger.info(this.getClass(), "User '{}' has added availability '{}' to user '{}'.",
+        AppointmentCenterLogger.info(this.getClass(), "User '{}' has added availability '{}' from user '{}'.",
                 createdBy, availabilityRange, user);
         return convert(getProvider().add(availabilityRangeConverter.reverse(availabilityRange), user));
     }
 
 
+    public AvailabilityDTO remove(Collection<AvailabilityRangeDTO> availabilityRanges, UUID user, String createdBy) {
+        AvailabilityDTO availabilityDTO = null;
+        for (AvailabilityRangeDTO availabilityRange : availabilityRanges) {
+            availabilityDTO = remove(availabilityRange, user, createdBy);
+        }
+        return availabilityDTO;
+    }
+
+
     public AvailabilityDTO remove(AvailabilityRangeDTO availabilityRange, UUID user, String createdBy) {
-        AppointmentCenterLogger.info(this.getClass(), "User '{}' has removed availability '{}' to user '{}'.",
+        AppointmentCenterLogger.info(this.getClass(), "User '{}' has removed availability '{}' from user '{}'.",
                 createdBy, availabilityRange, user);
         return convert(getProvider().remove(availabilityRangeConverter.reverse(availabilityRange), user));
     }
+
+
+    public AvailabilityDTO removeAll(UUID user, String createdBy) {
+        AppointmentCenterLogger.info(this.getClass(), "User '{}' has removed all availability from user '{}'.",
+                createdBy, user);
+        return convert(getProvider().removeAll(user));
+    }
+
+    @Override
+    public void validate(AvailabilityDTO dto) throws ValidateBadRequestException {
+        if (dto.getUser() == null) {
+            throw new ValidateBadRequestException(this.getClass(), "User cannot be null");
+        }
+    }
+
 }

@@ -16,6 +16,7 @@
             <class name="com.biit.appointment.persistence.entities.AvailabilityRange"/>
             <class name="com.biit.appointment.persistence.repositories.AppointmentRepositoryTests"/>
             <class name="com.biit.appointment.persistence.repositories.ExaminationTypeRepositoryTests"/>
+            <class name="com.biit.appointment.persistence.repositories.AvailabilityRepositoryTests"/>
         </classes>
     </test>
 </suite>

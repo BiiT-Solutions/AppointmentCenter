@@ -19,26 +19,37 @@ public class AvailabilityProvider extends ElementProvider<Availability, Long, Av
     }
 
 
-    public Availability add(Collection<AvailabilityRange> availabilityRanges, UUID user) {
-        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability());
+    public Availability set(Collection<AvailabilityRange> availabilityRanges, UUID user) {
+        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability(user));
         userAvailability.setRanges(new ArrayList<>(availabilityRanges));
         return getRepository().save(userAvailability);
     }
 
 
     public Availability add(AvailabilityRange availabilityRange, UUID user) {
-        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability());
+        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability(user));
         userAvailability.addRange(availabilityRange);
         return getRepository().save(userAvailability);
     }
 
+
     public Availability remove(AvailabilityRange availabilityRange, UUID user) {
-        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability());
+        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability(user));
         //No availability defined. Nothing to remove.
         if (userAvailability.getId() == null) {
             return null;
         }
         userAvailability.removeRange(availabilityRange);
+        return getRepository().save(userAvailability);
+    }
+
+    public Availability removeAll(UUID user) {
+        final Availability userAvailability = getRepository().findByUser(user).orElse(new Availability(user));
+        //No availability defined. Nothing to remove.
+        if (userAvailability.getId() == null) {
+            return null;
+        }
+        userAvailability.getRanges().clear();
         return getRepository().save(userAvailability);
     }
 }

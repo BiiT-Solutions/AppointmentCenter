@@ -8,6 +8,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -34,9 +36,10 @@ public class Availability extends Element<Long> {
     private static final long serialVersionUID = 3461399669106878590L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user", nullable = false, unique = true)
+    @Column(name = "user_uuid", nullable = false, unique = true)
     private UUID user;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,6 +49,11 @@ public class Availability extends Element<Long> {
 
     public Availability() {
         ranges = new ArrayList<>();
+    }
+
+    public Availability(UUID user) {
+        this();
+        setUser(user);
     }
 
     public void setId(Long id) {

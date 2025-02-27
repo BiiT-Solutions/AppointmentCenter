@@ -27,6 +27,17 @@ public class AvailabilityRangeDTO extends ElementDTO<Long> {
         this.id = id;
     }
 
+    public AvailabilityRangeDTO() {
+        super();
+    }
+
+    public AvailabilityRangeDTO(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        this();
+        setDayOfWeek(dayOfWeek);
+        setStartTime(startTime);
+        setEndTime(endTime);
+    }
+
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }

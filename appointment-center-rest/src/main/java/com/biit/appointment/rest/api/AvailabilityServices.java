@@ -42,34 +42,46 @@ public class AvailabilityServices extends ElementServices<Availability, Long, Av
     @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AvailabilityDTO addAvailabilityRange(@Parameter(description = "UUID of the user.")
                                                 @PathVariable(name = "uuid") UUID uuid,
-                                                @RequestBody AvailabilityRangeDTO availabilityRangeDTO,
+                                                @RequestBody Collection<AvailabilityRangeDTO> availabilityRangeDTOs,
                                                 Authentication authentication,
                                                 HttpServletRequest request) {
-        return getController().add(availabilityRangeDTO, uuid, authentication.getName());
-    }
-
-
-    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Define the set of ranges for the availability of a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AvailabilityDTO removeAvailabilityRange(@Parameter(description = "UUID of the user.")
-                                                   @PathVariable(name = "uuid") UUID uuid,
-                                                   @RequestBody Collection<AvailabilityRangeDTO> availabilityRangeDTOs,
-                                                   Authentication authentication,
-                                                   HttpServletRequest request) {
         return getController().add(availabilityRangeDTOs, uuid, authentication.getName());
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Removes an availability range from a user. Any existing range will be adjusted or remove to not overlap "
+    @Operation(summary = "Sets the set of ranges for the availability of a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AvailabilityDTO setAvailabilityRange(@Parameter(description = "UUID of the user.")
+                                                @PathVariable(name = "uuid") UUID uuid,
+                                                @RequestBody Collection<AvailabilityRangeDTO> availabilityRangeDTOs,
+                                                Authentication authentication,
+                                                HttpServletRequest request) {
+        return getController().set(availabilityRangeDTOs, uuid, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Removes an availability range from a user. Any existing range will be adjusted or remove to not overlap."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AvailabilityDTO removeAvailabilityRange(@Parameter(description = "UUID of the user.")
                                                    @PathVariable(name = "uuid") UUID uuid,
-                                                   @RequestBody AvailabilityRangeDTO availabilityRangeDTO,
+                                                   @RequestBody Collection<AvailabilityRangeDTO> availabilityRangeDTOs,
                                                    Authentication authentication,
                                                    HttpServletRequest request) {
-        return getController().remove(availabilityRangeDTO, uuid, authentication.getName());
+        return getController().remove(availabilityRangeDTOs, uuid, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Removes all the availability from a user. "
+            + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/users/{uuid}/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AvailabilityDTO removeAllAvailabilityRange(@Parameter(description = "UUID of the user.")
+                                                   @PathVariable(name = "uuid") UUID uuid,
+                                                   Authentication authentication,
+                                                   HttpServletRequest request) {
+        return getController().removeAll(uuid, authentication.getName());
     }
 }
