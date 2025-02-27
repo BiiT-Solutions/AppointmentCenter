@@ -14,7 +14,7 @@ import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.exceptions.ValidateBadRequestException;
 import com.biit.server.security.IAuthenticatedUser;
-import com.biit.usermanager.client.providers.UserManagerClient;
+import com.biit.server.security.IAuthenticatedUserProvider;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -25,14 +25,14 @@ public class AvailabilityController extends KafkaElementController<Availability,
         AvailabilityProvider, AvailabilityConverterRequest, AvailabilityConverter> {
 
     private final AvailabilityRangeConverter availabilityRangeConverter;
-    private final UserManagerClient userManagerClient;
+    private final IAuthenticatedUserProvider authenticatedUserProvider;
 
     protected AvailabilityController(AvailabilityProvider provider, AvailabilityConverter converter,
                                      AvailabilityEventSender eventSender, AvailabilityRangeConverter availabilityRangeConverter,
-                                     UserManagerClient userManagerClient) {
+                                     IAuthenticatedUserProvider userManagerClient) {
         super(provider, converter, eventSender);
         this.availabilityRangeConverter = availabilityRangeConverter;
-        this.userManagerClient = userManagerClient;
+        this.authenticatedUserProvider = userManagerClient;
     }
 
 
@@ -42,8 +42,9 @@ public class AvailabilityController extends KafkaElementController<Availability,
     }
 
     public AvailabilityDTO get(String username) {
-        final IAuthenticatedUser authenticatedUser = userManagerClient.findByUsername(username).orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                "No user with username '" + username + "' found!"));
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
         return get(UUID.fromString(authenticatedUser.getUID()));
     }
 
@@ -54,8 +55,9 @@ public class AvailabilityController extends KafkaElementController<Availability,
 
 
     public AvailabilityDTO set(Collection<AvailabilityRangeDTO> availabilityRanges, String username) {
-        final IAuthenticatedUser authenticatedUser = userManagerClient.findByUsername(username).orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                "No user with username '" + username + "' found!"));
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
         return set(availabilityRanges, UUID.fromString(authenticatedUser.getUID()), username);
     }
 
@@ -67,8 +69,9 @@ public class AvailabilityController extends KafkaElementController<Availability,
     }
 
     public AvailabilityDTO add(Collection<AvailabilityRangeDTO> availabilityRanges, String username) {
-        final IAuthenticatedUser authenticatedUser = userManagerClient.findByUsername(username).orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                "No user with username '" + username + "' found!"));
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
         return add(availabilityRanges, UUID.fromString(authenticatedUser.getUID()), username);
     }
 
@@ -90,8 +93,9 @@ public class AvailabilityController extends KafkaElementController<Availability,
 
 
     public AvailabilityDTO remove(Collection<AvailabilityRangeDTO> availabilityRanges, String username) {
-        final IAuthenticatedUser authenticatedUser = userManagerClient.findByUsername(username).orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                "No user with username '" + username + "' found!"));
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
         return remove(availabilityRanges, UUID.fromString(authenticatedUser.getUID()), username);
     }
 
@@ -113,8 +117,9 @@ public class AvailabilityController extends KafkaElementController<Availability,
 
 
     public AvailabilityDTO removeAll(String username) {
-        final IAuthenticatedUser authenticatedUser = userManagerClient.findByUsername(username).orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                "No user with username '" + username + "' found!"));
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
         return removeAll(UUID.fromString(authenticatedUser.getUID()), username);
     }
 

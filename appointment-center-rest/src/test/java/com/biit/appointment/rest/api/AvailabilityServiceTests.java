@@ -219,8 +219,11 @@ public class AvailabilityServiceTests extends AbstractTestNGSpringContextTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
+        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
+        Assert.assertEquals(userAvailability.getRanges().size(), 0);
     }
 
 
