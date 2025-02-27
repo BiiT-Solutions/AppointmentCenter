@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -16,6 +17,11 @@ public class AvailabilityProvider extends ElementProvider<Availability, Long, Av
 
     public AvailabilityProvider(AvailabilityRepository repository) {
         super(repository);
+    }
+
+
+    public Optional<Availability> findByUser(UUID userId) {
+        return getRepository().findByUser(userId);
     }
 
 

@@ -9,6 +9,7 @@
             <run>
                 <include name="appointmentTemplatesServiceTests"/>
                 <include name="appointmentServiceTests"/>
+                <include name="availabilityServiceTests"/>
                 <include name="appointmentAttendanceByQrTests"/>
             </run>
         </groups>
@@ -16,6 +17,7 @@
             <class name="com.biit.appointment.rest.api.AppointmentTemplatesServiceTests"/>
             <class name="com.biit.appointment.rest.api.AppointmentServiceTests"/>
             <class name="com.biit.appointment.rest.api.AppointmentAttendanceByQrTests"/>
+            <class name="com.biit.appointment.rest.api.AvailabilityServiceTests"/>
         </classes>
     </test>
 </suite>

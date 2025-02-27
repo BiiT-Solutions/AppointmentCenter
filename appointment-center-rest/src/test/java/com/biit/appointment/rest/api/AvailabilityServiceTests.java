@@ -1,6 +1,5 @@
 package com.biit.appointment.rest.api;
 
-import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AvailabilityDTO;
 import com.biit.appointment.core.models.AvailabilityRangeDTO;
 import com.biit.appointment.core.providers.AttendanceProvider;
@@ -34,7 +33,6 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,12 +42,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"appointmentServiceTests"})
+@Test(groups = {"availabilityServiceTests"})
 public class AvailabilityServiceTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
@@ -173,7 +170,61 @@ public class AvailabilityServiceTests extends AbstractTestNGSpringContextTests {
     }
 
 
-    @Test(dependsOnMethods = "addExtraAvailability")
+    @Test(dependsOnMethods = "setUserAvailability")
+    public void getAvailability() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/availabilities/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
+        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userAvailability.getRanges().size(), 2);
+        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+    }
+
+
+    @Test(dependsOnMethods = "setUserAvailability")
+    public void getAvailabilityFromUser() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/availabilities/users/" + admin.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final AvailabilityDTO userAvailability = objectMapper.readValue(result.getResponse().getContentAsString(), AvailabilityDTO.class);
+        Assert.assertEquals(userAvailability.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userAvailability.getRanges().size(), 2);
+        Assert.assertEquals(userAvailability.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userAvailability.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userAvailability.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+    }
+
+
+    @Test(dependsOnMethods = "setUserAvailability")
+    public void getAvailabilityFromInvalidUser() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/availabilities/users/" + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = {"addExtraAvailability", "getAvailability", "getAvailabilityFromUser"})
     public void removeAvailabilityRange() throws Exception {
         final MvcResult result = this.mockMvc
                 .perform(delete("/availabilities/users/" + admin.getUID())
