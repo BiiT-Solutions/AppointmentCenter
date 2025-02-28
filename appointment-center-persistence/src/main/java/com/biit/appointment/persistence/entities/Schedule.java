@@ -20,17 +20,23 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "schedule")
 public class Schedule extends Element<Long> {
+
+    private static final LocalTime DEFAULT_START_TIME = LocalTime.of(9, 0);
+    private static final LocalTime DEFAULT_END_TIME = LocalTime.of(18, 0);
 
     @Serial
     private static final long serialVersionUID = 3461399669106878590L;
@@ -229,5 +235,12 @@ public class Schedule extends Element<Long> {
                 + ", user=" + user
                 + ", ranges=" + ranges
                 + '}';
+    }
+
+    public List<ScheduleRange> getRange(DayOfWeek dayOfWeek) {
+        if (this.ranges != null && !this.ranges.isEmpty()) {
+            return this.ranges.stream().filter(scheduleRange -> scheduleRange.getDayOfWeek().equals(dayOfWeek)).collect(Collectors.toList());
+        }
+        return List.of(new ScheduleRange(dayOfWeek, DEFAULT_START_TIME, DEFAULT_END_TIME));
     }
 }

@@ -10,12 +10,14 @@
                 <include name="recurrenceTest"/>
                 <include name="appointmentTest"/>
                 <include name="appointmentTemplateTest"/>
+                <include name="userAvailability"/>
             </run>
         </groups>
         <classes>
-            <class name="com.biit.appointment.core.test.RecurrenceTest"/>
-            <class name="com.biit.appointment.core.test.AppointmentTest"/>
+            <class name="com.biit.appointment.core.test.RecurrenceTests"/>
+            <class name="com.biit.appointment.core.test.AppointmentTests"/>
             <class name="com.biit.appointment.core.test.AppointmentTemplateTests"/>
+            <class name="com.biit.appointment.core.test.UserAvailabilityTests"/>
         </classes>
     </test>
 </suite>

@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"appointmentTest"})
-public class AppointmentTest extends AbstractTestNGSpringContextTests {
+public class AppointmentTests extends AbstractTestNGSpringContextTests {
 
     private final static UUID ORGANIZER_ID = UUID.randomUUID();
     private final static String ORGANIZATION_ID = "THE ORGANIZATION";

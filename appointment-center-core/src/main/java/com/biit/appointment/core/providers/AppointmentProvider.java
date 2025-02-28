@@ -60,6 +60,10 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().findByOrganizer(organizer);
     }
 
+    public List<Appointment> findNextByOrganizer(UUID organizer, LocalDateTime from, LocalDateTime to) {
+        return getRepository().findDistinctByOrganizerAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(organizer, from, to);
+    }
+
     /**
      * Finds all appointments from an organization.
      *
@@ -101,21 +105,43 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     }
 
     public List<Appointment> findNextByAttendeesIn(Collection<UUID> attendeesIds) {
+        return findNextByAttendeesIn(attendeesIds, LocalDate.now().atStartOfDay());
+    }
+
+
+    public List<Appointment> findNextByAttendeesIn(Collection<UUID> attendeesIds, LocalDateTime from) {
         if (attendeesIds == null || attendeesIds.isEmpty()) {
             throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
         }
-        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThan(attendeesIds, LocalDate.now().atStartOfDay());
+        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanEqual(attendeesIds, from);
+    }
+
+
+    public List<Appointment> findNextByAttendeesIn(Collection<UUID> attendeesIds, LocalDateTime from, LocalDateTime to) {
+        if (attendeesIds == null || attendeesIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
+        }
+        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(attendeesIds, from, to);
     }
 
     public List<Appointment> findNextBySpeakersIn(Collection<UUID> speakersIds) {
         if (speakersIds == null || speakersIds.isEmpty()) {
             throw new InvalidParameterException(this.getClass(), "You must select a speaker!");
         }
-        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThan(speakersIds, LocalDate.now().atStartOfDay());
+        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThanEqual(speakersIds, LocalDate.now().atStartOfDay());
     }
 
+
+    public List<Appointment> findNextBySpeakersIn(Collection<UUID> attendeesIds, LocalDateTime from, LocalDateTime to) {
+        if (attendeesIds == null || attendeesIds.isEmpty()) {
+            throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
+        }
+        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(attendeesIds, from, to);
+    }
+
+
     public List<Appointment> findNext() {
-        return getRepository().findByStartTimeGreaterThan(LocalDate.now().atStartOfDay());
+        return getRepository().findByStartTimeGreaterThanEqual(LocalDate.now().atStartOfDay());
     }
 
 
@@ -129,7 +155,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         if (attendeesIds == null || attendeesIds.isEmpty()) {
             throw new InvalidParameterException(this.getClass(), "You must select an attendee!");
         }
-        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(attendeesIds,
+        return getRepository().findDistinctByAttendeesInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(attendeesIds,
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 
@@ -144,7 +170,7 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         if (speakersIds == null || speakersIds.isEmpty()) {
             throw new InvalidParameterException(this.getClass(), "You must select a speaker!");
         }
-        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThanAndStartTimeLessThan(speakersIds,
+        return getRepository().findDistinctBySpeakersInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(speakersIds,
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 
@@ -159,16 +185,17 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         if (organizationId == null) {
             throw new InvalidParameterException(this.getClass(), "You must select an organization!");
         }
-        return getRepository().findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(organizationId,
+        return getRepository().findDistinctByOrganizationIdAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(organizationId,
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 
     /**
      * Finds all appointments on today.
+     *
      * @return a list of appointments that contains any of the attendees.
      */
     public List<Appointment> findByToday() {
-        return getRepository().findDistinctByStartTimeGreaterThanAndStartTimeLessThan(
+        return getRepository().findDistinctByStartTimeGreaterThanEqualAndStartTimeLessThanEqual(
                 LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
     }
 

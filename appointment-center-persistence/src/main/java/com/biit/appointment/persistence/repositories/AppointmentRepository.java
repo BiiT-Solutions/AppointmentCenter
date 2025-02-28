@@ -27,6 +27,16 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      */
     List<Appointment> findByOrganizer(UUID organizer);
 
+
+    /**
+     * Finds all appointments that will be celebrated today
+     *
+     * @param organizer the organizer of the appointment.
+     * @return a list of appointments that contains any of the attendees.
+     */
+    List<Appointment> findDistinctByOrganizerAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(
+            UUID organizer, LocalDateTime lowerBound, LocalDateTime upperBound);
+
     /**
      * Finds all appointments from an organization.
      *
@@ -58,7 +68,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param organizationId the organization to search.
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctByOrganizationIdAndStartTimeGreaterThanAndStartTimeLessThan(
+    List<Appointment> findDistinctByOrganizationIdAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(
             String organizationId, LocalDateTime lowerBound, LocalDateTime upperBound);
 
 
@@ -67,7 +77,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      *
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctByStartTimeGreaterThanAndStartTimeLessThan(LocalDateTime lowerBound, LocalDateTime upperBound);
+    List<Appointment> findDistinctByStartTimeGreaterThanEqualAndStartTimeLessThanEqual(LocalDateTime lowerBound, LocalDateTime upperBound);
 
 
     /**
@@ -75,7 +85,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      *
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findByStartTimeGreaterThan(LocalDateTime lowerBound);
+    List<Appointment> findByStartTimeGreaterThanEqual(LocalDateTime lowerBound);
 
     /**
      * Finds all appointments that will be celebrated today
@@ -83,7 +93,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param attendeesIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThan(
+    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThanEqual(
             Collection<UUID> attendeesIds, LocalDateTime lowerBound);
 
 
@@ -93,7 +103,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param speakersIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctBySpeakersInAndStartTimeGreaterThan(
+    List<Appointment> findDistinctBySpeakersInAndStartTimeGreaterThanEqual(
             Collection<UUID> speakersIds, LocalDateTime lowerBound);
 
     /**
@@ -102,7 +112,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param attendeesIds a list of attendees.
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThanAndStartTimeLessThan(
+    List<Appointment> findDistinctByAttendeesInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(
             Collection<UUID> attendeesIds, LocalDateTime lowerBound, LocalDateTime upperBound);
 
 
@@ -112,7 +122,7 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @param speakersIds a list of speakers.
      * @return a list of appointments that contains any of the attendees.
      */
-    List<Appointment> findDistinctBySpeakersInAndStartTimeGreaterThanAndStartTimeLessThan(
+    List<Appointment> findDistinctBySpeakersInAndStartTimeGreaterThanEqualAndStartTimeLessThanEqual(
             Collection<UUID> speakersIds, LocalDateTime lowerBound, LocalDateTime upperBound);
 
     /**
