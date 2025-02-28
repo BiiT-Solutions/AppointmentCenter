@@ -30,7 +30,8 @@ public class UserAvailabilityController {
     private final ScheduleProvider scheduleProvider;
     private final IAuthenticatedUserProvider authenticatedUserProvider;
 
-    public UserAvailabilityController(AppointmentProvider appointmentProvider, ScheduleProvider scheduleProvider, IAuthenticatedUserProvider authenticatedUserProvider) {
+    public UserAvailabilityController(AppointmentProvider appointmentProvider, ScheduleProvider scheduleProvider,
+                                      IAuthenticatedUserProvider authenticatedUserProvider) {
         this.appointmentProvider = appointmentProvider;
         this.scheduleProvider = scheduleProvider;
         this.authenticatedUserProvider = authenticatedUserProvider;

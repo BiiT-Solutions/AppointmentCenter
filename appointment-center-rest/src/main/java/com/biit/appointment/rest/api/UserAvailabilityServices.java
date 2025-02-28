@@ -6,6 +6,7 @@ import com.biit.appointment.rest.api.models.AvailabilitySearch;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,12 +22,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/availability")
-public class userAvailabilityController {
+@RequestMapping("/availabilities")
+public class UserAvailabilityServices {
 
     private final UserAvailabilityController userAvailabilityController;
 
-    public userAvailabilityController(UserAvailabilityController userAvailabilityController) {
+    public UserAvailabilityServices(UserAvailabilityController userAvailabilityController) {
         this.userAvailabilityController = userAvailabilityController;
     }
 
@@ -37,9 +38,11 @@ public class userAvailabilityController {
     public List<UserAvailabilityDTO> getAvailability(
             @Parameter(description = "UUID of the user.", required = true)
             @PathVariable(name = "uuid") UUID user,
-            @Parameter(description = "UUID of the user.")
+            @Parameter(description = "Lower boundary for search.")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "start") LocalDateTime start,
-            @Parameter(description = "UUID of the user.")
+            @Parameter(description = "Upper boundary for search.")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
             @Parameter(description = "Duration of the requested slot in minutes.", required = true)
             @PathVariable(name = "duration") int slotDuration,
@@ -56,9 +59,10 @@ public class userAvailabilityController {
     public List<UserAvailabilityDTO> getAvailability(
             @Parameter(description = "UUID of the user.", required = true)
             @PathVariable(name = "uuid") UUID user,
-            @Parameter(description = "UUID of the user.")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "start") LocalDateTime start,
-            @Parameter(description = "UUID of the user.")
+            @Parameter(description = "Upper boundary for search.")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
             @Parameter(description = "Duration of the requested slot in minutes.", required = true)
             @PathVariable(name = "duration") int slotDuration,
@@ -72,7 +76,8 @@ public class userAvailabilityController {
     @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/own", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getOwnAvailability(@RequestBody AvailabilitySearch search, Authentication authentication) {
-        return userAvailabilityController.getAvailability(authentication.getName(), search.getStart(), search.getEnd(), search.getSlotDuration(), search.getSlots());
+        return userAvailabilityController.getAvailability(authentication.getName(), search.getStart(), search.getEnd(),
+                search.getSlotDuration(), search.getSlots());
     }
 
 

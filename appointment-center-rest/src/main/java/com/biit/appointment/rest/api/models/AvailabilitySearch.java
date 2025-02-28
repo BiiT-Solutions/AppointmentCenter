@@ -15,6 +15,19 @@ public class AvailabilitySearch {
 
     private int slots;
 
+    public AvailabilitySearch() {
+        super();
+    }
+
+    public AvailabilitySearch(UUID user, LocalDateTime start, LocalDateTime end, int slotDuration, int slots) {
+        this();
+        this.user = user;
+        this.start = start;
+        this.end = end;
+        this.slotDuration = slotDuration;
+        this.slots = slots;
+    }
+
     public UUID getUser() {
         return user;
     }
