@@ -15,9 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.time.DayOfWeek;
@@ -97,7 +95,6 @@ public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
     }
 
 
-
     @Test
     public void getSlotsBetweenTwoDays() {
         generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(user));
@@ -111,6 +108,26 @@ public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
         Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(12, 0)));
         Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(12, 30)));
+    }
+
+
+    @Test
+    public void getSlotsBetweenTreeDaysAndTwoWeeks() {
+        generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(user));
+        generateAppointment(LocalDateTime.of(today.plusDays(4), LocalTime.of(11, 15)), UUID.randomUUID(), Set.of(user));
+        generateAppointment(LocalDateTime.of(today.plusDays(4), LocalTime.of(13, 0)), UUID.randomUUID(), Set.of(user));
+        generateAppointment(LocalDateTime.of(today.plusDays(4), LocalTime.of(15, 20)), UUID.randomUUID(), Set.of(user));
+        generateAppointment(LocalDateTime.of(today.plusDays(4), LocalTime.of(17, 30)), UUID.randomUUID(), Set.of(user));
+
+        //Search on Monday late. So only one slot is available, the other 2 on friday.
+        List<UserAvailabilityDTO> availabilities = userAvailabilityController.getAvailability(
+                user, LocalDateTime.of(today, LocalTime.of(18, 0)), LocalDateTime.of(today.plusDays(7), LocalTime.of(20, 0)),
+                30, 3);
+
+        Assert.assertEquals(availabilities.size(), 3);
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(19, 30)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays( 7), LocalTime.of(8, 30)));
     }
 
 }

@@ -42,7 +42,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Gets your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO getSchedule(Authentication authentication,
-                                           HttpServletRequest request) {
+                                   HttpServletRequest request) {
         return getController().get(authentication.getName());
     }
 
@@ -51,8 +51,8 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Add a range to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO addScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                Authentication authentication,
-                                                HttpServletRequest request) {
+                                        Authentication authentication,
+                                        HttpServletRequest request) {
         return getController().add(scheduleRangeDTOs, authentication.getName());
     }
 
@@ -61,8 +61,8 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Sets the set of ranges for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(Authentication authentication,
-                                                @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                HttpServletRequest request) {
+                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        HttpServletRequest request) {
         return getController().set(scheduleRangeDTOs, authentication.getName());
     }
 
@@ -72,8 +72,8 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO removeScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                   Authentication authentication,
-                                                   HttpServletRequest request) {
+                                           Authentication authentication,
+                                           HttpServletRequest request) {
         return getController().remove(scheduleRangeDTOs, authentication.getName());
     }
 
@@ -83,17 +83,17 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO removeAllScheduleRange(Authentication authentication,
-                                                      HttpServletRequest request) {
+                                              HttpServletRequest request) {
         return getController().removeAll(authentication.getName());
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the schedule from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO getSchedule(@Parameter(description = "UUID of the user.")
-                                           @PathVariable(name = "uuid") UUID uuid,
-                                           Authentication authentication,
-                                           HttpServletRequest request) {
+    public ScheduleDTO getSchedule(@Parameter(description = "UUID of the user.", required = true)
+                                   @PathVariable(name = "uuid") UUID uuid,
+                                   Authentication authentication,
+                                   HttpServletRequest request) {
         return getController().get(uuid);
     }
 
@@ -101,11 +101,11 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add a range to the schedule of a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO addScheduleRange(@Parameter(description = "UUID of the user.")
-                                                @PathVariable(name = "uuid") UUID uuid,
-                                                @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                Authentication authentication,
-                                                HttpServletRequest request) {
+    public ScheduleDTO addScheduleRange(@Parameter(description = "UUID of the user.", required = true)
+                                        @PathVariable(name = "uuid") UUID uuid,
+                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        Authentication authentication,
+                                        HttpServletRequest request) {
         return getController().add(scheduleRangeDTOs, uuid, authentication.getName());
     }
 
@@ -113,11 +113,11 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Sets the set of ranges for the schedule of a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO setScheduleRange(@Parameter(description = "UUID of the user.")
-                                                @PathVariable(name = "uuid") UUID uuid,
-                                                @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                Authentication authentication,
-                                                HttpServletRequest request) {
+    public ScheduleDTO setScheduleRange(@Parameter(description = "UUID of the user.", required = true)
+                                        @PathVariable(name = "uuid") UUID uuid,
+                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        Authentication authentication,
+                                        HttpServletRequest request) {
         return getController().set(scheduleRangeDTOs, uuid, authentication.getName());
     }
 
@@ -126,11 +126,11 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Removes an schedule range from a user. Any existing range will be adjusted or remove to not overlap."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO removeScheduleRange(@Parameter(description = "UUID of the user.")
-                                                   @PathVariable(name = "uuid") UUID uuid,
-                                                   @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
-                                                   Authentication authentication,
-                                                   HttpServletRequest request) {
+    public ScheduleDTO removeScheduleRange(@Parameter(description = "UUID of the user.", required = true)
+                                           @PathVariable(name = "uuid") UUID uuid,
+                                           @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                           Authentication authentication,
+                                           HttpServletRequest request) {
         return getController().remove(scheduleRangeDTOs, uuid, authentication.getName());
     }
 
@@ -139,10 +139,10 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Removes all the schedule from a user. "
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users/{uuid}/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO removeAllScheduleRange(@Parameter(description = "UUID of the user.")
-                                                      @PathVariable(name = "uuid") UUID uuid,
-                                                      Authentication authentication,
-                                                      HttpServletRequest request) {
+    public ScheduleDTO removeAllScheduleRange(@Parameter(description = "UUID of the user.", required = true)
+                                              @PathVariable(name = "uuid") UUID uuid,
+                                              Authentication authentication,
+                                              HttpServletRequest request) {
         return getController().removeAll(uuid, authentication.getName());
     }
 }

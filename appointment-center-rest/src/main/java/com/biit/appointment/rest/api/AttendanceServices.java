@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/attendances/")
+@RequestMapping("/attendances")
 public class AttendanceServices extends ElementServices<Attendance, Long, AttendanceDTO, AttendanceRepository,
         AttendanceProvider, AttendanceConverterRequest, AttendanceConverter, AttendanceController> {
 
