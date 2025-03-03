@@ -36,15 +36,13 @@ public class UserAvailabilityServices {
     @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/from/{start}/to/{end}/slot-in-minutes/{duration}/slots/{slots}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getAvailability(
-            @Parameter(description = "UUID of the user.", required = true)
-            @PathVariable(name = "uuid") UUID user,
             @Parameter(description = "Lower boundary for search.")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "start") LocalDateTime start,
-            @Parameter(description = "Upper boundary for search.")
+            @Parameter(description = "Upper boundary for search. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
-            @Parameter(description = "Duration of the requested slot in minutes.", required = true)
+            @Parameter(description = "Duration of the requested slot in minutes. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", required = true)
             @PathVariable(name = "duration") int slotDuration,
             @Parameter(description = "Number of slots that will return.", required = true)
             @PathVariable(name = "slots") int slots,

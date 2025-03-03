@@ -134,7 +134,8 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
 
     @BeforeClass
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
     }
@@ -221,8 +222,8 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
     public void checkAvailabilityGet() throws Exception {
         final MvcResult result = this.mockMvc
                 .perform(get("/availabilities"
-                        + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC).format(dateTimeFormatter)
-                        + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC).format(dateTimeFormatter)
+                        + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC)
+                        + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC)
                         + "/slot-in-minutes/30/slots/3")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
