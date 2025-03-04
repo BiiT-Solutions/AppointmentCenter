@@ -12,7 +12,9 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -37,10 +39,18 @@ public class ScheduleRangeExclusion extends Element<Long> {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-
     public ScheduleRangeExclusion() {
         super();
     }
+
+    public ScheduleRangeExclusion(UUID user, LocalDate dayOff) {
+        this(user, LocalDateTime.of(dayOff, LocalTime.MIN), LocalDateTime.of(dayOff, LocalTime.MAX));
+    }
+
+    public ScheduleRangeExclusion(UUID user, LocalDate startTime, LocalDate endTime) {
+        this(user, LocalDateTime.of(startTime, LocalTime.MIN), LocalDateTime.of(endTime, LocalTime.MAX));
+    }
+
 
     public ScheduleRangeExclusion(UUID user, LocalDateTime startTime, LocalDateTime endTime) {
         this();

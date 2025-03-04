@@ -4,11 +4,13 @@ package com.biit.appointment.core.test;
 import com.biit.appointment.core.controllers.UserAvailabilityController;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
+import com.biit.appointment.core.providers.ScheduleRangeExclusionProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
+import com.biit.appointment.persistence.entities.ScheduleRangeExclusion;
 import com.biit.appointment.persistence.repositories.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,9 @@ public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     public UserAvailabilityController userAvailabilityController;
+
+    @Autowired
+    private ScheduleRangeExclusionProvider scheduleRangeExclusionProvider;
 
     private final UUID user = UUID.randomUUID();
 
@@ -127,7 +132,45 @@ public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(availabilities.size(), 3);
         Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
         Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(19, 30)));
-        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays( 7), LocalTime.of(8, 30)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays(7), LocalTime.of(8, 30)));
+    }
+
+
+    @Test
+    public void getSlotsBetweenTwoDaysInvalidExclusion() {
+        generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(user));
+
+        //Monday is holidayed!
+        scheduleRangeExclusionProvider.save(new ScheduleRangeExclusion(user, today.plusDays(7)));
+
+        //Search on Monday late. So only one slot is available, the other 2 on next monday.
+        List<UserAvailabilityDTO> availabilities = userAvailabilityController.getAvailability(
+                user, LocalDateTime.of(today, LocalTime.of(18, 0)), LocalDateTime.of(today.plusDays(7), LocalTime.of(20, 0)),
+                30, 3);
+
+        Assert.assertEquals(availabilities.size(), 3);
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(12, 0)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays(4), LocalTime.of(12, 30)));
+    }
+
+
+    @Test
+    public void getSlotsBetweenTwoDaysWithExclusions() {
+        generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(user));
+
+        //Friday is holidayed!
+        scheduleRangeExclusionProvider.save(new ScheduleRangeExclusion(user, today.plusDays(4)));
+
+        //Search on Monday late. So only one slot is available, the other 2 on next monday.
+        List<UserAvailabilityDTO> availabilities = userAvailabilityController.getAvailability(
+                user, LocalDateTime.of(today, LocalTime.of(18, 0)), LocalDateTime.of(today.plusDays(7), LocalTime.of(20, 0)),
+                30, 3);
+
+        Assert.assertEquals(availabilities.size(), 3);
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today.plusDays(7), LocalTime.of(8, 30)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays(7), LocalTime.of(9, 0)));
     }
 
 }

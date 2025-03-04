@@ -3,9 +3,11 @@ package com.biit.appointment.core.controllers;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ScheduleProvider;
+import com.biit.appointment.core.providers.ScheduleRangeExclusionProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
+import com.biit.appointment.persistence.entities.ScheduleRangeExclusion;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
@@ -29,12 +31,15 @@ public class UserAvailabilityController {
     private final AppointmentProvider appointmentProvider;
     private final ScheduleProvider scheduleProvider;
     private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final ScheduleRangeExclusionProvider scheduleRangeExclusionProvider;
 
     public UserAvailabilityController(AppointmentProvider appointmentProvider, ScheduleProvider scheduleProvider,
-                                      IAuthenticatedUserProvider authenticatedUserProvider) {
+                                      IAuthenticatedUserProvider authenticatedUserProvider,
+                                      ScheduleRangeExclusionProvider scheduleRangeExclusionProvider) {
         this.appointmentProvider = appointmentProvider;
         this.scheduleProvider = scheduleProvider;
         this.authenticatedUserProvider = authenticatedUserProvider;
+        this.scheduleRangeExclusionProvider = scheduleRangeExclusionProvider;
     }
 
     public List<UserAvailabilityDTO> getAvailability(String username, LocalDateTime start, LocalDateTime end, int slotDuration, int numberOfOptions) {
@@ -61,6 +66,9 @@ public class UserAvailabilityController {
         appointments.addAll(appointmentProvider.findNextByAttendeesIn(List.of(userUUID), start.with(LocalTime.MIN), end.with(LocalTime.MAX)));
         Collections.sort(appointments);
 
+        //Get any schedule exclusions to avoid them.
+        final List<ScheduleRangeExclusion> scheduleRangeExclusions = scheduleRangeExclusionProvider.findByUser(userUUID);
+
         final List<UserAvailabilityDTO> userAvailabilityDTOS = new ArrayList<>();
 
         int days = 0;
@@ -86,16 +94,26 @@ public class UserAvailabilityController {
                     if ((slot.getStartTime().isAfter(lowerBoundary) || slot.getStartTime().equals(lowerBoundary))
                             && (slot.getEndTime().isBefore(upperBoundary) || slot.getEndTime().equals(upperBoundary))
                             && userAvailabilityDTOS.size() < numberOfOptions) {
+
+                        //Check if the slot already is occupied by an exclusion.
+                        final ScheduleRangeExclusion exclusion = collidesWithExclusion(scheduleRangeExclusions, slot);
+                        if (exclusion != null) {
+                            slot = new UserAvailabilityDTO(userUUID, exclusion.getEndTime(),
+                                    exclusion.getEndTime().plusMinutes(slotDuration));
+                            continue;
+                        }
+
                         //Check if the slot already is occupied by an appointment.
-                        final Appointment collision = collides(appointments, slot);
-                        if (collision == null) {
-                            userAvailabilityDTOS.add(slot);
-                            slot = new UserAvailabilityDTO(userUUID, slot.getEndTime(),
-                                    slot.getEndTime().plusMinutes(slotDuration));
-                        } else {
+                        final Appointment collision = collidesWithAppointment(appointments, slot);
+                        if (collision != null) {
                             slot = new UserAvailabilityDTO(userUUID, collision.getEndTime(),
                                     collision.getEndTime().plusMinutes(slotDuration));
+                            continue;
                         }
+
+                        userAvailabilityDTOS.add(slot);
+                        slot = new UserAvailabilityDTO(userUUID, slot.getEndTime(),
+                                slot.getEndTime().plusMinutes(slotDuration));
                     } else {
                         //Advance the slot
                         slot = new UserAvailabilityDTO(userUUID, slot.getEndTime(),
@@ -111,12 +129,21 @@ public class UserAvailabilityController {
         return userAvailabilityDTOS;
     }
 
-    private Appointment collides(List<Appointment> appointments, UserAvailabilityDTO slot) {
+    private Appointment collidesWithAppointment(List<Appointment> appointments, UserAvailabilityDTO slot) {
         return appointments.stream().filter(
                 appointment -> ((slot.getStartTime().isAfter(appointment.getStartTime()) || slot.getStartTime().equals(appointment.getStartTime()))
                         && slot.getStartTime().isBefore(appointment.getEndTime()))
                         || ((slot.getEndTime().isAfter(appointment.getStartTime()))
                         && slot.getEndTime().isBefore(appointment.getEndTime()))
+        ).findAny().orElse(null);
+    }
+
+    private ScheduleRangeExclusion collidesWithExclusion(List<ScheduleRangeExclusion> exclusions, UserAvailabilityDTO slot) {
+        return exclusions.stream().filter(
+                exclusion -> ((slot.getStartTime().isAfter(exclusion.getStartTime()) || slot.getStartTime().equals(exclusion.getStartTime()))
+                        && slot.getStartTime().isBefore(exclusion.getEndTime()))
+                        || ((slot.getEndTime().isAfter(exclusion.getStartTime()))
+                        && slot.getEndTime().isBefore(exclusion.getEndTime()))
         ).findAny().orElse(null);
     }
 }
