@@ -42,7 +42,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Gets default schedule.", description = "The default schedule is applied to any user that has no schedule defined."
             + "It is not persisted on database.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/users/default", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/default", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO getDefaultSchedule(Authentication authentication,
                                           HttpServletRequest request) {
         return getController().getDefault();
@@ -51,7 +51,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO getSchedule(Authentication authentication,
                                    HttpServletRequest request) {
         return getController().get(authentication.getName());
@@ -60,7 +60,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add a range to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO addScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         Authentication authentication,
                                         HttpServletRequest request) {
@@ -70,7 +70,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Sets the set of ranges for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(Authentication authentication,
                                         @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         HttpServletRequest request) {
@@ -81,7 +81,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes an schedule range from your user. Any existing range will be adjusted or remove to not overlap."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO removeScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                            Authentication authentication,
                                            HttpServletRequest request) {
@@ -92,7 +92,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes all the schedule from your user. "
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/users/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/users/me/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO removeAllScheduleRange(Authentication authentication,
                                               HttpServletRequest request) {
         return getController().removeAll(authentication.getName());

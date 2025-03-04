@@ -171,7 +171,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setUserSchedule")
     public void getSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/schedules/users")
+                .perform(get("/schedules/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
@@ -266,7 +266,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void getDefaultSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/schedules/users/default")
+                .perform(get("/schedules/default")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))

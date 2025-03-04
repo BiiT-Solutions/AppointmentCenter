@@ -40,7 +40,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets your availability exceptions.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScheduleRangeExclusionDTO> getAvailabilityExceptions(Authentication authentication,
                                                                      HttpServletRequest request) {
         return getController().getFromUser(authentication.getName());
@@ -60,7 +60,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add an availability exception to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public void addAvailabilityExceptions(@RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                           Authentication authentication,
                                           HttpServletRequest request) {
@@ -82,7 +82,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Sets the availability exceptions for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public void setScheduleRange(Authentication authentication,
                                  @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                  HttpServletRequest request) {
@@ -105,7 +105,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes all availability exceptions from your user."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/users/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/users/me/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public void removeScheduleRange(
             Authentication authentication,
             HttpServletRequest request) {

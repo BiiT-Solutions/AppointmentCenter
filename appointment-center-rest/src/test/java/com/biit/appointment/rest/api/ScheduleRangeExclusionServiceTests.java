@@ -166,7 +166,7 @@ public class ScheduleRangeExclusionServiceTests extends AbstractTestNGSpringCont
 
 
         final MvcResult result = this.mockMvc
-                .perform(get("/availabilities/exceptions/users")
+                .perform(get("/availabilities/exceptions/users/me")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -186,7 +186,7 @@ public class ScheduleRangeExclusionServiceTests extends AbstractTestNGSpringCont
     @Test(dependsOnMethods = "addUserScheduleRangeExclusion")
     public void deleteUserScheduleRangeExclusion() throws Exception {
         this.mockMvc
-                .perform(delete("/availabilities/exceptions/users/all")
+                .perform(delete("/availabilities/exceptions/users/me/all")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())

@@ -33,8 +33,8 @@ public class UserAvailabilityServices {
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/from/{start}/to/{end}/slot-in-minutes/{duration}/slots/{slots}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Gets the availability from your user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/users/me/from/{start}/to/{end}/slot-in-minutes/{duration}/slots/{slots}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getAvailability(
             @Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -72,8 +72,8 @@ public class UserAvailabilityServices {
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/own", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Gets the availability from your user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getOwnAvailability(@RequestBody AvailabilitySearch search, Authentication authentication) {
         return userAvailabilityController.getAvailability(authentication.getName(), search.getStart(), search.getEnd(),
                 search.getSlotDuration(), search.getSlots());
@@ -82,7 +82,7 @@ public class UserAvailabilityServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getAvailability(@RequestBody AvailabilitySearch search) {
         return userAvailabilityController.getAvailability(search.getUser(), search.getStart(), search.getEnd(), search.getSlotDuration(), search.getSlots());
     }

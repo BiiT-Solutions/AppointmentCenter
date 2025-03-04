@@ -202,7 +202,7 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
         AvailabilitySearch availabilitySearch = new AvailabilitySearch(null, LocalDateTime.of(today, LocalTime.of(12, 20)), LocalDateTime.of(today, LocalTime.of(20, 0)), 30, 3);
 
         final MvcResult result = this.mockMvc
-                .perform(post("/availabilities/own")
+                .perform(post("/availabilities/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(availabilitySearch))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
@@ -221,7 +221,7 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
     @Test(dependsOnMethods = {"setAdminAuthentication"})
     public void checkAvailabilityGet() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(get("/availabilities"
+                .perform(get("/availabilities/users/me"
                         + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC)
                         + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC)
                         + "/slot-in-minutes/30/slots/3")
