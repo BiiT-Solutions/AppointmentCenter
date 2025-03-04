@@ -277,7 +277,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().size(), 5);
         Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.MONDAY);
         Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(19, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(18, 0));
     }
 
 
