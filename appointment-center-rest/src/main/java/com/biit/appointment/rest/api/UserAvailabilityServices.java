@@ -36,13 +36,13 @@ public class UserAvailabilityServices {
     @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/from/{start}/to/{end}/slot-in-minutes/{duration}/slots/{slots}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserAvailabilityDTO> getAvailability(
-            @Parameter(description = "Lower boundary for search.")
+            @Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "start") LocalDateTime start,
-            @Parameter(description = "Upper boundary for search. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)")
+            @Parameter(description = "Upper boundary for search. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-31-01T23:59:59.99Z")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
-            @Parameter(description = "Duration of the requested slot in minutes. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", required = true)
+            @Parameter(description = "Duration of the requested slot in minutes", required = true)
             @PathVariable(name = "duration") int slotDuration,
             @Parameter(description = "Number of slots that will return.", required = true)
             @PathVariable(name = "slots") int slots,
@@ -57,9 +57,10 @@ public class UserAvailabilityServices {
     public List<UserAvailabilityDTO> getAvailability(
             @Parameter(description = "UUID of the user.", required = true)
             @PathVariable(name = "uuid") UUID user,
+            @Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "start") LocalDateTime start,
-            @Parameter(description = "Upper boundary for search.")
+            @Parameter(description = "Upper boundary for search. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-31-01T23:59:59.99Z")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
             @Parameter(description = "Duration of the requested slot in minutes.", required = true)

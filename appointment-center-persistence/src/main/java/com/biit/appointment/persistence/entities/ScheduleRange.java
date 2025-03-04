@@ -41,15 +41,6 @@ public class ScheduleRange extends Element<Long> implements Comparable<ScheduleR
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public ScheduleRange() {
         super();
@@ -61,6 +52,17 @@ public class ScheduleRange extends Element<Long> implements Comparable<ScheduleR
         setStartTime(startTime);
         setEndTime(endTime);
     }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;

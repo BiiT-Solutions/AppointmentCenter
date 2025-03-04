@@ -49,7 +49,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add a range to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO addScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         Authentication authentication,
                                         HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Sets the set of ranges for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(Authentication authentication,
                                         @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         HttpServletRequest request) {
@@ -100,7 +100,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add a range to the schedule of a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO addScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                         @PathVariable(name = "uuid") UUID uuid,
                                         @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
@@ -112,7 +112,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Sets the set of ranges for the schedule of a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                         @PathVariable(name = "uuid") UUID uuid,
                                         @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,

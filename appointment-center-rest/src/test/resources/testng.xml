@@ -12,6 +12,7 @@
                 <include name="scheduleServiceTests"/>
                 <include name="appointmentAttendanceByQrTests"/>
                 <include name="availabilityServiceTests"/>
+                <include name="scheduleRangeExclusionServiceTests"/>
             </run>
         </groups>
         <classes>
@@ -20,6 +21,7 @@
             <class name="com.biit.appointment.rest.api.AppointmentAttendanceByQrTests"/>
             <class name="com.biit.appointment.rest.api.ScheduleServiceTests"/>
             <class name="com.biit.appointment.rest.api.UserAvailabilityServiceTests"/>
+            <class name="com.biit.appointment.rest.api.ScheduleRangeExclusionServiceTests"/>
         </classes>
     </test>
 </suite>

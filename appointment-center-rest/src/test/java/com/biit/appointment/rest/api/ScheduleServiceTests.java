@@ -64,9 +64,6 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private AttendanceProvider attendanceProvider;
-
     private MockMvc mockMvc;
 
     private String adminJwtToken;
@@ -131,7 +128,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setAdminAuthentication")
     public void setUserSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(post("/schedules/users/" + admin.getUID())
+                .perform(put("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(9, 0), LocalTime.of(13, 0)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
@@ -151,7 +148,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "setUserSchedule")
     public void addExtraSchedule() throws Exception {
         final MvcResult result = this.mockMvc
-                .perform(put("/schedules/users/" + admin.getUID())
+                .perform(post("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(15, 0), LocalTime.of(17, 0)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
