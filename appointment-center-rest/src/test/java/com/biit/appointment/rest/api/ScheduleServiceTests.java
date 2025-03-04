@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -259,6 +260,24 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
         Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
         Assert.assertEquals(userSchedule.getRanges().size(), 0);
+    }
+
+
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void getDefaultSchedule() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/schedules/users/default")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getRanges().size(), 5);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.MONDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(19, 0));
     }
 
 

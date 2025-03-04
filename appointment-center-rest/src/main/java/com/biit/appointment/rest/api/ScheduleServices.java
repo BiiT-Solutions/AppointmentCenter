@@ -39,6 +39,17 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets default schedule.", description = "The default schedule is applied to any user that has no schedule defined."
+            + "It is not persisted on database.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/users/default", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ScheduleDTO getDefaultSchedule(Authentication authentication,
+                                          HttpServletRequest request) {
+        return getController().getDefault();
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO getSchedule(Authentication authentication,

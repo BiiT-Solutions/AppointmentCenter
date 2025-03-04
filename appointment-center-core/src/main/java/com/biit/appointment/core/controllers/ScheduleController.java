@@ -48,9 +48,13 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
         return get(UUID.fromString(authenticatedUser.getUID()));
     }
 
+    public ScheduleDTO getDefault() {
+        return convert(getProvider().getDefaultSchedule(null));
+    }
+
 
     public ScheduleDTO get(UUID user) {
-        return convert(getProvider().findByUser(user).orElse(getProvider().getDefaultSchedule(user)));
+        return convert(getProvider().findByUser(user).orElse(new Schedule(user)));
     }
 
 
