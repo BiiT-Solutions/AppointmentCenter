@@ -58,7 +58,7 @@ public class UserAvailabilityController {
             end = LocalDateTime.now().plusMonths(1);
         }
         //Gets user availability.
-        final Schedule userSchedule = scheduleProvider.findByUser(userUUID).orElse(new Schedule(userUUID));
+        final Schedule userSchedule = scheduleProvider.findByUser(userUUID).orElse(scheduleProvider.getDefaultSchedule(userUUID));
 
         //Gets any appointment where the user is involved this specific dates.
         final List<Appointment> appointments = appointmentProvider.findNextByOrganizer(userUUID, start.with(LocalTime.MIN), end.with(LocalTime.MAX));

@@ -5,8 +5,11 @@ import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
 import com.biit.appointment.persistence.repositories.ScheduleRepository;
 import com.biit.server.providers.ElementProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -14,6 +17,15 @@ import java.util.UUID;
 
 @Service
 public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRepository> {
+
+    @Value("${default.schedule.starting.time.hour:8}")
+    private int defaultScheduleStartingTimeHours;
+
+    @Value("${default.schedule.ending.time.hour:19}")
+    private int defaultScheduleEndingTimeHours;
+
+    @Value("${default.schedule.week.days:MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY}")
+    private DayOfWeek[] defaultScheduleDaysOfWeek;
 
     public ScheduleProvider(ScheduleRepository repository) {
         super(repository);
@@ -49,6 +61,7 @@ public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRe
         return getRepository().save(userSchedule);
     }
 
+
     public Schedule removeAll(UUID user) {
         final Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
         //No schedule defined. Nothing to remove.
@@ -57,5 +70,15 @@ public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRe
         }
         userSchedule.getRanges().clear();
         return getRepository().save(userSchedule);
+    }
+
+
+    public Schedule getDefaultSchedule(UUID user) {
+        final Schedule userSchedule = new Schedule(user);
+        for (DayOfWeek dayOfWeek : defaultScheduleDaysOfWeek) {
+            userSchedule.addRange(new ScheduleRange(dayOfWeek, LocalTime.MIN.plusHours(defaultScheduleStartingTimeHours),
+                    LocalTime.MIN.plusHours(defaultScheduleEndingTimeHours)));
+        }
+        return userSchedule;
     }
 }

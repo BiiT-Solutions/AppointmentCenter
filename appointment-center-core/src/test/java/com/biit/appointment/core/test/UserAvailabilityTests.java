@@ -173,4 +173,19 @@ public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today.plusDays(7), LocalTime.of(9, 0)));
     }
 
+
+    @Test
+    public void getSlotsForDefaultSchedule() {
+        final UUID user = UUID.randomUUID();
+        //Search from Sunday. Return Monday after default hour (8:00)
+        List<UserAvailabilityDTO> availabilities = userAvailabilityController.getAvailability(
+                user, LocalDateTime.of(today.minusDays(1), LocalTime.of(12, 20)), LocalDateTime.of(today, LocalTime.of(20, 0)),
+                30, 3);
+
+        Assert.assertEquals(availabilities.size(), 3);
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(8, 0)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(8, 30)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(9, 0)));
+    }
+
 }

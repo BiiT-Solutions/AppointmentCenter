@@ -62,6 +62,12 @@ public class Schedule extends Element<Long> {
         setUser(user);
     }
 
+    public Schedule(UUID user, List<ScheduleRange> scheduleRanges) {
+        this();
+        setUser(user);
+        setRanges(scheduleRanges);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

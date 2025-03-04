@@ -28,8 +28,8 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
     private final IAuthenticatedUserProvider authenticatedUserProvider;
 
     protected ScheduleController(ScheduleProvider provider, ScheduleConverter converter,
-                                     ScheduleEventSender eventSender, ScheduleRangeConverter scheduleRangeConverter,
-                                     IAuthenticatedUserProvider userManagerClient) {
+                                 ScheduleEventSender eventSender, ScheduleRangeConverter scheduleRangeConverter,
+                                 IAuthenticatedUserProvider userManagerClient) {
         super(provider, converter, eventSender);
         this.scheduleRangeConverter = scheduleRangeConverter;
         this.authenticatedUserProvider = userManagerClient;
@@ -50,7 +50,7 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
 
 
     public ScheduleDTO get(UUID user) {
-        return convert(getProvider().findByUser(user).orElse(new Schedule(user)));
+        return convert(getProvider().findByUser(user).orElse(getProvider().getDefaultSchedule(user)));
     }
 
 
