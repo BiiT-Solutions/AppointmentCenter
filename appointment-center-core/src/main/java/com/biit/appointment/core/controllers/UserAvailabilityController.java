@@ -60,7 +60,7 @@ public class UserAvailabilityController {
         //Gets user availability.
         final Schedule userSchedule = scheduleProvider.findByUser(userUUID).orElse(scheduleProvider.getDefaultSchedule(userUUID));
 
-        //Gets any appointment where the user is involved this specific dates.
+        //Gets any appointment where the user is involved in these specific dates.
         final List<Appointment> appointments = appointmentProvider.findNextByOrganizer(userUUID, start.with(LocalTime.MIN), end.with(LocalTime.MAX));
         appointments.addAll(appointmentProvider.findNextBySpeakersIn(List.of(userUUID), start.with(LocalTime.MIN), end.with(LocalTime.MAX)));
         appointments.addAll(appointmentProvider.findNextByAttendeesIn(List.of(userUUID), start.with(LocalTime.MIN), end.with(LocalTime.MAX)));
