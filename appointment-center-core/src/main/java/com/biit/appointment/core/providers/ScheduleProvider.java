@@ -45,10 +45,10 @@ public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRe
 
 
     public Schedule add(ScheduleRange scheduleRange, UUID user) {
-        final Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
+        Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
         if (userSchedule.getId() == null) {
             //Ensuring is saved.
-            getRepository().save(userSchedule);
+            userSchedule = getRepository().save(userSchedule);
         }
         userSchedule.addRange(scheduleRange);
         return getRepository().save(userSchedule);
