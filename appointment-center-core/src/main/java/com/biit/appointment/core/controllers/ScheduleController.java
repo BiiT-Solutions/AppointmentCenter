@@ -96,6 +96,17 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
     }
 
 
+    public void removeScheduleRange(Collection<Long> ids, String username) {
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+
+        for (Long id : ids) {
+            getProvider().removeRange(id, UUID.fromString(authenticatedUser.getUID()));
+        }
+    }
+
+
     public ScheduleDTO remove(Collection<ScheduleRangeDTO> scheduleRanges, String username) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),

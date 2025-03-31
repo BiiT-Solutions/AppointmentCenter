@@ -2,7 +2,8 @@ package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.models.ScheduleDTO;
 import com.biit.appointment.core.models.ScheduleRangeDTO;
-import com.biit.appointment.core.providers.AttendanceProvider;
+import com.biit.appointment.core.providers.ScheduleProvider;
+import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
@@ -32,7 +33,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -70,6 +70,9 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     private String adminJwtToken;
 
     private IAuthenticatedUser admin;
+
+    @Autowired
+    private ScheduleProvider scheduleProvider;
 
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -148,7 +151,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "setUserSchedule")
     public void addExtraSchedule() throws Exception {
-        final MvcResult result = this.mockMvc
+        MvcResult result = this.mockMvc
                 .perform(post("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(15, 0), LocalTime.of(17, 0)))))
@@ -157,7 +160,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
         Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
         Assert.assertEquals(userSchedule.getRanges().size(), 2);
         Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
@@ -165,6 +168,27 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+
+
+        result = this.mockMvc
+                .perform(post("/schedules/users/" + admin.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(20, 0), LocalTime.of(21, 0)))))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 3);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
     }
 
 
@@ -180,12 +204,14 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
 
         final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
         Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().size(), 3);
         Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
         Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
         Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
     }
 
 
@@ -201,12 +227,14 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
 
         final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
         Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().size(), 3);
         Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
         Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
         Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
     }
 
 
@@ -238,16 +266,43 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
 
         final ScheduleDTO userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
         Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
-        Assert.assertEquals(userSchedule.getRanges().size(), 2);
+        Assert.assertEquals(userSchedule.getRanges().size(), 3);
         Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
         Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
         Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
     }
 
 
-    @Test(dependsOnMethods = "removeScheduleRange")
+    @Test(dependsOnMethods = {"removeScheduleRange"})
+    public void removeScheduleRangeById() throws Exception {
+        Schedule schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        final MvcResult result = this.mockMvc
+                .perform(delete("/schedules/users/me/ids?id=" + schedule.getRanges().get(2).getId())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        Assert.assertEquals(schedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(schedule.getRanges().size(), 2);
+        Assert.assertEquals(schedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(schedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(schedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+    }
+
+
+    @Test(dependsOnMethods = "removeScheduleRangeById")
     public void removeAllScheduleRange() throws Exception {
         final MvcResult result = this.mockMvc
                 .perform(delete("/schedules/users/" + admin.getUID() + "/all")

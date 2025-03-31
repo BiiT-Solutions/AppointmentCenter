@@ -160,6 +160,10 @@ public class Schedule extends Element<Long> {
         }
         //Remove any time range that overlaps with the desired one.
         for (ScheduleRange scheduleRange : new ArrayList<>(ranges)) {
+            if (Objects.equals(range.getId(), scheduleRange.getId())) {
+                ranges.remove(scheduleRange);
+                break;
+            }
             final ScheduleRange originalRange = scheduleRange.copy();
             if (Objects.equals(scheduleRange, range)) {
                 ranges.remove(scheduleRange);
@@ -184,7 +188,7 @@ public class Schedule extends Element<Long> {
                         ranges.add(new ScheduleRange(scheduleRange.getDayOfWeek(), range.getEndTime(), originalRange.getEndTime()));
                     }
                 }
-                if (scheduleRange.getStartTime().isAfter(range.getStartTime()) || scheduleRange.getStartTime().equals(range.getStartTime())
+                if ((scheduleRange.getStartTime().isAfter(range.getStartTime()) || scheduleRange.getStartTime().equals(range.getStartTime()))
                         && scheduleRange.getStartTime().isBefore(range.getEndTime())) {
                     //  schedule time                  /----------/
                     //  removed time                    /------/

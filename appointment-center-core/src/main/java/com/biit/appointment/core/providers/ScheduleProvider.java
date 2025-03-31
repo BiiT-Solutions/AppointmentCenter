@@ -12,6 +12,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +52,21 @@ public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRe
             userSchedule = getRepository().save(userSchedule);
         }
         userSchedule.addRange(scheduleRange);
+        return getRepository().save(userSchedule);
+    }
+
+
+    public Schedule removeRange(Long scheduleRangeId, UUID user) {
+        final Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
+        //No schedule defined. Nothing to remove.
+        if (userSchedule.getId() == null) {
+            return null;
+        }
+        for (ScheduleRange scheduleRange : new ArrayList<>(userSchedule.getRanges())) {
+            if (Objects.equals(scheduleRange.getId(), scheduleRangeId)) {
+                userSchedule.removeRange(scheduleRange);
+            }
+        }
         return getRepository().save(userSchedule);
     }
 
