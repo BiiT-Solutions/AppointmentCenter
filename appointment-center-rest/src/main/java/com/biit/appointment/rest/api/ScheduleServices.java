@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.PathParam;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -120,6 +119,19 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
                                    Authentication authentication,
                                    HttpServletRequest request) {
         return getController().get(uuid);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Removes an schedule range from a user. Any existing range will be adjusted or remove to not overlap."
+            + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/users/{uuid}/ids", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void removeScheduleRange(@Parameter(description = "UUID of the user.", required = true)
+                                    @PathVariable(name = "uuid") UUID uuid,
+                                    @RequestParam(value = "id") List<Long> ids,
+                                    Authentication authentication,
+                                    HttpServletRequest request) {
+        getController().removeScheduleRange(ids, uuid, authentication.getName());
     }
 
 
