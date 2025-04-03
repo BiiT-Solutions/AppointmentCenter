@@ -22,7 +22,7 @@ public class TestAppointmentCenterClient implements IAppointmentCenterRestClient
     private static final int APPOINTMENT_DURATION = 120;
 
     private LocalDateTime startTime = LocalDateTime.now().minusMinutes(STARTED_TIME_PASSED);
-    private LocalDateTime endTime = LocalDateTime.now().plusMinutes(APPOINTMENT_DURATION - STARTED_TIME_PASSED);
+    private LocalDateTime endTime = LocalDateTime.now().plusMinutes(APPOINTMENT_DURATION - (long) STARTED_TIME_PASSED);
 
     public Optional<AppointmentDTO> findByAttendeeAndTemplateCurrent(UUID userUUID, Long appointmentTemplateId) {
         final AppointmentDTO appointmentDTO = new AppointmentDTO();

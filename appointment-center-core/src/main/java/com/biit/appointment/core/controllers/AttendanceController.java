@@ -2,13 +2,13 @@ package com.biit.appointment.core.controllers;
 
 import com.biit.appointment.core.converters.AttendanceConverter;
 import com.biit.appointment.core.converters.models.AttendanceConverterRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AttendanceDTO;
-import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
 import com.biit.appointment.persistence.entities.Appointment;
@@ -138,8 +138,9 @@ public class AttendanceController extends ElementController<Attendance, Long, At
         final Appointment appointment = appointmentProvider.findById(appointmentId).orElseThrow(() ->
                 new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
 
-        getProvider().findBy(UUID.fromString(user.getUID()), appointment).orElseThrow(() ->
-                new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code."));
+        if (getProvider().findBy(UUID.fromString(user.getUID()), appointment).isEmpty()) {
+            throw new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code.");
+        }
     }
 
 

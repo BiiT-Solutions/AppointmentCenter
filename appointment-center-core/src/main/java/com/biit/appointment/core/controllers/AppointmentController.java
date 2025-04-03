@@ -4,6 +4,7 @@ import com.biit.appointment.core.controllers.kafka.AppointmentEventSender;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.AppointmentTemplateConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
@@ -11,7 +12,6 @@ import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentExcept
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
-import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
@@ -225,8 +225,9 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
     public AppointmentDTO getCurrentByAttendeeAndTemplatesNames(UUID attendeeUUID, Collection<String> templatesTitle) {
         //Get organization by user.
-        authenticatedUserProvider.findByUID(attendeeUUID.toString()).orElseThrow(() ->
-                new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'."));
+        if (authenticatedUserProvider.findByUID(attendeeUUID.toString()).isEmpty()) {
+            throw new UserNotFoundException(this.getClass(), "No user found with UUID '" + attendeeUUID + "'.");
+        }
 
         final List<Appointment> appointmentsFromUserInTemplates = getProvider().findByAttendeesInAndAppointmentTemplateIn(
                 Collections.singleton(attendeeUUID),
@@ -483,8 +484,9 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         final Appointment appointment = getProvider().findById(appointmentId).orElseThrow(() ->
                 new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
 
-        attendanceProvider.findBy(UUID.fromString(user.getUID()), appointment).orElseThrow(() ->
-                new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code."));
+        if (attendanceProvider.findBy(UUID.fromString(user.getUID()), appointment).isEmpty()) {
+            throw new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code.");
+        }
     }
 
 
