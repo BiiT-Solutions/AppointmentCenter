@@ -19,7 +19,7 @@
             <pattern>%-5p %d{yyyy-MM-dd HH:mm:ss.SSS 'GMT'Z} %c{1} [%t] - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <maxHistory>10</maxHistory>
+            <maxHistory>30</maxHistory>
             <!-- daily rollover -->
             <fileNamePattern>/logs/appointment-center/rest.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -59,9 +59,11 @@
         <appender-ref ref="DAILY"/>
     </logger>
     <logger name="com.biit.server.logger.RestServerLogger" additivity="false" level="INFO">
+        <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.biit.server.client.logger.RestServerClientLogger" additivity="false" level="INFO">
+        <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.biit.usermanager.logger.UserManagerClientLogger" additivity="false" level="DEBUG">
