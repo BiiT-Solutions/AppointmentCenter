@@ -10,7 +10,6 @@ import java.io.Serial;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ExaminationTypeNotFoundException extends NotFoundException {
 
-
     @Serial
     private static final long serialVersionUID = -3216682302482940102L;
 

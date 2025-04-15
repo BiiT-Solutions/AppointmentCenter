@@ -5,8 +5,12 @@ import com.biit.server.logger.LoggedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.Serial;
+
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidFormatException extends LoggedException {
+
+    @Serial
     private static final long serialVersionUID = 7130024111678831271L;
 
     public InvalidFormatException(Class<?> clazz, String message, ExceptionType type) {

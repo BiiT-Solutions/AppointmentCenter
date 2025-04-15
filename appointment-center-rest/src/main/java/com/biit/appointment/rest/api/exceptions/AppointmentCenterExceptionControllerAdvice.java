@@ -6,6 +6,7 @@ import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.ExaminationTypeNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidFormatException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
+import com.biit.appointment.core.exceptions.InvalidProfessionalSpecializationException;
 import com.biit.appointment.core.exceptions.InvalidRecurrenceException;
 import com.biit.appointment.core.exceptions.ProfessionalSpecializationNotFoundException;
 import com.biit.appointment.core.exceptions.RecurrenceNotFoundException;
@@ -27,7 +28,7 @@ public class AppointmentCenterExceptionControllerAdvice extends ServerExceptionC
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorResponse("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse("NOT_FOUND", "not_found", ex), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidRecurrenceException.class)
@@ -101,5 +102,11 @@ public class AppointmentCenterExceptionControllerAdvice extends ServerExceptionC
     public ResponseEntity<Object> invalidScheduleException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_schedule_range", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidProfessionalSpecializationException.class)
+    public ResponseEntity<Object> invalidProfessionalSpecializationException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_professional_specialization", ex), HttpStatus.BAD_REQUEST);
     }
 }
