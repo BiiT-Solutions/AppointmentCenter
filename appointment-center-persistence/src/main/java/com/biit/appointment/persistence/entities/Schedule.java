@@ -218,6 +218,7 @@ public class Schedule extends Element<Long> {
                 //Out of boundaries, Do nothing.
             }
         }
+        removeNoDurationRanges();
     }
 
 
@@ -244,7 +245,12 @@ public class Schedule extends Element<Long> {
         } else {
             finalRanges.add(range2);
         }
+        removeNoDurationRanges();
         return finalRanges;
+    }
+
+    private void removeNoDurationRanges() {
+        ranges.removeIf(scheduleRange -> Objects.equals(scheduleRange.getStartTime(), scheduleRange.getEndTime()));
     }
 
     @Override

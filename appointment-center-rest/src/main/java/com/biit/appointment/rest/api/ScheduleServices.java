@@ -121,6 +121,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
         return getController().removeAll(authentication.getName());
     }
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the schedule from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
