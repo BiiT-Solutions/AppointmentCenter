@@ -213,6 +213,29 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
         Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(22, 0));
         Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 0));
+
+        result = this.mockMvc
+                .perform(post("/schedules/users/" + admin.getUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(21, 30), LocalTime.of(23, 30)))))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+
+        userSchedule = objectMapper.readValue(result.getResponse().getContentAsString(), ScheduleDTO.class);
+        Assert.assertEquals(userSchedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(userSchedule.getRanges().size(), 4);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(userSchedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(0).getEndTime(), LocalTime.of(13, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getStartTime(), LocalTime.of(15, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(21, 30));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 30));
     }
 
 
@@ -236,8 +259,8 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(22, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(21, 30));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 30));
     }
 
 
@@ -261,8 +284,8 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(22, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(21, 30));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 30));
     }
 
 
@@ -302,8 +325,8 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(userSchedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getStartTime(), LocalTime.of(20, 0));
         Assert.assertEquals(userSchedule.getRanges().get(2).getEndTime(), LocalTime.of(21, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(22, 0));
-        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 0));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getStartTime(), LocalTime.of(21, 30));
+        Assert.assertEquals(userSchedule.getRanges().get(3).getEndTime(), LocalTime.of(23, 30));
     }
 
 
@@ -312,7 +335,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         final MvcResult result = this.mockMvc
                 .perform(delete("/schedules/users/" + admin.getUID())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(22, 0), LocalTime.of(23, 0)))))
+                        .content(toJson(List.of(new ScheduleRangeDTO(DayOfWeek.FRIDAY, LocalTime.of(21, 30), LocalTime.of(23, 30)))))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -336,7 +359,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         Schedule schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
         Assert.assertNotNull(schedule);
 
-        final MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(delete("/schedules/users/me/ids?id=" + schedule.getRanges().get(2).getId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
@@ -372,7 +395,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         final ScheduleRange scheduleRange = schedule.getRanges().get(1);
         scheduleRange.setEndTime(LocalTime.of(18, 30));
 
-        final MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(put("/schedules/users/me/ranges")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -410,7 +433,7 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
         final ScheduleRange scheduleRange = schedule.getRanges().get(0);
         scheduleRange.setEndTime( LocalTime.of(16, 30));
 
-        final MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(put("/schedules/users/me/ranges")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .contentType(MediaType.APPLICATION_JSON)

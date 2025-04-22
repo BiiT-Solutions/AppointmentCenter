@@ -225,7 +225,7 @@ public class Schedule extends Element<Long> {
     private List<ScheduleRange> simplify(ScheduleRange range1, ScheduleRange range2) {
         final List<ScheduleRange> finalRanges = new ArrayList<>();
         if (range1 != null && range2 != null) {
-            //On different days.
+            //On same day.
             if (range1.getDayOfWeek().compareTo(range2.getDayOfWeek()) == 0) {
                 //Must be sorted!
                 if (range1.getStartTime().isAfter(range2.getStartTime())) {
@@ -233,7 +233,9 @@ public class Schedule extends Element<Long> {
                 }
                 //Overlaps!
                 if (Objects.equals(range1.getEndTime(), range2.getStartTime()) || range1.getEndTime().isAfter(range2.getStartTime())) {
-                    finalRanges.add(new ScheduleRange(range1.getDayOfWeek(), range1.getStartTime(), range2.getEndTime()));
+                    finalRanges.add(new ScheduleRange(range1.getDayOfWeek(), range1.getStartTime(),
+                            //The latest one is used.
+                            (range1.getEndTime().isAfter(range2.getEndTime())) ? range1.getEndTime() : range2.getEndTime()));
                     return finalRanges;
                 }
             }
