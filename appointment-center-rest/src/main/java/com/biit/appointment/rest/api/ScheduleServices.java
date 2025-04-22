@@ -80,6 +80,16 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     }
 
 
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Sets a ranges for your schedule. If already exists, the range will be updated.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/users/me/ranges", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ScheduleDTO setScheduleRange(Authentication authentication,
+                                        @RequestBody ScheduleRangeDTO scheduleRangeDTO,
+                                        HttpServletRequest request) {
+        return getController().update(scheduleRangeDTO, authentication.getName());
+    }
+
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes an schedule range from your user. Any existing range will be adjusted or remove to not overlap."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))

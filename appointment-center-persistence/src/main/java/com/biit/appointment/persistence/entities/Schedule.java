@@ -100,7 +100,15 @@ public class Schedule extends Element<Long> {
             ranges = new ArrayList<>();
         }
         ranges.add(range);
-        this.ranges.sort(ScheduleRange::compareTo);
+        simplifyRanges();
+    }
+
+
+    public void updateRange(ScheduleRange range) {
+        final List<ScheduleRange> oldRanges = new ArrayList<>(this.ranges);
+        this.ranges.clear();
+        this.ranges.addAll(oldRanges.stream().filter(s -> !Objects.equals(s.getId(), range.getId())).toList());
+        ranges.add(range);
         simplifyRanges();
     }
 
@@ -112,7 +120,6 @@ public class Schedule extends Element<Long> {
         } else {
             this.ranges = ranges;
         }
-        this.ranges.sort(ScheduleRange::compareTo);
         simplifyRanges();
     }
 
@@ -121,6 +128,8 @@ public class Schedule extends Element<Long> {
         if (this.ranges.size() < 2) {
             return;
         }
+
+        ranges.sort(ScheduleRange::compareTo);
 
         final List<ScheduleRange> finalRanges = new ArrayList<>();
         final Iterator<ScheduleRange> comparing = this.ranges.iterator();

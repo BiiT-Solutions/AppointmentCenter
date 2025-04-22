@@ -16,11 +16,11 @@ public class ScheduleRangeDTO extends ElementDTO<Long> {
 
     private Long id;
     private DayOfWeek dayOfWeek;
-    @Schema(type = "string", pattern = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @Schema(type = "string", pattern = "HH:mm[:ss]")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm[:ss]")
     private LocalTime startTime;
-    @Schema(type = "string", pattern = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @Schema(type = "string", pattern = "HH:mm[:ss]")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm[:ss]")
     private LocalTime endTime;
 
     @Override

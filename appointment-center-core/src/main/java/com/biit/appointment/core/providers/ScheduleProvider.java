@@ -45,6 +45,13 @@ public class ScheduleProvider extends ElementProvider<Schedule, Long, ScheduleRe
     }
 
 
+    public Schedule update(ScheduleRange scheduleRange, UUID user) {
+        final Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
+        userSchedule.updateRange(scheduleRange);
+        return getRepository().save(userSchedule);
+    }
+
+
     public Schedule add(ScheduleRange scheduleRange, UUID user) {
         Schedule userSchedule = getRepository().findByUser(user).orElse(new Schedule(user));
         if (userSchedule.getId() == null) {

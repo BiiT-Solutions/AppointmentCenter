@@ -66,11 +66,27 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
     }
 
 
+    public ScheduleDTO update(ScheduleRangeDTO scheduleRange, String username) {
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+        return update(scheduleRange, UUID.fromString(authenticatedUser.getUID()), username);
+    }
+
+
     public ScheduleDTO set(Collection<ScheduleRangeDTO> scheduleRanges, UUID user, String createdBy) {
         AppointmentCenterLogger.info(this.getClass(), "User '{}' has added schedules '{}' from user '{}'.",
                 createdBy, scheduleRanges, user);
         return convert(getProvider().set(scheduleRangeConverter.reverseAll(scheduleRanges), user));
     }
+
+
+    public ScheduleDTO update(ScheduleRangeDTO scheduleRange, UUID user, String createdBy) {
+        AppointmentCenterLogger.info(this.getClass(), "User '{}' is updating schedule '{}' from user '{}'.",
+                createdBy, scheduleRange, user);
+        return convert(getProvider().update(scheduleRangeConverter.reverse(scheduleRange), user));
+    }
+
 
     public ScheduleDTO add(Collection<ScheduleRangeDTO> scheduleRanges, String username) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)

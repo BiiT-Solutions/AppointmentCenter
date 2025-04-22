@@ -4,6 +4,7 @@ import com.biit.appointment.core.models.ScheduleDTO;
 import com.biit.appointment.core.models.ScheduleRangeDTO;
 import com.biit.appointment.core.providers.ScheduleProvider;
 import com.biit.appointment.persistence.entities.Schedule;
+import com.biit.appointment.persistence.entities.ScheduleRange;
 import com.biit.appointment.rest.Server;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
@@ -302,7 +303,81 @@ public class ScheduleServiceTests extends AbstractTestNGSpringContextTests {
     }
 
 
-    @Test(dependsOnMethods = "removeScheduleRangeById")
+    @Test(dependsOnMethods = {"removeScheduleRangeById"})
+    public void updateScheduleRangeNoOverlap() throws Exception {
+        Schedule schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        Assert.assertEquals(schedule.getRanges().size(), 2);
+        Assert.assertEquals(schedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(schedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(schedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getEndTime(), LocalTime.of(17, 0));
+
+        //Change last range.
+        final ScheduleRange scheduleRange = schedule.getRanges().get(1);
+        scheduleRange.setEndTime(LocalTime.of(18, 30));
+
+        final MvcResult result = this.mockMvc
+                .perform(put("/schedules/users/me/ranges")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(scheduleRange))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        Assert.assertEquals(schedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(schedule.getRanges().size(), 2);
+        Assert.assertEquals(schedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(schedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(schedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getEndTime(), LocalTime.of(18, 30));
+    }
+
+
+    @Test(dependsOnMethods = {"updateScheduleRangeNoOverlap"})
+    public void updateScheduleRangeWithOverlap() throws Exception {
+        Schedule schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        Assert.assertEquals(schedule.getRanges().size(), 2);
+        Assert.assertEquals(schedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(schedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(schedule.getRanges().get(0).getEndTime(), LocalTime.of(12, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getStartTime(), LocalTime.of(16, 0));
+        Assert.assertEquals(schedule.getRanges().get(1).getEndTime(), LocalTime.of(18, 30));
+
+        //Change last range.
+        final ScheduleRange scheduleRange = schedule.getRanges().get(0);
+        scheduleRange.setEndTime( LocalTime.of(16, 30));
+
+        final MvcResult result = this.mockMvc
+                .perform(put("/schedules/users/me/ranges")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(scheduleRange))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        schedule = scheduleProvider.findByUser(UUID.fromString(admin.getUID())).orElse(null);
+        Assert.assertNotNull(schedule);
+
+        Assert.assertEquals(schedule.getUser(), UUID.fromString(admin.getUID()));
+        Assert.assertEquals(schedule.getRanges().size(), 1);
+        Assert.assertEquals(schedule.getRanges().get(0).getDayOfWeek(), DayOfWeek.FRIDAY);
+        Assert.assertEquals(schedule.getRanges().get(0).getStartTime(), LocalTime.of(9, 0));
+        Assert.assertEquals(schedule.getRanges().get(0).getEndTime(), LocalTime.of(18, 30));
+    }
+
+
+    @Test(dependsOnMethods = "updateScheduleRangeWithOverlap")
     public void removeAllScheduleRange() throws Exception {
         final MvcResult result = this.mockMvc
                 .perform(delete("/schedules/users/" + admin.getUID() + "/all")
