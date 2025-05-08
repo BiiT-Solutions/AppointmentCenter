@@ -57,6 +57,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+/**
+ * This tests needs to give access to google calendar by a link.
+ */
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -198,6 +201,7 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
 
     /**
      * On google calendar an appointment from 11h to 11h30 exists. So availability must be after 11h30
+     *
      * @throws Exception
      */
     @Test(dependsOnMethods = {"storeCredentials"})
