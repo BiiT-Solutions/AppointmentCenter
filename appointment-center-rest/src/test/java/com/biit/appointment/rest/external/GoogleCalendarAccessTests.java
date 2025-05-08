@@ -1,6 +1,7 @@
 package com.biit.appointment.rest.external;
 
 import com.biit.appointment.core.controllers.UserAvailabilityController;
+import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Schedule;
@@ -36,12 +37,16 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
@@ -159,6 +164,29 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
 
         adminJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertNotNull(adminJwtToken);
+    }
+
+    /**
+     * On google calendar
+     * @throws Exception
+     */
+    @Test(dependsOnMethods = {"setAdminAuthentication"})
+    public void checkAvailabilityGet() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/availabilities/users/me"
+                        + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC)
+                        + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC)
+                        + "/slot-in-minutes/30/slots/3")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<UserAvailabilityDTO> availabilities = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), UserAvailabilityDTO[].class));
+        Assert.assertEquals(availabilities.size(), 3);
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 15)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 45)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
     }
 
 

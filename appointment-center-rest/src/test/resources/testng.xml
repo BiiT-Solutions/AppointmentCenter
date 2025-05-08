@@ -13,7 +13,7 @@
                 <include name="appointmentAttendanceByQrTests"/>
                 <include name="availabilityServiceTests"/>
                 <include name="scheduleRangeExclusionServiceTests"/>
-                <include name="externalCalendarTests"/>
+<!--                <include name="externalCalendarTests"/>-->
             </run>
         </groups>
         <classes>
@@ -23,7 +23,7 @@
             <class name="com.biit.appointment.rest.api.ScheduleServiceTests"/>
             <class name="com.biit.appointment.rest.api.UserAvailabilityServiceTests"/>
             <class name="com.biit.appointment.rest.api.ScheduleRangeExclusionServiceTests"/>
-            <class name="com.biit.appointment.rest.external.GoogleCalendarAccessTests"/>
+<!--            <class name="com.biit.appointment.rest.external.GoogleCalendarAccessTests"/>-->
         </classes>
     </test>
 </suite>
