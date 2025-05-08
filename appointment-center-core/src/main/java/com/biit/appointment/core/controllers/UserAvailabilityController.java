@@ -92,7 +92,7 @@ public class UserAvailabilityController {
         Collections.sort(appointments);
 
         //Get appointments from external sources.
-        appointments.addAll(getExternalCalendarAppointments(userUUID, start, end));
+        //appointments.addAll(getExternalCalendarAppointments(userUUID, start, end));
 
         //Get any schedule exclusions to avoid them.
         final List<ScheduleRangeExclusion> scheduleRangeExclusions = scheduleRangeExclusionProvider.findByUser(userUUID);
