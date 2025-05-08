@@ -90,6 +90,10 @@
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.biit.appointment.google.logger.GoogleCalDAVLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
 
 
     <!-- Default ones -->

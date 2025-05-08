@@ -23,7 +23,7 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     private CalendarProviderDTO calendarProvider;
 
-    private String credentials;
+    private String userCredentials;
 
     @Override
     public Long getId() {
@@ -43,17 +43,17 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
         this.calendarProvider = calendarProvider;
     }
 
-    public String getCredentials() {
-        return credentials;
+    public String getUserCredentials() {
+        return userCredentials;
     }
 
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
+    public void setUserCredentials(String userCredentials) {
+        this.userCredentials = userCredentials;
     }
 
     public void setCredentialData(Object credentials) {
         try {
-            this.credentials = ObjectMapperFactory.getObjectMapper().writeValueAsString(credentials);
+            this.userCredentials = ObjectMapperFactory.getObjectMapper().writeValueAsString(credentials);
         } catch (JsonProcessingException e) {
             AppointmentCenterLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarException(this.getClass(), e);
@@ -61,11 +61,11 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
     }
 
     public <C> C getCredentialData(Class<C> elementClass) {
-        if (getCredentials() != null && !getCredentials().isEmpty()) {
+        if (getUserCredentials() != null && !getUserCredentials().isEmpty()) {
             try {
                 final ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
                 final JavaType elementType = objectMapper.getTypeFactory().constructType(elementClass);
-                return objectMapper.readValue(getCredentials(), elementType);
+                return objectMapper.readValue(getUserCredentials(), elementType);
             } catch (JsonProcessingException e) {
                 AppointmentCenterLogger.errorMessage(this.getClass(), e);
                 throw new ExternalCalendarException(this.getClass(), e);

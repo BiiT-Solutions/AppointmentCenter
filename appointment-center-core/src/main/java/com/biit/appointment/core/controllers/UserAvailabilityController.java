@@ -92,7 +92,7 @@ public class UserAvailabilityController {
         Collections.sort(appointments);
 
         //Get appointments from external sources.
-        //appointments.addAll(getExternalCalendarAppointments(userUUID, start, end));
+        appointments.addAll(getExternalCalendarAppointments(userUUID, start, end));
 
         //Get any schedule exclusions to avoid them.
         final List<ScheduleRangeExclusion> scheduleRangeExclusions = scheduleRangeExclusionProvider.findByUser(userUUID);
@@ -171,6 +171,8 @@ public class UserAvailabilityController {
                 } catch (ExternalCalendarActionException | ExternalCalendarNotFoundException e) {
                     AppointmentCenterLogger.errorMessage(this.getClass(), e);
                 }
+            } else {
+                AppointmentCenterLogger.debug(this.getClass(), "No external calendar provider found for '{}'.", provider.from());
             }
         });
         return appointments;

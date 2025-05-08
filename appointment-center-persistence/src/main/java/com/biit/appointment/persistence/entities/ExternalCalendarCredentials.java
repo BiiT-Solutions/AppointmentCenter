@@ -25,9 +25,9 @@ import java.util.UUID;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "external_calendar_credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "provider"})},
+@Table(name = "external_calendar_credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "provider"})},
         indexes = {
-                @Index(name = "ind_user", columnList = "user"),
+                @Index(name = "ind_user", columnList = "user_id"),
         })
 public class ExternalCalendarCredentials extends Element<Long> {
 
@@ -38,7 +38,7 @@ public class ExternalCalendarCredentials extends Element<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
     @Column(name = "provider", nullable = false)
@@ -46,9 +46,9 @@ public class ExternalCalendarCredentials extends Element<Long> {
     private CalendarProvider calendarProvider;
 
     @Lob
-    @Column(name = "credentials")
+    @Column(name = "user_credentials")
     @Convert(converter = StringCryptoConverter.class)
-    private String credentials;
+    private String userCredentials;
 
     @Override
     public Long getId() {
@@ -68,12 +68,12 @@ public class ExternalCalendarCredentials extends Element<Long> {
         this.calendarProvider = calendarProvider;
     }
 
-    public String getCredentials() {
-        return credentials;
+    public String getUserCredentials() {
+        return userCredentials;
     }
 
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
+    public void setUserCredentials(String credentials) {
+        this.userCredentials = credentials;
     }
 
     public UUID getUserId() {

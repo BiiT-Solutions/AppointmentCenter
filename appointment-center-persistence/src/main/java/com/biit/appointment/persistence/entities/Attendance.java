@@ -17,6 +17,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -30,6 +31,9 @@ import java.util.UUID;
                 @Index(name = "ind_appointment", columnList = "appointment")
         })
 public class Attendance extends Element<Long> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -8435901561876737621L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

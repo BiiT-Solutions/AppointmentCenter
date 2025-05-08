@@ -1,8 +1,11 @@
 package com.biit.appointment.rest.external;
 
 import com.biit.appointment.core.controllers.UserAvailabilityController;
+import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
+import com.biit.appointment.google.client.GoogleClient;
+import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
@@ -13,6 +16,9 @@ import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +39,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,11 +90,16 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
+
     private MockMvc mockMvc;
 
     private String adminJwtToken;
 
     private IAuthenticatedUser admin;
+
+    private Credential credential;
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -123,21 +136,23 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
 
     @BeforeClass
     public void setUserAppointments() {
-        generateAppointment(LocalDateTime.of(today, LocalTime.of(12, 30)), UUID.fromString(admin.getUID()), new HashSet<>());
-        generateAppointment(LocalDateTime.of(today, LocalTime.of(14, 15)), UUID.fromString(admin.getUID()), new HashSet<>());
-        //1 hour free!
-        generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(UUID.fromString(admin.getUID())));
+        generateAppointment(LocalDateTime.of(today, LocalTime.of(9, 00)), UUID.fromString(admin.getUID()), new HashSet<>());
     }
 
     @BeforeClass(dependsOnMethods = "addUser")
     public void generateSchedule() {
         final Schedule schedule = new Schedule();
-        schedule.addRange(new ScheduleRange(DayOfWeek.MONDAY, LocalTime.of(8, 30), LocalTime.of(13, 30)));
-        schedule.addRange(new ScheduleRange(DayOfWeek.MONDAY, LocalTime.of(15, 0), LocalTime.of(20, 0)));
-        schedule.addRange(new ScheduleRange(DayOfWeek.FRIDAY, LocalTime.of(12, 0), LocalTime.of(20, 0)));
+        schedule.addRange(new ScheduleRange(DayOfWeek.MONDAY, LocalTime.of(9, 00), LocalTime.of(13, 30)));
         schedule.setUser(UUID.fromString(admin.getUID()));
 
         scheduleRepository.save(schedule);
+    }
+
+    @BeforeClass(dependsOnMethods = "addUser")
+    public void generateCredentials() throws GeneralSecurityException, IOException {
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        final GoogleClient googleClient = new GoogleClient();
+        credential = googleClient.getCredentials(netHttpTransport);
     }
 
     @Test
@@ -166,16 +181,31 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
         Assert.assertNotNull(adminJwtToken);
     }
 
+    @Test(dependsOnMethods = {"setAdminAuthentication"})
+    public void storeCredentials() throws Exception {
+        ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarCredentialsConverter.
+                convertElement(UUID.fromString(admin.getUID()), credential);
+
+        final MvcResult result = this.mockMvc
+                .perform(post("/external-calendar-credentials")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(externalCalendarCredentialsDTO))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+    }
+
     /**
-     * On google calendar
+     * On google calendar an appointment from 11h to 11h30 exists. So availability must be after 11h30
      * @throws Exception
      */
-    @Test(dependsOnMethods = {"setAdminAuthentication"})
+    @Test(dependsOnMethods = {"storeCredentials"})
     public void checkAvailabilityGet() throws Exception {
         final MvcResult result = this.mockMvc
                 .perform(get("/availabilities/users/me"
-                        + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC)
-                        + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC)
+                        + "/from/" + LocalDateTime.of(today, LocalTime.of(9, 0)).atOffset(ZoneOffset.UTC)
+                        + "/to/" + LocalDateTime.of(today, LocalTime.of(13, 0)).atOffset(ZoneOffset.UTC)
                         + "/slot-in-minutes/30/slots/3")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
@@ -184,9 +214,9 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
 
         final List<UserAvailabilityDTO> availabilities = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), UserAvailabilityDTO[].class));
         Assert.assertEquals(availabilities.size(), 3);
-        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 15)));
-        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 45)));
-        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
+        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(11, 30)));
+        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(12, 0)));
+        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(12, 30)));
     }
 
 
