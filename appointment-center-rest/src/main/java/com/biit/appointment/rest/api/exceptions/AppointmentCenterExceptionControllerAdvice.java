@@ -4,6 +4,7 @@ import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.exceptions.AppointmentTypeNotFoundException;
 import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.ExaminationTypeNotFoundException;
+import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.InvalidFormatException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.InvalidProfessionalSpecializationException;
@@ -137,4 +138,12 @@ public class AppointmentCenterExceptionControllerAdvice extends ServerExceptionC
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_parameter", ex), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ExternalCalendarActionException.class)
+    public ResponseEntity<Object> externalCalendarActionException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "cannot_access_to_external_calendar", ex), HttpStatus.BAD_REQUEST);
+    }
+
+
 }

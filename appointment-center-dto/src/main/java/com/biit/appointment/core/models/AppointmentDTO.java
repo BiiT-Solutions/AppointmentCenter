@@ -55,6 +55,11 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private String infographicTemplate;
 
+    //ID for importing from Google, Microsoft, etc.
+    private String externalReference;
+
+    private CalendarProviderDTO calendarProvider;
+
     @Override
     public Long getId() {
         return id;
@@ -223,6 +228,22 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     public void setInfographicTemplate(String infographicTemplate) {
         this.infographicTemplate = infographicTemplate;
+    }
+
+    public String getExternalReference() {
+        return externalReference;
+    }
+
+    public void setExternalReference(String externalReference) {
+        this.externalReference = externalReference;
+    }
+
+    public CalendarProviderDTO getCalendarProvider() {
+        return calendarProvider;
+    }
+
+    public void setCalendarProvider(CalendarProviderDTO calendarProvider) {
+        this.calendarProvider = calendarProvider;
     }
 
     @Override
