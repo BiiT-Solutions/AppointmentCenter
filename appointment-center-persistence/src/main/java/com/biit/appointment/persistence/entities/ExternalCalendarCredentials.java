@@ -25,9 +25,9 @@ import java.util.UUID;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "external_calendar_credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "provider"})},
+@Table(name = "external_calendar_credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "provider"})},
         indexes = {
-                @Index(name = "ind_user", columnList = "userId"),
+                @Index(name = "ind_user", columnList = "user"),
         })
 public class ExternalCalendarCredentials extends Element<Long> {
 

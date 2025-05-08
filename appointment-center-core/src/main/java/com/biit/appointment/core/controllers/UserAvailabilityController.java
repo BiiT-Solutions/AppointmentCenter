@@ -4,12 +4,15 @@ import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.CalendarProviderConverter;
 import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter;
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
+import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
+import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
 import com.biit.appointment.core.providers.IExternalCalendarProvider;
 import com.biit.appointment.core.providers.ScheduleProvider;
 import com.biit.appointment.core.providers.ScheduleRangeExclusionProvider;
+import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.appointment.persistence.entities.Schedule;
@@ -89,17 +92,7 @@ public class UserAvailabilityController {
         Collections.sort(appointments);
 
         //Get appointments from external sources.
-        final LocalDateTime finalStart = start;
-        final LocalDateTime finalEnd = end;
-        externalCalendarProviders.forEach(provider -> {
-            final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
-                    .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from()));
-            if (externalCalendarCredentials != null) {
-                final List<Appointment> externalAppointments = appointmentConverter.reverseAll(provider.getEvents(finalStart, finalEnd,
-                        externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
-                appointments.addAll(externalAppointments.stream().filter(appointmentDTO -> !appointmentDTO.isDeleted()).toList());
-            }
-        });
+        appointments.addAll(getExternalCalendarAppointments(userUUID, start, end));
 
         //Get any schedule exclusions to avoid them.
         final List<ScheduleRangeExclusion> scheduleRangeExclusions = scheduleRangeExclusionProvider.findByUser(userUUID);
@@ -163,6 +156,26 @@ public class UserAvailabilityController {
         } while (userAvailabilityDTOS.size() < numberOfOptions && days < MAX_DAYS_CHECK);
         return userAvailabilityDTOS;
     }
+
+
+    private List<Appointment> getExternalCalendarAppointments(UUID userUUID, final LocalDateTime start, final LocalDateTime end) {
+        final List<Appointment> appointments = new ArrayList<>();
+        externalCalendarProviders.forEach(provider -> {
+            final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
+                    .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from()));
+            if (externalCalendarCredentials != null) {
+                try {
+                    final List<Appointment> externalAppointments = appointmentConverter.reverseAll(provider.getEvents(start, end,
+                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
+                    appointments.addAll(externalAppointments.stream().filter(appointmentDTO -> !appointmentDTO.isDeleted()).toList());
+                } catch (ExternalCalendarActionException | ExternalCalendarNotFoundException e) {
+                    AppointmentCenterLogger.errorMessage(this.getClass(), e);
+                }
+            }
+        });
+        return appointments;
+    }
+
 
     private Appointment collidesWithAppointment(List<Appointment> appointments, UserAvailabilityDTO slot) {
         return appointments.stream().filter(

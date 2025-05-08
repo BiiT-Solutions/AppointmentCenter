@@ -1,21 +1,16 @@
-package com.biit.appointment.rest.api;
+package com.biit.appointment.rest.external;
 
 import com.biit.appointment.core.controllers.UserAvailabilityController;
-import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
-import com.biit.appointment.persistence.entities.AppointmentType;
-import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
 import com.biit.appointment.persistence.repositories.ScheduleRepository;
 import com.biit.appointment.rest.Server;
-import com.biit.appointment.rest.api.models.AvailabilitySearch;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,29 +32,23 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = Server.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"availabilityServiceTests"})
-public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTests {
+@Test(groups = {"externalCalendarTests"})
+public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
     private final static String JWT_SALT = "4567";
@@ -98,23 +87,6 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
         return objectMapper.writeValueAsString(object);
     }
 
-
-    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
-        return objectMapper.readValue(payload, clazz);
-    }
-
-
-    private <T> List<T> fromJsonList(String payload) throws IOException {
-        return objectMapper.readValue(payload, new TypeReference<>() {
-        });
-    }
-
-
-    public static ExaminationType generateExaminationType(String name, AppointmentType appointmentType) {
-        return new ExaminationType(name, ORGANIZATION_ID, appointmentType);
-    }
-
-
     private Appointment generateAppointment(LocalDateTime onDate, UUID organizer, Set<UUID> attendees) {
         final Appointment appointment = new Appointment();
         appointment.setOrganizer(organizer);
@@ -127,7 +99,6 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
 
         return appointmentProvider.save(appointment);
     }
-
 
     @BeforeClass
     public void setUp() {
@@ -153,7 +124,6 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
         generateAppointment(LocalDateTime.of(today, LocalTime.of(17, 15)), UUID.randomUUID(), Set.of(UUID.fromString(admin.getUID())));
     }
 
-
     @BeforeClass(dependsOnMethods = "addUser")
     public void generateSchedule() {
         final Schedule schedule = new Schedule();
@@ -164,7 +134,6 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
 
         scheduleRepository.save(schedule);
     }
-
 
     @Test
     public void checkAuthentication() {
@@ -190,48 +159,6 @@ public class UserAvailabilityServiceTests extends AbstractTestNGSpringContextTes
 
         adminJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertNotNull(adminJwtToken);
-    }
-
-
-    @Test(dependsOnMethods = {"setAdminAuthentication"})
-    public void checkAvailabilityPost() throws Exception {
-
-        AvailabilitySearch availabilitySearch = new AvailabilitySearch(null, LocalDateTime.of(today, LocalTime.of(12, 20)), LocalDateTime.of(today, LocalTime.of(20, 0)), 30, 3);
-
-        final MvcResult result = this.mockMvc
-                .perform(post("/availabilities/users/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(availabilitySearch))
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        final List<UserAvailabilityDTO> availabilities = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), UserAvailabilityDTO[].class));
-        Assert.assertEquals(availabilities.size(), 3);
-        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 15)));
-        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 45)));
-        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
-    }
-
-
-    @Test(dependsOnMethods = {"setAdminAuthentication"})
-    public void checkAvailabilityGet() throws Exception {
-        final MvcResult result = this.mockMvc
-                .perform(get("/availabilities/users/me"
-                        + "/from/" + LocalDateTime.of(today, LocalTime.of(12, 20)).atOffset(ZoneOffset.UTC)
-                        + "/to/" + LocalDateTime.of(today, LocalTime.of(20, 0)).atOffset(ZoneOffset.UTC)
-                        + "/slot-in-minutes/30/slots/3")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        final List<UserAvailabilityDTO> availabilities = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), UserAvailabilityDTO[].class));
-        Assert.assertEquals(availabilities.size(), 3);
-        Assert.assertEquals(availabilities.get(0).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 15)));
-        Assert.assertEquals(availabilities.get(1).getStartTime(), LocalDateTime.of(today, LocalTime.of(16, 45)));
-        Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(19, 15)));
     }
 
 

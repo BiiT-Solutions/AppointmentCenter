@@ -1,7 +1,13 @@
 package com.biit.appointment.core.models;
 
 
+import com.biit.appointment.core.exceptions.ExternalCalendarException;
+import com.biit.appointment.core.utils.ObjectMapperFactory;
+import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.server.controllers.models.ElementDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serial;
 import java.util.UUID;
@@ -10,7 +16,6 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     @Serial
     private static final long serialVersionUID = -5593134183953887764L;
-
 
     private Long id;
 
@@ -45,6 +50,30 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
     public void setCredentials(String credentials) {
         this.credentials = credentials;
     }
+
+    public void setCredentialData(Object credentials) {
+        try {
+            this.credentials = ObjectMapperFactory.getObjectMapper().writeValueAsString(credentials);
+        } catch (JsonProcessingException e) {
+            AppointmentCenterLogger.errorMessage(this.getClass(), e);
+            throw new ExternalCalendarException(this.getClass(), e);
+        }
+    }
+
+    public <C> C getCredentialData(Class<C> elementClass) {
+        if (getCredentials() != null && !getCredentials().isEmpty()) {
+            try {
+                final ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                final JavaType elementType = objectMapper.getTypeFactory().constructType(elementClass);
+                return objectMapper.readValue(getCredentials(), elementType);
+            } catch (JsonProcessingException e) {
+                AppointmentCenterLogger.errorMessage(this.getClass(), e);
+                throw new ExternalCalendarException(this.getClass(), e);
+            }
+        }
+        return null;
+    }
+
 
     public UUID getUserId() {
         return userId;
