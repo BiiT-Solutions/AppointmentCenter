@@ -43,6 +43,22 @@ public class ExternalAppointmentServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of events within a range.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/from/{start}/to/{end}"}, produces = {"application/json"})
+    public List<AppointmentDTO> get(@Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)",
+                                            example = "2025-01-01T00:00:00.00Z")
+                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                    @PathVariable(name = "start") LocalDateTime start,
+                                    @Parameter(description = "Upper boundary for search. Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)",
+                                            example = "2025-31-01T23:59:59.99Z")
+                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                    @PathVariable(name = "end") LocalDateTime end,
+                                    Authentication authentication, HttpServletRequest request) {
+        return externalCalendarController.getExternalAppointments(authentication.getName(), start, end);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of events within a range.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/{provider}/from/{start}/to/{end}"}, produces = {"application/json"})
     public List<AppointmentDTO> get(@Parameter(description = "Credentials provider.", required = true)
                                     @PathVariable(name = "provider") CalendarProviderDTO calendarProviderDTO,
@@ -57,6 +73,19 @@ public class ExternalAppointmentServices {
                                     Authentication authentication, HttpServletRequest request) {
         return externalCalendarController.getExternalAppointments(authentication.getName(), start, end,
                 calendarProviderDTO);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a number of events starting on a date.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/from/{start}/total/{numberOfEvents}"}, produces = {"application/json"})
+    public List<AppointmentDTO> get(@Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
+                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                    @PathVariable(name = "start") LocalDateTime start,
+                                    @Parameter(description = "Number of events to retrieve.", required = true)
+                                    @PathVariable("numberOfEvents") int numberOfEvents,
+                                    Authentication authentication, HttpServletRequest request) {
+        return externalCalendarController.getExternalAppointments(authentication.getName(), start, numberOfEvents);
     }
 
 

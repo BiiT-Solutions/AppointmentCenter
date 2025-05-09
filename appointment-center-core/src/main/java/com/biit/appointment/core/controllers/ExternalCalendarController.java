@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -68,16 +70,37 @@ public class ExternalCalendarController {
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
+
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime) {
+        final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
+
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+
+        Arrays.stream(CalendarProviderDTO.values()).parallel().forEach(calendarProvider ->
+                appointmentsDTOs.addAll(getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider)));
+        return appointmentsDTOs;
+    }
+
+
     public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, LocalDate rangeEndingTime, CalendarProviderDTO provider) {
         return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), rangeEndingTime.atTime(LocalTime.MAX), provider);
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime, CalendarProviderDTO provider) {
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
+                                                        CalendarProviderDTO provider) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
+        return getExternalAppointments(authenticatedUser.getUID(), rangeStartingTime, rangeEndingTime, provider);
+    }
+
+
+    public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
+                                                        CalendarProviderDTO provider) {
         for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
             if (Objects.equals(externalCalendarProvider.from(), provider)) {
                 final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
@@ -92,6 +115,15 @@ public class ExternalCalendarController {
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
+
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, int numberOfEvents) {
+        final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
+        Arrays.stream(CalendarProviderDTO.values()).parallel().forEach(calendarProvider ->
+                appointmentsDTOs.addAll(getExternalAppointments(username, rangeStartingTime, numberOfEvents, calendarProvider)));
+        return appointmentsDTOs;
+    }
+
+
     public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider) {
         return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), numberOfEvents, provider);
     }
@@ -102,6 +134,11 @@ public class ExternalCalendarController {
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
+        return getExternalAppointments(authenticatedUser, rangeStartingTime, numberOfEvents, provider);
+    }
+
+
+    public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider) {
         for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
             if (Objects.equals(externalCalendarProvider.from(), provider)) {
                 final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
