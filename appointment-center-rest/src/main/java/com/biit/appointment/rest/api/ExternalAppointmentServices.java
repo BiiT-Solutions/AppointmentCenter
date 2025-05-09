@@ -79,7 +79,8 @@ public class ExternalAppointmentServices {
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a number of events starting on a date.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/from/{start}/total/{numberOfEvents}"}, produces = {"application/json"})
-    public List<AppointmentDTO> get(@Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
+    public List<AppointmentDTO> get(@Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)",
+                                            example = "2025-01-01T00:00:00.00Z")
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                     @PathVariable(name = "start") LocalDateTime start,
                                     @Parameter(description = "Number of events to retrieve.", required = true)
@@ -94,7 +95,8 @@ public class ExternalAppointmentServices {
     @GetMapping(value = {"/{provider}/from/{start}/total/{numberOfEvents}"}, produces = {"application/json"})
     public List<AppointmentDTO> get(@Parameter(description = "Credentials provider.", required = true)
                                     @PathVariable(name = "provider") CalendarProviderDTO calendarProviderDTO,
-                                    @Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)", example = "2025-01-01T00:00:00.00Z")
+                                    @Parameter(description = "Lower boundary for search.  Format ISO 8601 (yyyy-MM-ddTHH:mm:ssZ)",
+                                            example = "2025-01-01T00:00:00.00Z")
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                     @PathVariable(name = "start") LocalDateTime start,
                                     @Parameter(description = "Number of events to retrieve.", required = true)

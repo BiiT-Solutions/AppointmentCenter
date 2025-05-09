@@ -95,7 +95,7 @@ public class ExternalCalendarController {
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
-        return getExternalAppointments(authenticatedUser.getUID(), rangeStartingTime, rangeEndingTime, provider);
+        return getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, provider);
     }
 
 
@@ -138,7 +138,8 @@ public class ExternalCalendarController {
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider) {
+    public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, int numberOfEvents,
+                                                        CalendarProviderDTO provider) {
         for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
             if (Objects.equals(externalCalendarProvider.from(), provider)) {
                 final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
