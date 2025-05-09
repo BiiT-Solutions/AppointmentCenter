@@ -160,7 +160,7 @@ public class UserAvailabilityController {
 
     private List<Appointment> getExternalCalendarAppointments(UUID userUUID, final LocalDateTime start, final LocalDateTime end) {
         final List<Appointment> appointments = new ArrayList<>();
-        externalCalendarProviders.forEach(provider -> {
+        externalCalendarProviders.parallelStream().forEach(provider -> {
             final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
                     .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from()));
             if (externalCalendarCredentials != null) {

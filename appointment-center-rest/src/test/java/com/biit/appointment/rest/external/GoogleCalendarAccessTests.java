@@ -1,6 +1,7 @@
 package com.biit.appointment.rest.external;
 
 import com.biit.appointment.core.controllers.UserAvailabilityController;
+import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
@@ -103,6 +104,8 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
     private IAuthenticatedUser admin;
 
     private Credential credential;
+
+    private AppointmentDTO googleAppointment;
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -223,5 +226,62 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(availabilities.get(2).getStartTime(), LocalDateTime.of(today, LocalTime.of(12, 30)));
     }
 
+
+    /**
+     * On google calendar a recursive appointment from 11h to 11h30 exists.
+     *
+     * @throws Exception
+     */
+    @Test(dependsOnMethods = {"storeCredentials"})
+    public void getByRange() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/appointments/external-providers/GOOGLE"
+                        + "/from/" + LocalDateTime.of(today, LocalTime.of(0, 0)).atOffset(ZoneOffset.UTC)
+                        + "/to/" + LocalDateTime.of(today, LocalTime.of(23, 59)).atOffset(ZoneOffset.UTC))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> appointmentsOnGoogle = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(appointmentsOnGoogle.size(), 1);
+        googleAppointment = appointmentsOnGoogle.get(0);
+    }
+
+
+    /**
+     * On google calendar a recursive appointment from 11h to 11h30 exists.
+     *
+     * @throws Exception
+     */
+    @Test(dependsOnMethods = {"storeCredentials"})
+    public void getByRangeAndTotal() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/appointments/external-providers/GOOGLE"
+                        + "/from/" + LocalDateTime.of(today, LocalTime.of(0, 0)).atOffset(ZoneOffset.UTC)
+                        + "/total/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> appointmentsOnGoogle = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(appointmentsOnGoogle.size(), 1);
+    }
+
+
+    @Test(dependsOnMethods = {"getByRange"})
+    public void getAppointmentByExternalRefererence() throws Exception {
+        final MvcResult result = this.mockMvc
+                .perform(get("/appointments/external-providers/GOOGLE"
+                        + "/external-references/" + googleAppointment.getExternalReference())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final AppointmentDTO appointmentOnGoogle = objectMapper.readValue(result.getResponse().getContentAsString(), AppointmentDTO.class);
+        Assert.assertNotNull(appointmentOnGoogle);
+    }
 
 }
