@@ -40,4 +40,9 @@ public class ExternalCalendarCredentialsController extends ElementController<Ext
         return convert(getProvider().getByUserIdAndCalendarProvider(userId, calendarProviderConverter.reverse(calendarProvider)));
     }
 
+    @Override
+    public void delete(UUID userId, CalendarProviderDTO calendarProvider) {
+        getProvider().getByUserIdAndCalendarProvider(userId, calendarProviderConverter.reverse(calendarProvider));
+    }
+
 }
