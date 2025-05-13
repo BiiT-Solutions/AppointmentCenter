@@ -17,7 +17,7 @@ import java.util.UUID;
 @Controller
 public class ExternalCalendarCredentialsController extends ElementController<ExternalCalendarCredentials, Long, ExternalCalendarCredentialsDTO,
         ExternalCalendarCredentialsRepository, ExternalCalendarCredentialsProvider, ExternalCalendarCredentialsConverterRequest,
-        ExternalCalendarCredentialsConverter> {
+        ExternalCalendarCredentialsConverter> implements IExternalCredentialsController {
 
     private final CalendarProviderConverter calendarProviderConverter;
 

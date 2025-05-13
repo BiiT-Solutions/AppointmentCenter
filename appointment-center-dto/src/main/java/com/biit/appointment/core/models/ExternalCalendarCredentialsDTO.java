@@ -25,6 +25,16 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     private String userCredentials;
 
+    public ExternalCalendarCredentialsDTO() {
+        super();
+    }
+
+    public ExternalCalendarCredentialsDTO(UUID userId, CalendarProviderDTO calendarProvider) {
+        this();
+        this.userId = userId;
+        this.calendarProvider = calendarProvider;
+    }
+
     @Override
     public Long getId() {
         return id;
