@@ -2,7 +2,7 @@ package com.biit.appointment.core.models;
 
 
 import com.biit.appointment.core.exceptions.InvalidFormatException;
-import com.biit.appointment.persistence.values.ImageFormat;
+import com.biit.appointment.core.values.ImageFormat;
 import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
