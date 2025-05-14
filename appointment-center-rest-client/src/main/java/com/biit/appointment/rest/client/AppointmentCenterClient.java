@@ -4,7 +4,6 @@ package com.biit.appointment.rest.client;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.IAppointmentCenterRestClient;
 import com.biit.appointment.logger.AppointmentCenterClientLogger;
-import com.biit.rest.exceptions.EmptyResultException;
 import com.biit.rest.exceptions.InvalidResponseException;
 import com.biit.server.client.SecurityClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
