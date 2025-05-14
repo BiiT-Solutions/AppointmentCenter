@@ -250,13 +250,8 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
                                 matchingDate.atTime(recurrence.getAppointments().get(0).getStartTime().toLocalTime())));
                     }
                 }
-            );
-/*            //Add all extra appointments defined by the user.
-            if (recurrence.getAppointments() != null && recurrence.getAppointments().size() > 1) {
-                //The first appointment is the source. Already included.
-                appointments.addAll(recurrence.getAppointments().subList(1, recurrence.getAppointments().size()));
-            }*/
-        });
+            })
+        );
         Collections.sort(appointments);
         return appointments;
     }
