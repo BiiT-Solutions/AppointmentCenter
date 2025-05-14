@@ -16,6 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.DispatcherServlet;
         "com.biit.kafka", "com.biit.database.encryption"})
 @ConfigurationPropertiesScan({"com.biit.appointment.rest", "com.biit.server.time"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
+@EnableScheduling
 public class ServicesServer {
     private static final int POOL_SIZE = 20;
     private static final int MAX_POOL_SIZE = 100;

@@ -27,4 +27,6 @@ public interface IExternalCalendarProvider {
 
     void deleteEvent(AppointmentDTO appointmentDTO, ExternalCalendarCredentialsDTO credentials)
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException;
+
+    ExternalCalendarCredentialsDTO updateToken(ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO);
 }

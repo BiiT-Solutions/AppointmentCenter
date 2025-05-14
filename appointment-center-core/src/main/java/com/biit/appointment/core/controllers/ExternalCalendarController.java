@@ -8,11 +8,13 @@ import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
 import com.biit.appointment.core.providers.IExternalCalendarProvider;
+import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.exceptions.ActionNotAllowedException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
@@ -26,7 +28,7 @@ import java.util.UUID;
 
 @Controller
 public class ExternalCalendarController {
-
+    private static final int REFRESHING_TOKEN_INTERVAL = 1800;
     private final List<IExternalCalendarProvider> externalCalendarProviders;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
     private final CalendarProviderConverter calendarProviderConverter;
@@ -155,10 +157,34 @@ public class ExternalCalendarController {
     }
 
     private void updateExternalCalendarControllerThatExpires(LocalDateTime expiresAt) {
-        final List<ExternalCalendarCredentials> credentialsToExpire = externalCalendarCredentialsProvider.findByExpiresAtAfter(expiresAt);
+        final List<ExternalCalendarCredentials> credentialsToExpire = externalCalendarCredentialsProvider.findByExpiresAtBefore(expiresAt);
+        if (!credentialsToExpire.isEmpty()) {
+            AppointmentCenterLogger.info(this.getClass(), "Updating '{}' tokens.", credentialsToExpire.size());
+        }
         credentialsToExpire.parallelStream().forEach(externalCalendarCredentials -> {
-
+            for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
+                if (Objects.equals(calendarProviderConverter.reverse(externalCalendarProvider.from()), externalCalendarCredentials.getProvider())) {
+                    try {
+                        AppointmentCenterLogger.info(this.getClass(), "Updating token for user '{}' and provider '{}'.",
+                                externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                        final ExternalCalendarCredentials refreshedExternalCalendarCredentials = externalCalendarCredentialsConverter.reverse(
+                                externalCalendarProvider.updateToken(externalCalendarCredentialsConverter
+                                        .convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
+                        externalCalendarCredentialsProvider.delete(externalCalendarCredentials);
+                        externalCalendarCredentialsProvider.save(refreshedExternalCalendarCredentials);
+                    } catch (Exception e) {
+                        AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
+                                externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                        AppointmentCenterLogger.errorMessage(this.getClass(), e);
+                    }
+                }
+            }
         });
     }
 
+    @Scheduled(fixedRate = REFRESHING_TOKEN_INTERVAL, initialDelay = 0)
+    public void scheduleRefreshTokens() {
+        AppointmentCenterLogger.info(this.getClass(), "Refreshing external calendar tokens...");
+        updateExternalCalendarControllerThatExpires(LocalDateTime.now());
+    }
 }

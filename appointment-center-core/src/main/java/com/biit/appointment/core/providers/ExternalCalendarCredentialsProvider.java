@@ -28,5 +28,9 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
         return getRepository().findByExpiresAtAfter(expiresAt);
     }
 
+    public List<ExternalCalendarCredentials> findByExpiresAtBefore(LocalDateTime expiresAt) {
+        return getRepository().findByExpiresAtAfter(expiresAt);
+    }
+
 
 }
