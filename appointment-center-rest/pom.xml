@@ -42,6 +42,10 @@
             <artifactId>user-manager-system-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>google-calendar</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
@@ -111,11 +115,6 @@
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
             <version>4.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.biit.appointment</groupId>
-            <artifactId>google-calendar</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
