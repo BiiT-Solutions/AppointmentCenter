@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
@@ -24,6 +25,8 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
     private CalendarProviderDTO calendarProvider;
 
     private String userCredentials;
+
+    private LocalDateTime expiresAt;
 
     public ExternalCalendarCredentialsDTO() {
         super();
@@ -91,5 +94,21 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    public CalendarProviderDTO getCalendarProvider() {
+        return calendarProvider;
+    }
+
+    public void setCalendarProvider(CalendarProviderDTO calendarProvider) {
+        this.calendarProvider = calendarProvider;
     }
 }

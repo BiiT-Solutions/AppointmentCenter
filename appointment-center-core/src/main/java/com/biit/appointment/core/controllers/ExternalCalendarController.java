@@ -154,4 +154,11 @@ public class ExternalCalendarController {
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
+    private void updateExternalCalendarControllerThatExpires(LocalDateTime expiresAt) {
+        final List<ExternalCalendarCredentials> credentialsToExpire = externalCalendarCredentialsProvider.findByExpiresAtAfter(expiresAt);
+        credentialsToExpire.parallelStream().forEach(externalCalendarCredentials -> {
+
+        });
+    }
+
 }

@@ -7,6 +7,8 @@ import com.biit.appointment.persistence.repositories.ExternalCalendarCredentials
 import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,4 +23,10 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
     public ExternalCalendarCredentials getByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
         return getRepository().findByUserIdAndCalendarProvider(userId, calendarProvider);
     }
+
+    public List<ExternalCalendarCredentials> findByExpiresAtAfter(LocalDateTime expiresAt) {
+        return getRepository().findByExpiresAtAfter(expiresAt);
+    }
+
+
 }

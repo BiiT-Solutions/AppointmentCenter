@@ -20,6 +20,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -49,6 +50,9 @@ public class ExternalCalendarCredentials extends Element<Long> {
     @Column(name = "user_credentials")
     @Convert(converter = StringCryptoConverter.class)
     private String userCredentials;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
 
     @Override
     public Long getId() {
@@ -82,5 +86,21 @@ public class ExternalCalendarCredentials extends Element<Long> {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public CalendarProvider getCalendarProvider() {
+        return calendarProvider;
+    }
+
+    public void setCalendarProvider(CalendarProvider calendarProvider) {
+        this.calendarProvider = calendarProvider;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
