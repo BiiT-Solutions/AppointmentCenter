@@ -25,10 +25,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ExternalCalendarController {
-    private static final int REFRESHING_TOKEN_INTERVAL = 1800;
+    private static final int REFRESHING_TOKEN_INTERVAL = 1800000;
     private final List<IExternalCalendarProvider> externalCalendarProviders;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
     private final CalendarProviderConverter calendarProviderConverter;
@@ -182,7 +183,7 @@ public class ExternalCalendarController {
         });
     }
 
-    @Scheduled(fixedRate = REFRESHING_TOKEN_INTERVAL, initialDelay = 0)
+    @Scheduled(fixedRate = REFRESHING_TOKEN_INTERVAL, timeUnit = TimeUnit.SECONDS, initialDelay = 0)
     public void scheduleRefreshTokens() {
         AppointmentCenterLogger.info(this.getClass(), "Refreshing external calendar tokens...");
         updateExternalCalendarControllerThatExpires(LocalDateTime.now());
