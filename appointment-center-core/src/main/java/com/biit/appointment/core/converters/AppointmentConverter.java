@@ -49,7 +49,7 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
             return new ArrayList<>();
         }
         return from.stream().map(this::convert).sorted(Comparator.comparing(AppointmentDTO::getStartTime,
-                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+                Comparator.nullsFirst(Comparator.naturalOrder()))).toList();
     }
 
     @Override
@@ -72,18 +72,18 @@ public class AppointmentConverter extends ElementConverter<Appointment, Appointm
         try {
             if (from.getCustomProperties() != null) {
                 customProperties = customPropertyConverter.convertAll(from.getCustomProperties().stream()
-                        .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
+                        .map(CustomPropertyConverterRequest::new).toList());
             } else {
                 if (from.getEntity().getCustomProperties() != null) {
                     customProperties = customPropertyConverter.convertAll(from.getEntity().getCustomProperties().stream()
-                            .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
+                            .map(CustomPropertyConverterRequest::new).toList());
                 } else {
                     customProperties = new ArrayList<>();
                 }
             }
         } catch (LazyInitializationException e) {
             customProperties = customPropertyConverter.convertAll(customPropertyProvider.findByAppointment(from.getEntity()).stream()
-                    .map(CustomPropertyConverterRequest::new).collect(Collectors.toList()));
+                    .map(CustomPropertyConverterRequest::new).toList());
         }
 
         appointmentDTO.setCustomProperties(customProperties);

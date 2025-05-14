@@ -490,7 +490,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     }
 
 
-    public AppointmentDTO unattend(Long appointmentId, UUID userUUID, String createdBy) {
+    public AppointmentDTO unattend(Long appointmentId, UUID userUUID) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUID(userUUID.toString()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with UUID '" + userUUID + "'."));
 

@@ -33,7 +33,7 @@ public class RecurrenceConverter extends ElementConverter<Recurrence, Recurrence
         final RecurrenceDTO recurrenceDTO = new RecurrenceDTO();
         BeanUtils.copyProperties(from.getEntity(), recurrenceDTO);
         recurrenceDTO.setAppointments(new HashSet<>(appointmentConverter.convertAll(from.getEntity().getAppointments().stream()
-                .map(AppointmentConverterRequest::new).collect(Collectors.toList()))));
+                .map(AppointmentConverterRequest::new).toList())));
         recurrenceDTO.setExaminationType(examinationTypeConverter.convertElement(new ExaminationTypeConverterRequest(from.getEntity().getExaminationType())));
         return recurrenceDTO;
     }

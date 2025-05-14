@@ -13,6 +13,8 @@ import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "appointment_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})},
@@ -103,10 +105,7 @@ public class AppointmentType extends Element<Long> implements Comparable<Appoint
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (organizationId != other.organizationId) {
-            return false;
-        }
-        return true;
+        return Objects.equals(organizationId, other.organizationId);
     }
 
     @Override

@@ -28,9 +28,5 @@ public class EventController {
         EventsLogger.debug(this.getClass(), "Received event '{}' on topic '{}', group '{}', key '{}', partition '{}' at '{}'",
                 event, topic, groupId, key, partition, LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp),
                         TimeZone.getDefault().toZoneId()));
-
-//        final String createdBy = event.getCustomProperties().get(EventCustomProperties.ISSUER.getTag()) != null
-//                ? event.getCustomProperties().get(EventCustomProperties.ISSUER.getTag())
-//                : event.getCreatedBy();
     }
 }

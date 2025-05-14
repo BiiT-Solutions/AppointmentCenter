@@ -411,7 +411,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
             appointment.setSpeakers(new HashSet<>(sourceAppointment.getSpeakers()));
         }
 
-        final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).collect(Collectors.toList());
+        final List<CustomProperty> customProperties = appointment.getCustomProperties().stream().map(CustomProperty::copy).toList();
         customProperties.forEach(customProperty -> customProperty.setAppointment(appointment));
         appointment.setCustomProperties(customProperties);
         final Set<Attendance> attendances = appointment.getAttendances().stream().map(Attendance::copy).collect(Collectors.toSet());

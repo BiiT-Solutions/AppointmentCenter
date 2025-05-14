@@ -157,7 +157,7 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
                          @Parameter(description = "Id of an existing attendee", required = true)
                          @PathVariable("attendeeUUID") UUID attendeeUUID,
                          Authentication authentication, HttpServletRequest request) {
-        getController().unattend(appointmentId, attendeeUUID, authentication.getName());
+        getController().unattend(appointmentId, attendeeUUID);
     }
 
 

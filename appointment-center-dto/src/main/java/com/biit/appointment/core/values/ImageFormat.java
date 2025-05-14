@@ -1,4 +1,4 @@
-package com.biit.appointment.persistence.values;
+package com.biit.appointment.core.values;
 
 public enum ImageFormat {
     RAW,

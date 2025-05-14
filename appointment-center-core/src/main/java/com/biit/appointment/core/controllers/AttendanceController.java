@@ -144,7 +144,7 @@ public class AttendanceController extends ElementController<Attendance, Long, At
     }
 
 
-    public void unattend(Long appointmentId, UUID userUUID, String createdBy) {
+    public void unattend(Long appointmentId, UUID userUUID) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUID(userUUID.toString()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found with UUID '" + userUUID + "'."));
 

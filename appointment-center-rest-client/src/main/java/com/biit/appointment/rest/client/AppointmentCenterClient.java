@@ -53,8 +53,6 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
             }
         } catch (JsonProcessingException e) {
             throw new InvalidResponseException(e);
-        } catch (EmptyResultException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -78,8 +76,6 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
             }
         } catch (JsonProcessingException e) {
             throw new InvalidResponseException(e);
-        } catch (EmptyResultException e) {
-            throw new RuntimeException(e);
         }
     }
 }

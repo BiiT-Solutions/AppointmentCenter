@@ -445,6 +445,6 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                    @Parameter(description = "Id of an existing attendee", required = true)
                                    @PathVariable("attendeeUUID") UUID attendeeUUID,
                                    Authentication authentication, HttpServletRequest request) {
-        return getController().unattend(appointmentId, attendeeUUID, authentication.getName());
+        return getController().unattend(appointmentId, attendeeUUID);
     }
 }

@@ -266,7 +266,7 @@ public class Schedule extends Element<Long> {
 
     public List<ScheduleRange> getRange(DayOfWeek dayOfWeek) {
         if (this.ranges != null && !this.ranges.isEmpty()) {
-            return this.ranges.stream().filter(scheduleRange -> scheduleRange.getDayOfWeek().equals(dayOfWeek)).collect(Collectors.toList());
+            return this.ranges.stream().filter(scheduleRange -> scheduleRange.getDayOfWeek().equals(dayOfWeek)).toList();
         }
         return List.of(new ScheduleRange(dayOfWeek, DEFAULT_START_TIME, DEFAULT_END_TIME));
     }

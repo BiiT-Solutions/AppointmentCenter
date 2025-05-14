@@ -49,7 +49,7 @@ public enum AppointmentStatus {
      * @return a list of AppointmentStatus.
      */
     public static List<AppointmentStatus> getAllStatusSmallerThan(AppointmentStatus status) {
-        final List<AppointmentStatus> statusList = new ArrayList<AppointmentStatus>();
+        final List<AppointmentStatus> statusList = new ArrayList<>();
         for (final AppointmentStatus compareStatus : AppointmentStatus.values()) {
             if (!compareStatus.isStatusPassed(status)) {
                 statusList.add(compareStatus);
@@ -61,7 +61,7 @@ public enum AppointmentStatus {
     }
 
     public static List<AppointmentStatus> getAllStatusEqualOrHigherThan(AppointmentStatus status) {
-        final List<AppointmentStatus> statusList = new ArrayList<AppointmentStatus>();
+        final List<AppointmentStatus> statusList = new ArrayList<>();
         for (final AppointmentStatus compareStatus : AppointmentStatus.values()) {
             if (compareStatus.isStatusPassed(status)) {
                 statusList.add(compareStatus);
