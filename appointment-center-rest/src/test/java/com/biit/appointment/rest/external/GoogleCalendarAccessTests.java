@@ -5,7 +5,7 @@ import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
-import com.biit.appointment.google.client.GoogleClient;
+import com.biit.appointment.google.client.GoogleClientProvider;
 import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Schedule;
@@ -157,7 +157,7 @@ public class GoogleCalendarAccessTests extends AbstractTestNGSpringContextTests 
     @BeforeClass(dependsOnMethods = "addUser")
     public void generateCredentials() throws GeneralSecurityException, IOException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        final GoogleClient googleClient = new GoogleClient();
+        final GoogleClientProvider googleClient = new GoogleClientProvider();
         credential = googleClient.getCredentials(netHttpTransport);
     }
 

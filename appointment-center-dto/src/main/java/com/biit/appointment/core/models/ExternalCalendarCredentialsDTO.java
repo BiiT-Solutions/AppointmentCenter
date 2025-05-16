@@ -113,6 +113,9 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
     }
 
     public boolean hasExpired() {
+        if (expiresAt == null) {
+            return false;
+        }
         return LocalDateTime.now().isAfter(expiresAt);
     }
 }

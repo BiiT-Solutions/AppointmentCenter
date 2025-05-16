@@ -105,6 +105,9 @@ public class ExternalCalendarCredentials extends Element<Long> {
     }
 
     public boolean hasExpired() {
+        if (expiresAt == null) {
+            return false;
+        }
         return LocalDateTime.now().isAfter(expiresAt);
     }
 }
