@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CalendarProviderConverter {
 
-    protected CalendarProviderDTO convertElement(CalendarProvider from) {
+    public CalendarProviderDTO convertElement(CalendarProvider from) {
         switch (from) {
             case APPLE -> {
                 return CalendarProviderDTO.APPLE;

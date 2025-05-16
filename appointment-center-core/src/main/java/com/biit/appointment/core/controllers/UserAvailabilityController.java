@@ -6,15 +6,15 @@ import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
 import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
+import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
-import com.biit.appointment.core.providers.IExternalCalendarProvider;
 import com.biit.appointment.core.providers.ScheduleProvider;
 import com.biit.appointment.core.providers.ScheduleRangeExclusionProvider;
+import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.Appointment;
-import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
 import com.biit.appointment.persistence.entities.ScheduleRangeExclusion;
@@ -45,7 +45,8 @@ public class UserAvailabilityController {
     private final IAuthenticatedUserProvider authenticatedUserProvider;
     private final ScheduleRangeExclusionProvider scheduleRangeExclusionProvider;
 
-    private final List<IExternalCalendarProvider> externalCalendarProviders;
+    private final List<IExternalProviderCalendarService> externalCalendarControllers;
+    private final ExternalCalendarCredentialsController externalCalendarCredentialsController;
     private final ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
 
@@ -53,7 +54,8 @@ public class UserAvailabilityController {
                                       CalendarProviderConverter calendarProviderConverter,
                                       ScheduleProvider scheduleProvider, IAuthenticatedUserProvider authenticatedUserProvider,
                                       ScheduleRangeExclusionProvider scheduleRangeExclusionProvider,
-                                      List<IExternalCalendarProvider> externalCalendarProviders,
+                                      List<IExternalProviderCalendarService> externalCalendarControllers,
+                                      ExternalCalendarCredentialsController externalCalendarCredentialsController,
                                       ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider,
                                       ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter) {
         this.appointmentProvider = appointmentProvider;
@@ -62,7 +64,8 @@ public class UserAvailabilityController {
         this.scheduleProvider = scheduleProvider;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.scheduleRangeExclusionProvider = scheduleRangeExclusionProvider;
-        this.externalCalendarProviders = externalCalendarProviders;
+        this.externalCalendarControllers = externalCalendarControllers;
+        this.externalCalendarCredentialsController = externalCalendarCredentialsController;
         this.externalCalendarCredentialsProvider = externalCalendarCredentialsProvider;
         this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
     }
@@ -160,13 +163,15 @@ public class UserAvailabilityController {
 
     private List<Appointment> getExternalCalendarAppointments(UUID userUUID, final LocalDateTime start, final LocalDateTime end) {
         final List<Appointment> appointments = new ArrayList<>();
-        externalCalendarProviders.parallelStream().forEach(provider -> {
-            final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
-                    .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from()));
+        externalCalendarControllers.parallelStream().forEach(provider -> {
+            final ExternalCalendarCredentialsDTO externalCalendarCredentials = externalCalendarCredentialsProvider
+                    .refreshIfExpired(externalCalendarCredentialsConverter.convert(
+                            new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
+                                    .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from())))));
             if (externalCalendarCredentials != null) {
                 try {
                     final List<Appointment> externalAppointments = appointmentConverter.reverseAll(provider.getEvents(start, end,
-                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
+                            externalCalendarCredentials));
                     appointments.addAll(externalAppointments.stream().filter(appointmentDTO -> !appointmentDTO.isDeleted()).toList());
                 } catch (ExternalCalendarActionException | ExternalCalendarNotFoundException e) {
                     AppointmentCenterLogger.errorMessage(this.getClass(), e);

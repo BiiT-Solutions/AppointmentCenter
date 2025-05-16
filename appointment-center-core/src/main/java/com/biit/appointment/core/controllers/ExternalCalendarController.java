@@ -6,14 +6,16 @@ import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsCo
 import com.biit.appointment.core.exceptions.AppointmentNotFoundException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.CalendarProviderDTO;
+import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
-import com.biit.appointment.core.providers.IExternalCalendarProvider;
+import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.exceptions.ActionNotAllowedException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -26,43 +28,49 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Controller
 public class ExternalCalendarController {
-    private static final int REFRESHING_TOKEN_INTERVAL = 1800000;
-    private final List<IExternalCalendarProvider> externalCalendarProviders;
-    private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
-    private final CalendarProviderConverter calendarProviderConverter;
+    private static final int REFRESHING_TOKEN_INTERVAL = 24 * 60 * 60;
+
+    private final List<IExternalProviderCalendarService> externalCalendarControllers;
     private final ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider;
     private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
+    private final CalendarProviderConverter calendarProviderConverter;
+
+    @Value("${token.refresh.interval.days:5}")
+    private int refreshIntervalDays;
 
 
-    public ExternalCalendarController(List<IExternalCalendarProvider> externalCalendarProviders,
-                                      ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter,
-                                      CalendarProviderConverter calendarProviderConverter,
+    public ExternalCalendarController(List<IExternalProviderCalendarService> externalCalendarControllers,
                                       ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider,
-                                      IAuthenticatedUserProvider authenticatedUserProvider) {
-        this.externalCalendarProviders = externalCalendarProviders;
-        this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
-        this.calendarProviderConverter = calendarProviderConverter;
+                                      IAuthenticatedUserProvider authenticatedUserProvider,
+                                      ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter,
+                                      CalendarProviderConverter calendarProviderConverter) {
+        this.externalCalendarControllers = externalCalendarControllers;
         this.externalCalendarCredentialsProvider = externalCalendarCredentialsProvider;
         this.authenticatedUserProvider = authenticatedUserProvider;
+        this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
+        this.calendarProviderConverter = calendarProviderConverter;
     }
 
 
-    public AppointmentDTO getExternalAppointment(String username, String externalReference, CalendarProviderDTO provider) {
+    public AppointmentDTO getExternalAppointment(String username, String externalReference, CalendarProviderDTO provider, String requestedBy) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
-        for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
-            if (Objects.equals(externalCalendarProvider.from(), provider)) {
-                final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
-                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
-                                calendarProviderConverter.reverse(externalCalendarProvider.from()));
+        for (IExternalProviderCalendarService externalCalendarController : externalCalendarControllers) {
+            if (Objects.equals(externalCalendarController.from(), provider)) {
+                ExternalCalendarCredentialsDTO externalCalendarCredentials = externalCalendarCredentialsConverter.convert(
+                        new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
+                                .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
+                                        calendarProviderConverter.reverse(externalCalendarController.from()))));
                 if (externalCalendarCredentials != null) {
-                    final AppointmentDTO appointmentDTO = externalCalendarProvider.getEvent(externalReference,
-                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials)));
+                    externalCalendarCredentials = externalCalendarCredentialsProvider.refreshIfExpired(externalCalendarCredentials);
+                    final AppointmentDTO appointmentDTO = externalCalendarController.getEvent(externalReference, externalCalendarCredentials);
                     if (appointmentDTO == null) {
                         throw new AppointmentNotFoundException(this.getClass(), "No appointment found for '" + externalReference + "'.");
                     }
@@ -74,7 +82,8 @@ public class ExternalCalendarController {
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime) {
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
+                                                        String requestedBy) {
         final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
 
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
@@ -82,36 +91,38 @@ public class ExternalCalendarController {
                         "No user with username '" + username + "' found!"));
 
         Arrays.stream(CalendarProviderDTO.values()).parallel().forEach(calendarProvider ->
-                appointmentsDTOs.addAll(getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider)));
+                appointmentsDTOs.addAll(getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider, requestedBy)));
         return appointmentsDTOs;
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, LocalDate rangeEndingTime, CalendarProviderDTO provider) {
-        return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), rangeEndingTime.atTime(LocalTime.MAX), provider);
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, LocalDate rangeEndingTime, CalendarProviderDTO provider,
+                                                        String requestedBy) {
+        return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), rangeEndingTime.atTime(LocalTime.MAX), provider, requestedBy);
     }
 
 
     public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
-                                                        CalendarProviderDTO provider) {
+                                                        CalendarProviderDTO provider, String requestedBy) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
-        return getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, provider);
+        return getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, provider, requestedBy);
     }
 
 
     public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
-                                                        CalendarProviderDTO provider) {
-        for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
-            if (Objects.equals(externalCalendarProvider.from(), provider)) {
-                final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
-                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
-                                calendarProviderConverter.reverse(externalCalendarProvider.from()));
+                                                        CalendarProviderDTO provider, String requestedBy) {
+        for (IExternalProviderCalendarService externalCalendarController : externalCalendarControllers) {
+            if (Objects.equals(externalCalendarController.from(), provider)) {
+                final ExternalCalendarCredentialsDTO externalCalendarCredentials =
+                        externalCalendarCredentialsConverter.convert(
+                                new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
+                                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
+                                                calendarProviderConverter.reverse(externalCalendarController.from()))));
                 if (externalCalendarCredentials != null) {
-                    return externalCalendarProvider.getEvents(rangeStartingTime, rangeEndingTime,
-                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials)));
+                    return externalCalendarController.getEvents(rangeStartingTime, rangeEndingTime, externalCalendarCredentials);
                 }
             }
         }
@@ -119,73 +130,65 @@ public class ExternalCalendarController {
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, int numberOfEvents) {
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, int numberOfEvents, String requestedBy) {
         final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
         Arrays.stream(CalendarProviderDTO.values()).parallel().forEach(calendarProvider ->
-                appointmentsDTOs.addAll(getExternalAppointments(username, rangeStartingTime, numberOfEvents, calendarProvider)));
+                appointmentsDTOs.addAll(getExternalAppointments(username, rangeStartingTime, numberOfEvents, calendarProvider, requestedBy)));
         return appointmentsDTOs;
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider) {
-        return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), numberOfEvents, provider);
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDate rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider,
+                                                        String requestedBy) {
+        return getExternalAppointments(username, rangeStartingTime.atStartOfDay(), numberOfEvents, provider, requestedBy);
     }
 
 
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider) {
+    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, int numberOfEvents, CalendarProviderDTO provider,
+                                                        String requestedBy) {
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
-        return getExternalAppointments(authenticatedUser, rangeStartingTime, numberOfEvents, provider);
+        return getExternalAppointments(authenticatedUser, rangeStartingTime, numberOfEvents, provider, requestedBy);
     }
 
 
     public List<AppointmentDTO> getExternalAppointments(IAuthenticatedUser authenticatedUser, LocalDateTime rangeStartingTime, int numberOfEvents,
-                                                        CalendarProviderDTO provider) {
-        for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
-            if (Objects.equals(externalCalendarProvider.from(), provider)) {
-                final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
-                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
-                                calendarProviderConverter.reverse(externalCalendarProvider.from()));
+                                                        CalendarProviderDTO provider, String requestedBy) {
+        for (IExternalProviderCalendarService externalCalendarController : externalCalendarControllers) {
+            if (Objects.equals(externalCalendarController.from(), provider)) {
+                final ExternalCalendarCredentialsDTO externalCalendarCredentials = externalCalendarCredentialsConverter.convert(
+                        new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
+                                .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
+                                        calendarProviderConverter.reverse(externalCalendarController.from()))));
                 if (externalCalendarCredentials != null) {
-                    return externalCalendarProvider.getEvents(numberOfEvents, rangeStartingTime,
-                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials)));
+                    return externalCalendarController.getEvents(numberOfEvents, rangeStartingTime,
+                            externalCalendarCredentials);
                 }
             }
         }
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
+
     private void updateExternalCalendarControllerThatExpires(LocalDateTime expiresAt) {
-        final List<ExternalCalendarCredentials> credentialsToExpire = externalCalendarCredentialsProvider.findByExpiresAtBefore(expiresAt);
+        final List<ExternalCalendarCredentialsDTO> credentialsToExpire = externalCalendarCredentialsConverter.convertAll(
+                externalCalendarCredentialsProvider.findByCreatedAtBefore(expiresAt).stream().map(this::createConverterRequest)
+                        .collect(Collectors.toCollection(ArrayList::new)));
         if (!credentialsToExpire.isEmpty()) {
             AppointmentCenterLogger.info(this.getClass(), "Updating '{}' tokens.", credentialsToExpire.size());
+            credentialsToExpire.parallelStream().forEach(externalCalendarCredentialsProvider::refreshExternalCredentials);
         }
-        credentialsToExpire.parallelStream().forEach(externalCalendarCredentials -> {
-            for (IExternalCalendarProvider externalCalendarProvider : externalCalendarProviders) {
-                if (Objects.equals(calendarProviderConverter.reverse(externalCalendarProvider.from()), externalCalendarCredentials.getProvider())) {
-                    try {
-                        AppointmentCenterLogger.info(this.getClass(), "Updating token for user '{}' and provider '{}'.",
-                                externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
-                        final ExternalCalendarCredentials refreshedExternalCalendarCredentials = externalCalendarCredentialsConverter.reverse(
-                                externalCalendarProvider.updateToken(externalCalendarCredentialsConverter
-                                        .convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
-                        externalCalendarCredentialsProvider.delete(externalCalendarCredentials);
-                        externalCalendarCredentialsProvider.save(refreshedExternalCalendarCredentials);
-                    } catch (Exception e) {
-                        AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
-                                externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
-                        AppointmentCenterLogger.errorMessage(this.getClass(), e);
-                    }
-                }
-            }
-        });
+    }
+
+    private ExternalCalendarCredentialsConverterRequest createConverterRequest(ExternalCalendarCredentials externalCalendarCredentials) {
+        return new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials);
     }
 
     @Scheduled(fixedRate = REFRESHING_TOKEN_INTERVAL, timeUnit = TimeUnit.SECONDS, initialDelay = 0)
     public void scheduleRefreshTokens() {
         AppointmentCenterLogger.info(this.getClass(), "Refreshing external calendar tokens...");
-        updateExternalCalendarControllerThatExpires(LocalDateTime.now());
+        updateExternalCalendarControllerThatExpires(LocalDateTime.now().minusDays(refreshIntervalDays));
     }
 }

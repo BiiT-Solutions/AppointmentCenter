@@ -111,4 +111,8 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
     public void setCalendarProvider(CalendarProviderDTO calendarProvider) {
         this.calendarProvider = calendarProvider;
     }
+
+    public boolean hasExpired() {
+        return LocalDateTime.now().isAfter(expiresAt);
+    }
 }

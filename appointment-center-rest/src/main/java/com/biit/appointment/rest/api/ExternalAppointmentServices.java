@@ -37,7 +37,7 @@ public class ExternalAppointmentServices {
                               @Parameter(description = "ExternalReference from an Appointment hosted on a provider", required = true)
                               @PathVariable("externalReference") String externalReference,
                               Authentication authentication, HttpServletRequest request) {
-        return externalCalendarController.getExternalAppointment(authentication.getName(), externalReference, calendarProviderDTO);
+        return externalCalendarController.getExternalAppointment(authentication.getName(), externalReference, calendarProviderDTO, authentication.getName());
     }
 
 
@@ -53,7 +53,7 @@ public class ExternalAppointmentServices {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                     @PathVariable(name = "end") LocalDateTime end,
                                     Authentication authentication, HttpServletRequest request) {
-        return externalCalendarController.getExternalAppointments(authentication.getName(), start, end);
+        return externalCalendarController.getExternalAppointments(authentication.getName(), start, end, authentication.getName());
     }
 
 
@@ -72,7 +72,7 @@ public class ExternalAppointmentServices {
                                     @PathVariable(name = "end") LocalDateTime end,
                                     Authentication authentication, HttpServletRequest request) {
         return externalCalendarController.getExternalAppointments(authentication.getName(), start, end,
-                calendarProviderDTO);
+                calendarProviderDTO, authentication.getName());
     }
 
 
@@ -86,7 +86,7 @@ public class ExternalAppointmentServices {
                                     @Parameter(description = "Number of events to retrieve.", required = true)
                                     @PathVariable("numberOfEvents") int numberOfEvents,
                                     Authentication authentication, HttpServletRequest request) {
-        return externalCalendarController.getExternalAppointments(authentication.getName(), start, numberOfEvents);
+        return externalCalendarController.getExternalAppointments(authentication.getName(), start, numberOfEvents, authentication.getName());
     }
 
 
@@ -103,6 +103,6 @@ public class ExternalAppointmentServices {
                                     @PathVariable("numberOfEvents") int numberOfEvents,
                                     Authentication authentication, HttpServletRequest request) {
         return externalCalendarController.getExternalAppointments(authentication.getName(), start, numberOfEvents,
-                calendarProviderDTO);
+                calendarProviderDTO, authentication.getName());
     }
 }

@@ -1,4 +1,4 @@
-package com.biit.appointment.core.providers;
+package com.biit.appointment.core.services;
 
 import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
@@ -9,7 +9,7 @@ import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface IExternalCalendarProvider {
+public interface IExternalProviderCalendarService {
 
     CalendarProviderDTO from();
 
