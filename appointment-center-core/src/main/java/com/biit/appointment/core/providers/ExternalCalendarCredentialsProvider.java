@@ -42,7 +42,7 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
 
 
     public ExternalCalendarCredentialsDTO refreshIfExpired(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
-        if (externalCalendarCredentials.hasExpired()) {
+        if (externalCalendarCredentials != null && externalCalendarCredentials.hasExpired()) {
             return refreshExternalCredentials(externalCalendarCredentials);
         }
         return externalCalendarCredentials;

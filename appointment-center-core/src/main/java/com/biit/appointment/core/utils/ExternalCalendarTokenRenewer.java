@@ -1,12 +1,12 @@
 package com.biit.appointment.core.utils;
 
-import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.core.converters.CalendarProviderConverter;
 import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter;
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
+import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class ExternalCalendarTokenRenewer {
 
 
     public ExternalCalendarCredentialsDTO refreshIfExpired(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
-        if (externalCalendarCredentials.hasExpired()) {
+        if (externalCalendarCredentials != null && externalCalendarCredentials.hasExpired()) {
             return refreshExternalCredentials(externalCalendarCredentials);
         }
         return externalCalendarCredentials;
