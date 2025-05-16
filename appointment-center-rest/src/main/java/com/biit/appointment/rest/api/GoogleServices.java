@@ -3,7 +3,7 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.ExternalCalendarCredentialsController;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
-import com.biit.appointment.google.client.GoogleCalendarController;
+import com.biit.appointment.google.client.GoogleCalendarService;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/external-calendar-credentials/google")
 public class GoogleServices {
 
-    private final GoogleCalendarController googleCalendarController;
+    private final GoogleCalendarService googleCalendarService;
     private final ExternalCalendarCredentialsController externalCalendarCredentialsController;
 
-    public GoogleServices(GoogleCalendarController googleCalendarController,
+    public GoogleServices(GoogleCalendarService googleCalendarService,
                           ExternalCalendarCredentialsController externalCalendarCredentialsController) {
-        this.googleCalendarController = googleCalendarController;
+        this.googleCalendarService = googleCalendarService;
         this.externalCalendarCredentialsController = externalCalendarCredentialsController;
     }
 
@@ -44,7 +44,7 @@ public class GoogleServices {
                                                         @PathVariable(name = "state") String state,
                                                         Authentication authentication,
                                                         HttpServletRequest request) {
-        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarController
+        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
                 .exchangeCodeForToken(authentication.getName(), code, state);
         externalCalendarCredentialsController.deleteToken(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
         return externalCalendarCredentialsController.create(externalCalendarCredentialsDTO, authentication.getName());
@@ -60,7 +60,7 @@ public class GoogleServices {
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
         GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
-        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarController
+        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
                 .exchangeCodeForToken(authentication.getName(), code, state);
         externalCalendarCredentialsController.deleteToken(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
         return externalCalendarCredentialsController.create(externalCalendarCredentialsDTO, authentication.getName());
