@@ -5,6 +5,7 @@ import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
+import com.biit.appointment.logger.AppointmentCenterLogger;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -24,7 +25,8 @@ public class ExternalCalendarCredentialsProxy {
     }
 
     public void delete(UUID userId, CalendarProviderDTO calendarProvider) {
-        externalCalendarCredentialsProvider.getByUserIdAndCalendarProvider(userId, calendarProviderConverter.reverse(calendarProvider));
+        AppointmentCenterLogger.info(this.getClass(), "Deleting external calendar credentials for " + userId.toString());
+        externalCalendarCredentialsProvider.deleteByUserIdAndCalendarProvider(userId, calendarProviderConverter.reverse(calendarProvider));
     }
 
     public ExternalCalendarCredentialsDTO create(ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO) {
