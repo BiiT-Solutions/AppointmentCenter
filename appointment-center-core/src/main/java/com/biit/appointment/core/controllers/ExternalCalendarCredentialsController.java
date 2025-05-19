@@ -14,12 +14,10 @@ import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
-import com.biit.server.security.exceptions.ActionNotAllowedException;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Controller
