@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,15 @@ public class ExternalCalendarCredentialsServices extends ElementServices<Externa
 
     public ExternalCalendarCredentialsServices(ExternalCalendarCredentialsController controller) {
         super(controller);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Allows a user to stores its own credentials.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = {"/me"}, produces = {"application/json"})
+    public ExternalCalendarCredentialsDTO addOwn(@RequestBody ExternalCalendarCredentialsDTO dto, Authentication authentication, HttpServletRequest request) {
+        return this.getController().createOwn(dto, authentication.getName());
     }
 
 
@@ -77,7 +88,7 @@ public class ExternalCalendarCredentialsServices extends ElementServices<Externa
     @DeleteMapping(value = "/providers/{provider}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteExternalProviderAuth(@Parameter(description = "Credentials provider.", required = true)
-                                 @PathVariable(name = "provider") CalendarProviderDTO calendarProviderDTO,
+                                           @PathVariable(name = "provider") CalendarProviderDTO calendarProviderDTO,
                                            Authentication authentication, HttpServletRequest request) {
         getController().deleteToken(authentication.getName(), calendarProviderDTO);
     }

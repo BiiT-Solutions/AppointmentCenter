@@ -14,10 +14,12 @@ import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.exceptions.ActionNotAllowedException;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -72,5 +74,18 @@ public class ExternalCalendarCredentialsController extends ElementController<Ext
 
     public void deleteToken(UUID userUUID, CalendarProviderDTO calendarProvider) {
         externalProviderCalendarCredentials.delete(userUUID, calendarProvider);
+    }
+
+
+    public ExternalCalendarCredentialsDTO createOwn(ExternalCalendarCredentialsDTO dto, String username) {
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+
+        if (!Objects.equals(dto.getUserId().toString(), authenticatedUser.getUID())) {
+            throw new ActionNotAllowedException(this.getClass(), "The credentials are not assigned to logged in user.");
+        }
+
+        return super.create(dto, username);
     }
 }
