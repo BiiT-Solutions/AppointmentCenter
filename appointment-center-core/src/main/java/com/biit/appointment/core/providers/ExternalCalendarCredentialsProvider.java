@@ -32,6 +32,12 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
         this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
     }
 
+    @Override
+    public ExternalCalendarCredentials save(ExternalCalendarCredentials entity) {
+        deleteByUserIdAndCalendarProvider(entity.getUserId(), entity.getCalendarProvider());
+        return super.save(entity);
+    }
+
     public ExternalCalendarCredentials getByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
         return getRepository().findByUserIdAndCalendarProvider(userId, calendarProvider);
     }
