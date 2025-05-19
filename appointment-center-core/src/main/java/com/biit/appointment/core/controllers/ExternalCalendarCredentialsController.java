@@ -82,9 +82,7 @@ public class ExternalCalendarCredentialsController extends ElementController<Ext
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
 
-        if (dto.getUserId() == null || !Objects.equals(dto.getUserId().toString(), authenticatedUser.getUID())) {
-            throw new ActionNotAllowedException(this.getClass(), "The credentials are not assigned to logged in user.");
-        }
+        dto.setUserId(UUID.fromString(authenticatedUser.getUID()));
 
         return super.create(dto, username);
     }
