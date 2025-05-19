@@ -36,8 +36,8 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
         return getRepository().findByUserIdAndCalendarProvider(userId, calendarProvider);
     }
 
-    public ExternalCalendarCredentials deleteByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
-        return getRepository().deleteByUserIdAndCalendarProvider(userId, calendarProvider);
+    public void deleteByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
+        getRepository().deleteByUserIdAndCalendarProvider(userId, calendarProvider);
     }
 
     public List<ExternalCalendarCredentials> findByCreatedAtBefore(LocalDateTime expiresAt) {
