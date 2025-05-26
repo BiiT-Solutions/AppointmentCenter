@@ -63,7 +63,27 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
+
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/find/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDTO> findAllFromMe(@Parameter(description = "Id of an existing organization")
+                                        @RequestParam(name = "organizationId") Optional<String> organizationId,
+                                        @Parameter(description = "Filter by appointment status")
+                                        @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
+                                        @Parameter(description = "Minimum time for the appointment")
+                                        @RequestParam(name = "lowerTimeBoundary") Optional<LocalDateTime> lowerTimeBoundary,
+                                        @Parameter(description = "Maximum time for the appointment")
+                                        @RequestParam(name = "upperTimeBoundary") Optional<LocalDateTime> upperTimeBoundary,
+                                        HttpServletRequest request) {
+        return getController().findByWithExaminationTypeNames(organizationId.orElse(null), null, null,
+               null, appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
+                upperTimeBoundary.orElse(null), false);
+    }
+
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> findAll(@Parameter(description = "Id of an existing organization")
