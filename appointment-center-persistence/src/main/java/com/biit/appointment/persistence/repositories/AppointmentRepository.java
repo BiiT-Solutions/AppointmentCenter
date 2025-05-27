@@ -1,23 +1,20 @@
 package com.biit.appointment.persistence.repositories;
 
 import com.biit.appointment.persistence.entities.Appointment;
-import com.biit.appointment.persistence.entities.AppointmentStatus;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
-import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.server.persistence.repositories.ElementRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+
 @Transactional
-public interface AppointmentRepository extends ElementRepository<Appointment, Long> {
+public interface AppointmentRepository extends ElementRepository<Appointment, Long>, CustomAppointmentRepository {
 
     /**
      * Finds all appointments from an organizer.
@@ -157,75 +154,6 @@ public interface AppointmentRepository extends ElementRepository<Appointment, Lo
      * @return a list of appointments that have been generated from a template.
      */
     List<Appointment> findByAppointmentTemplateNotNull();
-
-    /**
-     * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
-     *
-     * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizer           who must resolve the appointment (can be null for any organizer).
-     * @param examinationTypes    a collection of types of the appointment (can be null for any type).
-     * @param appointmentStatuses the status of the appointment (can be null for any status or a list).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
-     * @param deleted             the appointment is deleted or not.
-     * @return a list of appointments.
-     */
-    @Query("""
-            SELECT a FROM Appointment a WHERE
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
-            (:organizer IS NULL OR a.organizer = :organizer) AND
-            (:attendee IS NULL OR :attendee MEMBER OF a.attendees) AND
-            (a.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
-            (a.status IN :appointmentStatuses OR :appointmentStatuses IS NULL) AND
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
-            a.startTime IS NULL AND a.endTime IS NULL) AND
-            (:deleted IS NULL OR a.deleted = :deleted)
-            """)
-    List<Appointment> findBy(
-            @Param("organizationId") String organizationId,
-            @Param("organizer") UUID organizer,
-            @Param("attendee") UUID attendee,
-            @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
-            @Param("appointmentStatuses") Collection<AppointmentStatus> appointmentStatuses,
-            @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
-            @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary,
-            @Param("deleted") Boolean deleted);
-
-
-    /**
-     * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
-     *
-     * @param organizationId      the organization of the parameters (can be null for any organization).
-     * @param organizer           who must resolve the appointment (can be null for any organizer).
-     * @param examinationTypes    the type of the appointment (can be null for any type).
-     * @param appointmentStatuses the status of the appointment (can be null for any status).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
-     * @param deleted             the appointment is deleted or not.
-     * @return the total number of appointments
-     */
-    @Query("""
-            SELECT COUNT(a) FROM Appointment a WHERE
-            (:organizationId IS NULL OR a.organizationId = :organizationId) AND
-            (:organizer IS NULL OR a.organizer = :organizer) AND
-            (:attendee IS NULL OR :attendee MEMBER OF a.attendees) AND
-            (a.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
-            (a.status IN :appointmentStatuses OR :appointmentStatuses IS NULL) AND
-            (((:lowerTimeBoundary IS NULL OR a.endTime >= :lowerTimeBoundary) AND
-            (:upperTimeBoundary IS NULL OR a.startTime <= :upperTimeBoundary)) OR
-            a.startTime IS NULL AND a.endTime IS NULL) AND
-            (:deleted IS NULL OR a.deleted = :deleted)
-            """)
-    long count(
-            @Param("organizationId") String organizationId,
-            @Param("organizer") UUID organizer,
-            @Param("attendee") UUID attendee,
-            @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
-            @Param("appointmentStatuses") Collection<AppointmentStatus> appointmentStatuses,
-            @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
-            @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary,
-            @Param("deleted") Boolean deleted);
 
 
     /**

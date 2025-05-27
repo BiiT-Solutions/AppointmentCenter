@@ -34,7 +34,7 @@ public class DatabaseConfiguration {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
+    @Bean(name = "appointmentCenterFactory")
     @Primary
     public LocalContainerEntityManagerFactoryBean appointmentCenterFactory(EntityManagerFactoryBuilder builder,
                                                                           @Qualifier("appointmentCenterDataSource") DataSource dataSource) {
