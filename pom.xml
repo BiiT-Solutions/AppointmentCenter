@@ -4,7 +4,7 @@
     <artifactId>appointment-center</artifactId>
     <name>AppointmentCenter</name>
     <groupId>com.biit.appointment</groupId>
-    <version>1.6.57-SNAPSHOT</version>
+    <version>1.6.58-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
