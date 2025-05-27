@@ -74,10 +74,10 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                               @RequestParam(name = "appointmentStatuses", required = false) Optional<Collection<AppointmentStatus>> appointmentStatuses,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
-                                              @RequestParam(value = "from") OffsetDateTime lowerTimeBoundary,
+                                              @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
-                                              @RequestParam(value = "to") OffsetDateTime upperTimeBoundary,
+                                              @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
                                               HttpServletRequest request) {
         return getController().findByWithExaminationTypeNames(organizationId.orElse(null), null, null,
                 null, appointmentStatuses.orElse(null),
