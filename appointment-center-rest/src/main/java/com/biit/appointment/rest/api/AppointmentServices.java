@@ -71,7 +71,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     public List<AppointmentDTO> findAllFromMe(@Parameter(description = "Id of an existing organization")
                                               @RequestParam(name = "organizationId", required = false) Optional<String> organizationId,
                                               @Parameter(description = "Filter by appointment status")
-                                              @RequestParam(name = "appointmentStatuses", required = false) Optional<Collection<AppointmentStatus>> appointmentStatuses,
+                                              @RequestParam(name = "appointmentStatuses", required = false)
+                                              Optional<Collection<AppointmentStatus>> appointmentStatuses,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
                                               @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
