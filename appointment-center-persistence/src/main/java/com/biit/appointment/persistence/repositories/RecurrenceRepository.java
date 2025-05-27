@@ -42,6 +42,29 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
 
 
     /**
+     * Find all appointments that match the search parameters. If startTime and endTime are defined, will search any appointment inside this range.
+     *
+     * @param organizationId    the organization of the parameters (can be null for any organization).
+     * @param organizer       who must resolve the appointment (can be null for any organizer).
+     * @param lowerTimeBoundary the lower limit on time for searching an appointment (can be null for no limit).
+     * @param upperTimeBoundary the upper limit on time for searching an appointment (can be null for no limit).
+     * @return a list of appointments.
+     */
+    @Query("""
+            SELECT r FROM Recurrence  r WHERE
+            (:organizationId IS NULL OR r.organizationId = :organizationId) AND
+            (:organizer IS NULL OR r.organizer = :organizer) AND
+            (((:lowerTimeBoundary IS NULL OR r.endsAt >= :lowerTimeBoundary) AND
+            (:upperTimeBoundary IS NULL OR r.startsAt <= :upperTimeBoundary)) OR
+            r.startsAt IS NULL AND r.endsAt IS NULL)
+            """)
+    List<Recurrence> findBy(
+            @Param("organizationId") String organizationId, @Param("organizer") UUID organizer,
+            @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
+            @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary);
+
+
+    /**
      * Counts the total appointments that match the search parameters. If startTime and endTime are defined, will search any appointment inside this range.
      *
      * @param organizationId    the organization of the parameters (can be null for any organization).

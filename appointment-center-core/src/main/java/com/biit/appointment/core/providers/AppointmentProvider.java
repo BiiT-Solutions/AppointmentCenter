@@ -233,9 +233,12 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     public List<Appointment> findBy(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
                                     Collection<AppointmentStatus> appointmentStatuses,
                                     LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        final List<Recurrence> recurrences = recurrenceRepository.findBy(organizationId, organizer,
-                examinationTypes != null && examinationTypes.isEmpty() ? null : examinationTypes,
-                lowerTimeBoundary, upperTimeBoundary);
+        final List<Recurrence> recurrences;
+        if (examinationTypes != null && !examinationTypes.isEmpty()) {
+            recurrences = recurrenceRepository.findBy(organizationId, organizer, examinationTypes, lowerTimeBoundary, upperTimeBoundary);
+        } else {
+            recurrences = recurrenceRepository.findBy(organizationId, organizer, lowerTimeBoundary, upperTimeBoundary);
+        }
         final List<Appointment> appointments = getRepository().findBy(organizationId, organizer, attendee,
                 examinationTypes != null && examinationTypes.isEmpty() ? null : examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted);
@@ -278,7 +281,12 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
                       LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final AtomicLong appointments = new AtomicLong(getRepository().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted));
-        final List<Recurrence> recurrences = recurrenceRepository.findBy(organizationId, organizer, examinationTypes, lowerTimeBoundary, upperTimeBoundary);
+        final List<Recurrence> recurrences;
+        if (examinationTypes != null && !examinationTypes.isEmpty()) {
+            recurrences = recurrenceRepository.findBy(organizationId, organizer, examinationTypes, lowerTimeBoundary, upperTimeBoundary);
+        } else {
+            recurrences = recurrenceRepository.findBy(organizationId, organizer, lowerTimeBoundary, upperTimeBoundary);
+        }
         recurrences.forEach(recurrence -> appointments.addAndGet(recurrence.getMatches(lowerTimeBoundary, upperTimeBoundary).size()));
         return appointments.get();
     }

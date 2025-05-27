@@ -30,10 +30,14 @@ public class RecurrenceProvider extends ElementProvider<Recurrence, Long, Recurr
     }
 
 
-    public List<Recurrence> findAll(String organizationId, UUID organizer, Collection<ExaminationType> examinationType,
+    public List<Recurrence> findAll(String organizationId, UUID organizer, Collection<ExaminationType> examinationTypes,
                                     LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary) {
-        return getRepository().findBy(organizationId, organizer, examinationType, lowerTimeBoundary, upperTimeBoundary);
+        if (examinationTypes != null && !examinationTypes.isEmpty()) {
+            return getRepository().findBy(organizationId, organizer, examinationTypes, lowerTimeBoundary, upperTimeBoundary);
+        } else {
+            return getRepository().findBy(organizationId, organizer, lowerTimeBoundary, upperTimeBoundary);
+        }
     }
 
 
