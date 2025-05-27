@@ -3,10 +3,10 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.AppointmentController;
 import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.models.AppointmentConverterRequest;
+import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AppointmentTemplateDTO;
-import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentStatus;
@@ -39,6 +39,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -63,24 +65,26 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     }
 
 
-
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/find/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> findAllFromMe(@Parameter(description = "Id of an existing organization")
-                                        @RequestParam(name = "organizationId") Optional<String> organizationId,
-                                        @Parameter(description = "Filter by appointment status")
-                                        @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
-                                        @Parameter(description = "Minimum time for the appointment")
-                                        @RequestParam(name = "lowerTimeBoundary") Optional<LocalDateTime> lowerTimeBoundary,
-                                        @Parameter(description = "Maximum time for the appointment")
-                                        @RequestParam(name = "upperTimeBoundary") Optional<LocalDateTime> upperTimeBoundary,
-                                        HttpServletRequest request) {
+                                              @RequestParam(name = "organizationId") Optional<String> organizationId,
+                                              @Parameter(description = "Filter by appointment status")
+                                              @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
+                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                              @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
+                                              @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
+                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                              @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
+                                              @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
+                                              HttpServletRequest request) {
         return getController().findByWithExaminationTypeNames(organizationId.orElse(null), null, null,
-               null, appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
-                upperTimeBoundary.orElse(null), false);
+                null, appointmentStatuses.orElse(null),
+                lowerTimeBoundary != null ? LocalDateTime.ofInstant(lowerTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
+                upperTimeBoundary != null ? LocalDateTime.ofInstant(upperTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
+                false);
     }
-
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -96,16 +100,20 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                         @RequestParam(name = "examinationType") Optional<Collection<String>> examinationTypesNames,
                                         @Parameter(description = "Filter by appointment status")
                                         @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
-                                        @Parameter(description = "Minimum time for the appointment")
-                                        @RequestParam(name = "lowerTimeBoundary") Optional<LocalDateTime> lowerTimeBoundary,
-                                        @Parameter(description = "Maximum time for the appointment")
-                                        @RequestParam(name = "upperTimeBoundary") Optional<LocalDateTime> upperTimeBoundary,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
+                                        @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
+                                        @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
                                         @Parameter(description = "If it is marked as deleted")
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {
         return getController().findByWithExaminationTypeNames(organizationId.orElse(null), organizer.orElse(null), attendeeId.orElse(null),
-                examinationTypesNames.orElse(null), appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
-                upperTimeBoundary.orElse(null), deleted.orElse(null));
+                examinationTypesNames.orElse(null), appointmentStatuses.orElse(null),
+                lowerTimeBoundary != null ? LocalDateTime.ofInstant(lowerTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
+                upperTimeBoundary != null ? LocalDateTime.ofInstant(upperTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
+                deleted.orElse(null));
     }
 
 
