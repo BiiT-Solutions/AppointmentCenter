@@ -29,7 +29,7 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             SELECT r FROM Recurrence  r WHERE
             (:organizationId IS NULL OR r.organizationId = :organizationId) AND
             (:organizer IS NULL OR r.organizer = :organizer) AND
-            (r.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
+            (:examinationTypes IS NULL OR r.examinationType IN :examinationTypes) AND
             (((:lowerTimeBoundary IS NULL OR r.endsAt >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR r.startsAt <= :upperTimeBoundary)) OR
             r.startsAt IS NULL AND r.endsAt IS NULL)
@@ -55,7 +55,7 @@ public interface RecurrenceRepository extends ElementRepository<Recurrence, Long
             SELECT COUNT(r) FROM Recurrence r WHERE
             (:organizationId IS NULL OR r.organizationId = :organizationId) AND
             (:organizer IS NULL OR r.organizer = :organizer) AND
-            (r.examinationType IN :examinationTypes OR :examinationTypes IS NULL) AND
+            (:examinationTypes IS NULL OR r.examinationType IN :examinationTypes) AND
             (((:lowerTimeBoundary IS NULL OR r.endsAt >= :lowerTimeBoundary) AND
             (:upperTimeBoundary IS NULL OR r.startsAt <= :upperTimeBoundary)) OR
             r.startsAt IS NULL AND r.endsAt IS NULL)
