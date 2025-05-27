@@ -69,15 +69,15 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Gets all appointments using some filters.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/find/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDTO> findAllFromMe(@Parameter(description = "Id of an existing organization")
-                                              @RequestParam(name = "organizationId") Optional<String> organizationId,
+                                              @RequestParam(name = "organizationId", required = false) Optional<String> organizationId,
                                               @Parameter(description = "Filter by appointment status")
-                                              @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
+                                              @RequestParam(name = "appointmentStatuses", required = false) Optional<Collection<AppointmentStatus>> appointmentStatuses,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
-                                              @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
+                                              @RequestParam(value = "from") OffsetDateTime lowerTimeBoundary,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
-                                              @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
+                                              @RequestParam(value = "to") OffsetDateTime upperTimeBoundary,
                                               HttpServletRequest request) {
         return getController().findByWithExaminationTypeNames(organizationId.orElse(null), null, null,
                 null, appointmentStatuses.orElse(null),
