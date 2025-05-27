@@ -75,12 +75,12 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                               Optional<Collection<AppointmentStatus>> appointmentStatuses,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
-                                              @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
+                                              @RequestParam(value = "lowerTimeBoundary", required = false) OffsetDateTime lowerTimeBoundary,
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
-                                              @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
+                                              @RequestParam(value = "upperTimeBoundary", required = false) OffsetDateTime upperTimeBoundary,
                                               HttpServletRequest request) {
-        return getController().findByWithExaminationTypeNames(organizationId.orElse(null), null, null,
+        return getController().findBy(organizationId.orElse(null), null, null,
                 null, appointmentStatuses.orElse(null),
                 lowerTimeBoundary != null ? LocalDateTime.ofInstant(lowerTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
                 upperTimeBoundary != null ? LocalDateTime.ofInstant(upperTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
@@ -103,10 +103,10 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                         @RequestParam(name = "appointmentStatuses") Optional<Collection<AppointmentStatus>> appointmentStatuses,
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                         @Parameter(description = "Minimum time for the appointment", example = "2023-01-01T00:00:00.00Z")
-                                        @RequestParam(value = "from", required = false) OffsetDateTime lowerTimeBoundary,
+                                        @RequestParam(value = "lowerTimeBoundary", required = false) OffsetDateTime lowerTimeBoundary,
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                         @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
-                                        @RequestParam(value = "to", required = false) OffsetDateTime upperTimeBoundary,
+                                        @RequestParam(value = "upperTimeBoundary", required = false) OffsetDateTime upperTimeBoundary,
                                         @Parameter(description = "If it is marked as deleted")
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {

@@ -95,14 +95,19 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     public List<AppointmentDTO> findByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
                                                                Collection<AppointmentStatus> appointmentStatuses,
                                                                LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
+        final List<ExaminationType> examinationTypes;
+        if (examinationTypeNames == null) {
+            examinationTypes = null;
+        } else {
+            examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
+        }
         return findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }
 
 
     /**
-     * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
+     * Find all appointments that match the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
      * @param organizer           who must resolve the appointment (can be null for any organizer).

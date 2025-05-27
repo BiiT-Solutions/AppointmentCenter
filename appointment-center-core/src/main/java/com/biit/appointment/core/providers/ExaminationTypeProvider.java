@@ -7,6 +7,7 @@ import com.biit.appointment.persistence.repositories.ExaminationTypeRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,22 +23,22 @@ public class ExaminationTypeProvider extends ElementProvider<ExaminationType, St
     }
 
     public List<ExaminationType> findByNameAndDeleted(Collection<String> names, boolean deleted) {
-        return getRepository().findByNameInAndDeleted(names, deleted);
+        return getRepository().findByNameInAndDeleted(names == null ? new ArrayList<>() : names, deleted);
     }
 
     public ExaminationType findByNameAndOrganizationId(String name, String organizationId, boolean deleted) {
-        return  getRepository().findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
+        return getRepository().findByNameAndOrganizationIdAndDeleted(name, organizationId, deleted).orElseThrow(() ->
                 new ExaminationTypeNotFoundException(this.getClass(), "No examination defined with name '" + name + "' and organization '"
                         + organizationId + "'"));
     }
 
     public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(
             String organizationId, AppointmentType appointmentType, boolean deleted) {
-        return  getRepository().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted);
+        return getRepository().findAllByOrOrganizationIdAndAppointmentTypeAndDeleted(organizationId, appointmentType, deleted);
     }
 
     public List<ExaminationType> findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(
             String organizationId, Collection<AppointmentType> appointmentTypes, boolean deleted) {
-        return  getRepository().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted);
+        return getRepository().findAllByOrOrganizationIdAndAppointmentTypeInAndDeleted(organizationId, appointmentTypes, deleted);
     }
 }

@@ -325,6 +325,59 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
 
     @Test(dependsOnMethods = "attendToAppointment")
+    public void findAppointments() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/find/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("lowerTimeBoundary", "2024-03-27T00:00:00.000Z")
+                        .param("upperTimeBoundary", "2024-03-28T00:00:00.000Z")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> myAppointments =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(myAppointments.size(), 1);
+    }
+
+
+    @Test(dependsOnMethods = "attendToAppointment")
+    public void findOthersAppointments() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/find")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("lowerTimeBoundary", "2024-03-27T00:00:00.000Z")
+                        .param("upperTimeBoundary", "2024-03-28T00:00:00.000Z")
+                        .param("organizer", admin.getUID())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> myAppointments =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(myAppointments.size(), 1);
+    }
+
+
+    @Test(dependsOnMethods = "attendToAppointment")
+    public void findAllAppointments() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/appointments/find/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<AppointmentDTO> myAppointments =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), AppointmentDTO[].class));
+        Assert.assertEquals(myAppointments.size(), 3);
+    }
+
+
+    @Test(dependsOnMethods = "attendToAppointment")
     public void unattendToInvalidAppointment() throws Exception {
         System.out.println(" #------------------------------------ Expected Exception ----------------------------");
         this.mockMvc
@@ -338,7 +391,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
 
 
     @Test(dependsOnMethods = {"subscribeToAppointment", "attendToAppointment", "attendToInvalidAppointment",
-            "unattendToInvalidAppointment", "unattendToAppointment"})
+            "unattendToInvalidAppointment", "unattendToAppointment", "findAppointments"})
     public void unsubscribeToAppointment() throws Exception {
         this.mockMvc
                 .perform(put("/appointments/" + appointment.getId() + "/attendees/unsubscribe")
