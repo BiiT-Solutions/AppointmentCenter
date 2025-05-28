@@ -54,6 +54,9 @@ public class ExternalCalendarCredentials extends Element<Long> {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
+    @Column(name = "force_refresh_at")
+    private LocalDateTime forceRefreshAt;
+
     @Override
     public Long getId() {
         return id;
@@ -109,5 +112,13 @@ public class ExternalCalendarCredentials extends Element<Long> {
             return false;
         }
         return LocalDateTime.now().isAfter(expiresAt);
+    }
+
+    public LocalDateTime getForceRefreshAt() {
+        return forceRefreshAt;
+    }
+
+    public void setForceRefreshAt(LocalDateTime forceRefreshAt) {
+        this.forceRefreshAt = forceRefreshAt;
     }
 }

@@ -28,6 +28,8 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     private LocalDateTime expiresAt;
 
+    private LocalDateTime forceRefreshAt;
+
     public ExternalCalendarCredentialsDTO() {
         super();
     }
@@ -117,5 +119,13 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
             return false;
         }
         return LocalDateTime.now().isAfter(expiresAt);
+    }
+
+    public LocalDateTime getForceRefreshAt() {
+        return forceRefreshAt;
+    }
+
+    public void setForceRefreshAt(LocalDateTime forceRefreshAt) {
+        this.forceRefreshAt = forceRefreshAt;
     }
 }

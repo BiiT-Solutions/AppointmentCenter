@@ -15,7 +15,6 @@ import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.exceptions.ActionNotAllowedException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -39,9 +38,6 @@ public class ExternalCalendarController {
     private final IAuthenticatedUserProvider authenticatedUserProvider;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
     private final CalendarProviderConverter calendarProviderConverter;
-
-    @Value("${token.refresh.interval.days:5}")
-    private int refreshIntervalDays;
 
 
     public ExternalCalendarController(List<IExternalProviderCalendarService> externalCalendarControllers,
@@ -172,9 +168,9 @@ public class ExternalCalendarController {
     }
 
 
-    private void updateExternalCalendarControllerThatExpires(LocalDateTime expiresAt) {
+    private void updateExternalCalendarControllerThatExpires(LocalDateTime expiresBefore) {
         final List<ExternalCalendarCredentialsDTO> credentialsToExpire = externalCalendarCredentialsConverter.convertAll(
-                externalCalendarCredentialsProvider.findByCreatedAtBefore(expiresAt).stream().map(this::createConverterRequest)
+                externalCalendarCredentialsProvider.findByForceRefreshAtBefore(expiresBefore).stream().map(this::createConverterRequest)
                         .collect(Collectors.toCollection(ArrayList::new)));
         if (!credentialsToExpire.isEmpty()) {
             AppointmentCenterLogger.info(this.getClass(), "Updating '{}' tokens.", credentialsToExpire.size());
@@ -189,6 +185,6 @@ public class ExternalCalendarController {
     @Scheduled(fixedRate = REFRESHING_TOKEN_INTERVAL, timeUnit = TimeUnit.SECONDS, initialDelay = 0)
     public void scheduleRefreshTokens() {
         AppointmentCenterLogger.info(this.getClass(), "Refreshing external calendar tokens...");
-        updateExternalCalendarControllerThatExpires(LocalDateTime.now().minusDays(refreshIntervalDays));
+        updateExternalCalendarControllerThatExpires(LocalDateTime.now());
     }
 }

@@ -50,10 +50,19 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
         return getRepository().findByCreatedAtBefore(expiresAt);
     }
 
+    public List<ExternalCalendarCredentials> findByForceRefreshAtBefore(LocalDateTime expiresAt) {
+        return getRepository().findByForceRefreshAtBefore(expiresAt);
+    }
+
 
     public ExternalCalendarCredentialsDTO refreshIfExpired(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
         if (externalCalendarCredentials != null && externalCalendarCredentials.hasExpired()) {
             return refreshExternalCredentials(externalCalendarCredentials);
+        }
+        //Has not expired yet, but will do it soon. Use the current token, but ask meanwhile for a new one.
+        if (externalCalendarCredentials != null && externalCalendarCredentials.getExpiresAt() != null
+                && externalCalendarCredentials.getExpiresAt().isBefore(LocalDateTime.now())) {
+            new Thread(() -> refreshExternalCredentials(externalCalendarCredentials)).start();
         }
         return externalCalendarCredentials;
     }
