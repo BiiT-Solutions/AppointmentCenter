@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -77,17 +78,29 @@ public class ExternalCalendarController {
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
-
-    public List<AppointmentDTO> getExternalAppointments(String username, LocalDateTime rangeStartingTime, LocalDateTime rangeEndingTime,
-                                                        String requestedBy) {
+    //TODO(jnavalon): Should we send an exception if any credential does not work or any exception or just log it?
+    public List<AppointmentDTO> getExternalAppointments(final String username,
+                                                        final LocalDateTime rangeStartingTime,
+                                                        final LocalDateTime rangeEndingTime,
+                                                        final String requestedBy) {
         final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
 
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(this.getClass(),
                         "No user with username '" + username + "' found!"));
-
-        Arrays.stream(CalendarProviderDTO.values()).parallel().forEach(calendarProvider ->
-                appointmentsDTOs.addAll(getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider, requestedBy)));
+        Arrays.stream(CalendarProviderDTO.values())
+                .filter(provider -> externalCalendarCredentialsProvider
+                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()), calendarProviderConverter.reverse(provider)) != null)
+                .parallel().forEach(calendarProvider -> {
+            try {
+                final Collection<AppointmentDTO> appointments =
+                        getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider, requestedBy);
+                appointmentsDTOs.addAll(appointments);
+            } catch (Exception e) {
+                AppointmentCenterLogger.debug(this.getClass(), "Error while fetching appointments from provider '{}': {} for user '{}'",
+                        calendarProvider, e.getMessage(), authenticatedUser.getUID());
+            }
+        });
         return appointmentsDTOs;
     }
 
