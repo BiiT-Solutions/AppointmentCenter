@@ -8,7 +8,7 @@
     <parent>
         <artifactId>appointment-center</artifactId>
         <groupId>com.biit.appointment</groupId>
-        <version>1.6.61-SNAPSHOT</version>
+        <version>1.6.67-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -48,6 +48,10 @@
         <dependency>
             <groupId>com.biit.appointment</groupId>
             <artifactId>google-calendar</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>ms-calendar</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
