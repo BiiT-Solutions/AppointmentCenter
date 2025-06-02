@@ -1,10 +1,10 @@
 package com.biit.appointment.core.providers;
 
 
+import com.biit.appointment.core.converters.CalendarProviderConverter;
 import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter;
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
 import com.biit.appointment.core.models.CalendarProviderDTO;
-import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.CalendarProvider;
@@ -14,6 +14,7 @@ import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,13 +24,16 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
 
     private final List<IExternalProviderCalendarService> externalCalendarServices;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
+    private final CalendarProviderConverter calendarProviderConverter;
 
     protected ExternalCalendarCredentialsProvider(ExternalCalendarCredentialsRepository repository,
                                                   List<IExternalProviderCalendarService> externalCalendarServices,
-                                                  ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter) {
+                                                  ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter,
+                                                  CalendarProviderConverter calendarProviderConverter) {
         super(repository);
         this.externalCalendarServices = externalCalendarServices;
         this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
+        this.calendarProviderConverter = calendarProviderConverter;
     }
 
     @Override
@@ -39,7 +43,14 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
     }
 
     public ExternalCalendarCredentials getByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
-        return getRepository().findByUserIdAndCalendarProvider(userId, calendarProvider);
+        return refreshIfExpired(getRepository().findByUserIdAndCalendarProvider(userId, calendarProvider));
+    }
+
+    public List<ExternalCalendarCredentials> getByUserId(UUID userId) {
+        final List<ExternalCalendarCredentials> oldCredentials = getRepository().findByUserId(userId);
+        final List<ExternalCalendarCredentials> newCredentials = new ArrayList<>();
+        oldCredentials.forEach(oldCredential -> newCredentials.add(refreshIfExpired(oldCredential)));
+        return newCredentials;
     }
 
     public void deleteByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider) {
@@ -55,13 +66,15 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
     }
 
 
-    public ExternalCalendarCredentialsDTO refreshIfExpired(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
-        if (externalCalendarCredentials != null && externalCalendarCredentials.hasExpired()) {
+    public ExternalCalendarCredentials refreshIfExpired(ExternalCalendarCredentials externalCalendarCredentials) {
+        if (externalCalendarCredentials == null) {
+            return null;
+        }
+        if (externalCalendarCredentials.hasExpired()) {
             return refreshExternalCredentials(externalCalendarCredentials);
         }
         //Has not expired yet, but will do it soon. Use the current token, but ask meanwhile for a new one.
-        if (externalCalendarCredentials != null && externalCalendarCredentials.getExpiresAt() != null
-                && externalCalendarCredentials.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (externalCalendarCredentials.getExpiresAt() != null && externalCalendarCredentials.getExpiresAt().isBefore(LocalDateTime.now())) {
             new Thread(() -> refreshExternalCredentials(externalCalendarCredentials)).start();
         }
         return externalCalendarCredentials;
@@ -77,28 +90,64 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
         return null;
     }
 
+    private IExternalProviderCalendarService getExternalCalendarProvider(CalendarProvider calendarProvider) {
+        for (IExternalProviderCalendarService externalProviderCalendarService : externalCalendarServices) {
+            if (Objects.equals(calendarProviderConverter.reverse(externalProviderCalendarService.from()), calendarProvider)) {
+                return externalProviderCalendarService;
+            }
+        }
+        return null;
+    }
 
-    public ExternalCalendarCredentialsDTO refreshExternalCredentials(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
+
+//    public ExternalCalendarCredentialsDTO refreshExternalCredentials(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
+//        try {
+//            AppointmentCenterLogger.info(this.getClass(), "Updating token for user '{}' and provider '{}'.",
+//                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
+//            final IExternalProviderCalendarService externalProviderCalendarService = getExternalCalendarProvider(
+//                    externalCalendarCredentials.getCalendarProvider());
+//            if (externalProviderCalendarService != null) {
+//                final ExternalCalendarCredentialsDTO refreshedExternalCalendarCredentials = externalProviderCalendarService
+//                        .updateToken(externalCalendarCredentials);
+//                delete(externalCalendarCredentialsConverter.reverse(externalCalendarCredentials));
+//                return externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(
+//                        save(externalCalendarCredentialsConverter.reverse(refreshedExternalCalendarCredentials))));
+//            } else {
+//                AppointmentCenterLogger.warning(this.getClass(), "no calendar provider found for '{}'",
+//                        externalCalendarCredentials.getCalendarProvider());
+//            }
+//        } catch (Exception e) {
+//            AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
+//                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
+//            AppointmentCenterLogger.errorMessage(this.getClass(), e);
+//            delete(externalCalendarCredentialsConverter.reverse(externalCalendarCredentials));
+//        }
+//        return null;
+//    }
+
+
+    public ExternalCalendarCredentials refreshExternalCredentials(ExternalCalendarCredentials externalCalendarCredentials) {
         try {
             AppointmentCenterLogger.info(this.getClass(), "Updating token for user '{}' and provider '{}'.",
-                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
             final IExternalProviderCalendarService externalProviderCalendarService = getExternalCalendarProvider(
                     externalCalendarCredentials.getCalendarProvider());
             if (externalProviderCalendarService != null) {
-                final ExternalCalendarCredentialsDTO refreshedExternalCalendarCredentials = externalProviderCalendarService
-                        .updateToken(externalCalendarCredentials);
-                delete(externalCalendarCredentialsConverter.reverse(externalCalendarCredentials));
-                return externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(
-                        save(externalCalendarCredentialsConverter.reverse(refreshedExternalCalendarCredentials))));
+                final ExternalCalendarCredentials refreshedExternalCalendarCredentials =
+                        externalCalendarCredentialsConverter.reverse(externalProviderCalendarService
+                                .updateToken(externalCalendarCredentialsConverter
+                                        .convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
+                delete(refreshedExternalCalendarCredentials);
+                return save(refreshedExternalCalendarCredentials);
             } else {
                 AppointmentCenterLogger.warning(this.getClass(), "no calendar provider found for '{}'",
                         externalCalendarCredentials.getCalendarProvider());
             }
         } catch (Exception e) {
             AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
-                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
             AppointmentCenterLogger.errorMessage(this.getClass(), e);
-            delete(externalCalendarCredentialsConverter.reverse(externalCalendarCredentials));
+            delete(externalCalendarCredentials);
         }
         return null;
     }

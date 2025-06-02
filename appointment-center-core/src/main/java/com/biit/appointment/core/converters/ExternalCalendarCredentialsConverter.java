@@ -26,7 +26,7 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
         BeanUtils.copyProperties(from.getEntity(), externalCalendarCredentialsDTO);
-        externalCalendarCredentialsDTO.setProvider(calendarProviderConverter.convertElement(from.getEntity().getProvider()));
+        externalCalendarCredentialsDTO.setCalendarProvider(calendarProviderConverter.convertElement(from.getEntity().getProvider()));
         return externalCalendarCredentialsDTO;
     }
 
@@ -38,7 +38,7 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentials externalCalendarCredentials = new ExternalCalendarCredentials();
         BeanUtils.copyProperties(from, externalCalendarCredentials);
-        externalCalendarCredentials.setProvider(calendarProviderConverter.reverse(from.getProvider()));
+        externalCalendarCredentials.setProvider(calendarProviderConverter.reverse(from.getCalendarProvider()));
         return externalCalendarCredentials;
     }
 }

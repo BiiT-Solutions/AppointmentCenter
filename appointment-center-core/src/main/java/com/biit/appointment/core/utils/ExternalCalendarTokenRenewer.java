@@ -52,7 +52,7 @@ public class ExternalCalendarTokenRenewer {
     public ExternalCalendarCredentialsDTO refreshExternalCredentials(ExternalCalendarCredentialsDTO externalCalendarCredentials) {
         try {
             AppointmentCenterLogger.info(this.getClass(), "Updating token for user '{}' and provider '{}'.",
-                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
             final IExternalProviderCalendarService externalCalendarController = getExternalCalendarProvider(
                     externalCalendarCredentials.getCalendarProvider());
             if (externalCalendarController != null) {
@@ -67,7 +67,7 @@ public class ExternalCalendarTokenRenewer {
             }
         } catch (Exception e) {
             AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
-                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getProvider());
+                    externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
             AppointmentCenterLogger.errorMessage(this.getClass(), e);
             externalCalendarCredentialsProvider.delete(externalCalendarCredentialsConverter.reverse(externalCalendarCredentials));
         }

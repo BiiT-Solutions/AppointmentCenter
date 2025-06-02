@@ -16,6 +16,8 @@ public interface ExternalCalendarCredentialsRepository extends ElementRepository
 
     ExternalCalendarCredentials findByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider);
 
+    List<ExternalCalendarCredentials> findByUserId(UUID userId);
+
     void deleteByUserIdAndCalendarProvider(UUID userId, CalendarProvider calendarProvider);
 
     List<ExternalCalendarCredentials> findByExpiresAtAfter(LocalDateTime expiresAt);

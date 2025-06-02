@@ -50,14 +50,6 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
         this.id = id;
     }
 
-    public CalendarProviderDTO getProvider() {
-        return calendarProvider;
-    }
-
-    public void setProvider(CalendarProviderDTO calendarProvider) {
-        this.calendarProvider = calendarProvider;
-    }
-
     public String getUserCredentials() {
         return userCredentials;
     }

@@ -6,7 +6,6 @@ import com.biit.appointment.core.converters.ExternalCalendarCredentialsConverter
 import com.biit.appointment.core.converters.models.ExternalCalendarCredentialsConverterRequest;
 import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
-import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.models.UserAvailabilityDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.ExternalCalendarCredentialsProvider;
@@ -15,6 +14,7 @@ import com.biit.appointment.core.providers.ScheduleRangeExclusionProvider;
 import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.Appointment;
+import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.appointment.persistence.entities.Schedule;
 import com.biit.appointment.persistence.entities.ScheduleRange;
 import com.biit.appointment.persistence.entities.ScheduleRangeExclusion;
@@ -164,14 +164,12 @@ public class UserAvailabilityController {
     private List<Appointment> getExternalCalendarAppointments(UUID userUUID, final LocalDateTime start, final LocalDateTime end) {
         final List<Appointment> appointments = new ArrayList<>();
         externalCalendarControllers.parallelStream().forEach(provider -> {
-            final ExternalCalendarCredentialsDTO externalCalendarCredentials = externalCalendarCredentialsProvider
-                    .refreshIfExpired(externalCalendarCredentialsConverter.convert(
-                            new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
-                                    .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from())))));
+            final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
+                            .getByUserIdAndCalendarProvider(userUUID, calendarProviderConverter.reverse(provider.from()));
             if (externalCalendarCredentials != null) {
                 try {
                     final List<Appointment> externalAppointments = appointmentConverter.reverseAll(provider.getEvents(start, end,
-                            externalCalendarCredentials));
+                            externalCalendarCredentialsConverter.convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials))));
                     appointments.addAll(externalAppointments.stream().filter(appointmentDTO -> !appointmentDTO.isDeleted()).toList());
                 } catch (ExternalCalendarActionException | ExternalCalendarNotFoundException e) {
                     AppointmentCenterLogger.errorMessage(this.getClass(), e);

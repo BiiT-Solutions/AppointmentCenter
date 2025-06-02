@@ -61,13 +61,12 @@ public class ExternalCalendarController {
 
         for (IExternalProviderCalendarService externalCalendarController : externalCalendarControllers) {
             if (Objects.equals(externalCalendarController.from(), provider)) {
-                ExternalCalendarCredentialsDTO externalCalendarCredentials = externalCalendarCredentialsConverter.convert(
-                        new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentialsProvider
-                                .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
-                                        calendarProviderConverter.reverse(externalCalendarController.from()))));
+                final ExternalCalendarCredentials externalCalendarCredentials = externalCalendarCredentialsProvider
+                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()),
+                                calendarProviderConverter.reverse(externalCalendarController.from()));
                 if (externalCalendarCredentials != null) {
-                    externalCalendarCredentials = externalCalendarCredentialsProvider.refreshIfExpired(externalCalendarCredentials);
-                    final AppointmentDTO appointmentDTO = externalCalendarController.getEvent(externalReference, externalCalendarCredentials);
+                    final AppointmentDTO appointmentDTO = externalCalendarController.getEvent(externalReference, externalCalendarCredentialsConverter
+                            .convert(new ExternalCalendarCredentialsConverterRequest(externalCalendarCredentials)));
                     if (appointmentDTO == null) {
                         throw new AppointmentNotFoundException(this.getClass(), "No appointment found for '" + externalReference + "'.");
                     }
@@ -78,7 +77,6 @@ public class ExternalCalendarController {
         throw new ActionNotAllowedException(this.getClass(), "You are not allowed to access to provider '" + provider + "'.");
     }
 
-    //TODO(jnavalon): Should we send an exception if any credential does not work or any exception or just log it?
     public List<AppointmentDTO> getExternalAppointments(final String username,
                                                         final LocalDateTime rangeStartingTime,
                                                         final LocalDateTime rangeEndingTime,
@@ -86,21 +84,21 @@ public class ExternalCalendarController {
         final List<AppointmentDTO> appointmentsDTOs = new ArrayList<>();
 
         final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
-                        "No user with username '" + username + "' found!"));
-        Arrays.stream(CalendarProviderDTO.values())
-                .filter(provider -> externalCalendarCredentialsProvider
-                        .getByUserIdAndCalendarProvider(UUID.fromString(authenticatedUser.getUID()), calendarProviderConverter.reverse(provider)) != null)
-                .parallel().forEach(calendarProvider -> {
-            try {
-                final Collection<AppointmentDTO> appointments =
-                        getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime, calendarProvider, requestedBy);
-                appointmentsDTOs.addAll(appointments);
-            } catch (Exception e) {
-                AppointmentCenterLogger.debug(this.getClass(), "Error while fetching appointments from provider '{}': {} for user '{}'",
-                        calendarProvider, e.getMessage(), authenticatedUser.getUID());
-            }
-        });
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(), "No user with username '" + username + "' found!"));
+        externalCalendarCredentialsProvider.getByUserId(UUID.fromString(authenticatedUser.getUID())).parallelStream()
+                .forEach(externalCalendarCredentials -> {
+                    try {
+
+                        final Collection<AppointmentDTO> appointments =
+                                getExternalAppointments(authenticatedUser, rangeStartingTime, rangeEndingTime,
+                                        calendarProviderConverter.convertElement(externalCalendarCredentials.getCalendarProvider()), requestedBy);
+                        appointmentsDTOs.addAll(appointments);
+                    } catch (Exception e) {
+                        AppointmentCenterLogger.debug(this.getClass(), "Error while fetching appointments from provider '{}': '{}' for user '{}'",
+                                externalCalendarCredentials, e.getMessage(), authenticatedUser.getUID());
+                        AppointmentCenterLogger.errorMessage(this.getClass(), e);
+                    }
+                });
         return appointmentsDTOs;
     }
 
@@ -187,7 +185,9 @@ public class ExternalCalendarController {
                         .collect(Collectors.toCollection(ArrayList::new)));
         if (!credentialsToExpire.isEmpty()) {
             AppointmentCenterLogger.info(this.getClass(), "Updating '{}' tokens.", credentialsToExpire.size());
-            credentialsToExpire.parallelStream().forEach(externalCalendarCredentialsProvider::refreshExternalCredentials);
+            credentialsToExpire.parallelStream().forEach(externalCalendarCredentialsDTO ->
+                    externalCalendarCredentialsProvider.refreshExternalCredentials(externalCalendarCredentialsConverter
+                            .reverse(externalCalendarCredentialsDTO)));
         }
     }
 

@@ -55,7 +55,7 @@ public class ExternalCalendarCredentialsController extends ElementController<Ext
     public ExternalCalendarCredentialsDTO getByUserIdAndCalendarProvider(UUID userId, CalendarProviderDTO calendarProvider, String requestedBy) {
         AppointmentCenterLogger.debug(this.getClass(), "User '{}' is requesting the credentials from user '{}' on '{}'.",
                 requestedBy, userId, calendarProvider);
-        return getProvider().refreshIfExpired(convert(getProvider()
+        return convert(getProvider().refreshIfExpired(getProvider()
                 .getByUserIdAndCalendarProvider(userId, calendarProviderConverter.reverse(calendarProvider))));
     }
 
