@@ -26,7 +26,7 @@ public class RecurrenceRepositoryImpl implements CustomRecurrenceRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Recurrence> findBy(String organizationId, UUID organizer, Collection<ExaminationType> examinationTypes,
+    public List<Recurrence> findBy(String organizationId, UUID organizer, String createdBy, Collection<ExaminationType> examinationTypes,
                                    LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Recurrence> query = criteriaBuilder.createQuery(Recurrence.class);
@@ -47,6 +47,9 @@ public class RecurrenceRepositoryImpl implements CustomRecurrenceRepository {
         }
         if (upperTimeBoundary != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startsAt"), upperTimeBoundary));
+        }
+        if (createdBy != null) {
+            predicates.add(criteriaBuilder.equal(root.get("createdBy"), createdBy));
         }
 
         root.fetch("appointments", JoinType.LEFT);

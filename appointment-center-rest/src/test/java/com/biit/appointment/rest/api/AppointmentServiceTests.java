@@ -149,6 +149,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         appointment.setStartTime(LocalDateTime.of(2024, 3, 27, 16, 38, 3));
         appointment.setEndTime(LocalDateTime.of(2024, 3, 27, 18, 38, 3));
         appointment.setOrganizer(UUID.fromString(admin.getUID()));
+        appointment.setCreatedBy(admin.getUsername());
         this.appointment = appointmentProvider.save(appointment);
     }
 
@@ -161,6 +162,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         appointment.setEndTime(LocalDateTime.now().plusHours(2));
         appointment.setOrganizer(UUID.fromString(admin.getUID()));
         appointment.addAttendee(UUID.fromString(admin.getUID()));
+        appointment.setCreatedBy(admin.getUsername());
         appointmentProvider.save(appointment);
     }
 
@@ -173,6 +175,7 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         appointment.setEndTime(LocalDateTime.now().plusDays(1).plusHours(2));
         appointment.setOrganizer(UUID.fromString(admin.getUID()));
         appointment.addAttendee(UUID.fromString(admin.getUID()));
+        appointment.setCreatedBy(admin.getUsername());
         appointmentProvider.save(appointment);
     }
 

@@ -26,7 +26,7 @@ public class AppointmentRepositoryImpl implements CustomAppointmentRepository {
 
 
     @Override
-    public List<Appointment> findBy(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public List<Appointment> findBy(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<ExaminationType> examinationTypes,
                                     Collection<AppointmentStatus> appointmentStatuses, LocalDateTime lowerTimeBoundary,
                                     LocalDateTime upperTimeBoundary, Boolean deleted) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -39,6 +39,9 @@ public class AppointmentRepositoryImpl implements CustomAppointmentRepository {
         }
         if (organizer != null) {
             predicates.add(criteriaBuilder.equal(root.get("organizer"), organizer));
+        }
+        if (createdBy != null) {
+            predicates.add(criteriaBuilder.equal(root.get("createdByHash"), createdBy));
         }
         if (attendee != null) {
             predicates.add(criteriaBuilder.isMember(attendee, root.get("attendees")));
@@ -63,7 +66,7 @@ public class AppointmentRepositoryImpl implements CustomAppointmentRepository {
     }
 
     @Override
-    public long count(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public long count(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<ExaminationType> examinationTypes,
                       Collection<AppointmentStatus> appointmentStatuses, LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary,
                       Boolean deleted) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -79,6 +82,9 @@ public class AppointmentRepositoryImpl implements CustomAppointmentRepository {
         }
         if (attendee != null) {
             predicates.add(criteriaBuilder.isMember(attendee, root.get("attendees")));
+        }
+        if (createdBy != null) {
+            predicates.add(criteriaBuilder.equal(root.get("createdByHash"), createdBy));
         }
         if (examinationTypes != null && !examinationTypes.isEmpty()) {
             predicates.add(root.get("examinationType").in(examinationTypes));

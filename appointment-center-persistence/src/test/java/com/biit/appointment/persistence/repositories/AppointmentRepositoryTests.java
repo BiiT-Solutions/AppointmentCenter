@@ -115,8 +115,8 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
     @Test(dependsOnMethods = {"storeEntity"})
     public void getAppointmentsByPatient() {
-        Assert.assertEquals(appointmentRepository.count(null, null, attendeeId, null, null, null, null, null), 1);
-        Assert.assertEquals(appointmentRepository.count(null, null, UUID.randomUUID(), null, null, null, null, null), 0);
+        Assert.assertEquals(appointmentRepository.count(null, null, attendeeId, null, null, null, null, null, null), 1);
+        Assert.assertEquals(appointmentRepository.count(null, null, UUID.randomUUID(), null, null, null, null, null, null), 0);
     }
 
     @Test(dependsOnMethods = {"storeEntity"})
@@ -161,51 +161,51 @@ public class AppointmentRepositoryTests extends AbstractTestNGSpringContextTests
 
         // Check get All with filters;
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, null, null, null, null, null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, null, null, null, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), null, null, null, null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), null, null, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, null, null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.FINISHED), null, null, null).size(), 0);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.FINISHED), null, null, null).size(), 0);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, null, null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, null, null).size(), 1);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), null, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), null).size(), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, null, null, false), 1);
         Assert.assertEquals(
                 appointmentRepository.count(
-                        null, null, null, null, null, null, null, false),
+                        null, null, null, null, null, null, null, null, false),
                 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
 
         // Check rowcount with filters
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, null, null, null, false), 1);
+                ORGANIZATION_ID, null, null, null, null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                null, null, null, null, null, null, null, false), 1);
+                null, null, null, null, null, null, null, null, false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, Collections.singletonList(type), null, START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
+                ORGANIZATION_ID, null, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 1);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
+                ORGANIZATION_ID, null, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
         Assert.assertEquals(appointmentRepository.count(
-                ORGANIZATION_ID, null, null, null, Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
+                ORGANIZATION_ID, null, null, null, null, Collections.singletonList(AppointmentStatus.STARTED), START_TIME_1, START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT), false), 0);
 
         // NOTE This test will fail with older versions of MYSQL!
         Assert.assertEquals(appointmentRepository.findBy(
-                ORGANIZATION_ID, ORGANIZER_ID, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT + 1), null, null).size(), 0);
+                ORGANIZATION_ID, ORGANIZER_ID, null, null, Collections.singletonList(type), Collections.singletonList(AppointmentStatus.NOT_STARTED), START_TIME_1.plusMinutes(END_TIME_MINUTES_INCREMENT + 1), null, null).size(), 0);
     }
 
     @Test(dependsOnMethods = {"retrieveAllEntities"})

@@ -22,7 +22,9 @@ public interface CustomRecurrenceRepository {
      * @return a list of appointments.
      */
     List<Recurrence> findBy(
-            @Param("organizationId") String organizationId, @Param("organizer") UUID organizer,
+            @Param("organizationId") String organizationId,
+            @Param("organizer") UUID organizer,
+            @Param("createdBy") String createdBy,
             @Param("examinationTypes") Collection<ExaminationType> examinationTypes,
             @Param("lowerTimeBoundary") LocalDateTime lowerTimeBoundary,
             @Param("upperTimeBoundary") LocalDateTime upperTimeBoundary);

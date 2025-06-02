@@ -111,7 +111,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void dailyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(7));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.DAILY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
         Assert.assertEquals(appointments.size(), 8);
     }
@@ -120,7 +120,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void invalidDailyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(7));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.DAILY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(8), null);
         Assert.assertEquals(appointments.size(), 0);
     }
@@ -129,7 +129,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void weeklyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(7));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.WEEKLY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
         Assert.assertEquals(appointments.size(), 2);
     }
@@ -138,7 +138,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void invalidWeeklyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(1));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(5), RecurrenceFrequency.WEEKLY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(10), LocalDateTime.now().plusDays(10), null);
         //Has only the original appointment.
         Assert.assertEquals(appointments.size(), 1);
@@ -148,7 +148,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void monthlyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(35));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(35), LocalDateTime.now().minusDays(2), RecurrenceFrequency.MONTHLY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(7), LocalDateTime.now().minusDays(2), null);
         Assert.assertEquals(appointments.size(), 1);
     }
@@ -157,7 +157,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void invalidMonthlyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusDays(35));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(35), LocalDateTime.now().minusDays(2), RecurrenceFrequency.MONTHLY);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now(), LocalDateTime.now().plusDays(100), null);
         Assert.assertEquals(appointments.size(), 0);
     }
@@ -166,11 +166,11 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
     public void yearlyRecurrence() {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.now().minusYears(5).minusDays(1));
         generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusYears(5), LocalDateTime.now().plusYears(5), RecurrenceFrequency.YEARLY);
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(7), LocalDateTime.now(), null).size(), 1);
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusYears(1), LocalDateTime.now().plusYears(1), null).size(), 2);
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(200), null).size(), 0);
     }
 
@@ -180,13 +180,13 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30));
         generateRecurrence(pastWeekAppointment, LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30), LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30).plusWeeks(2), RecurrenceFrequency.WORKING_DAYS);
         //Check on Sunday
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30), LocalDateTime.of(2023, Month.NOVEMBER, 12, 11, 30), null).size(), 5);
         //Check next Monday
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30), LocalDateTime.of(2023, Month.NOVEMBER, 13, 11, 30), null).size(), 6);
         //Check next Sunday
-        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null,
+        Assert.assertEquals(appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30), LocalDateTime.of(2023, Month.NOVEMBER, 19, 11, 30), null).size(), 10);
     }
 
@@ -196,7 +196,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30));
         generateRecurrence(pastWeekAppointment, LocalDateTime.of(2023, Month.NOVEMBER, 6, 10, 30), LocalDateTime.of(2024, Month.JANUARY, 6, 10, 30).plusWeeks(2), RecurrenceFrequency.MONTHLY_ON_WEEK_DAY);
         //Check on December
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.DECEMBER, 1, 0, 0), LocalDateTime.of(2023, Month.DECEMBER, 31, 23, 59), null);
         Assert.assertEquals(appointments.size(), 1);
         //Check that is Monday also.
@@ -205,7 +205,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.get(0).getStartTime().get(ChronoField.ALIGNED_WEEK_OF_MONTH), 1);
 
         //Check also with January
-        appointments = appointmentProvider.findBy(null, null, null, null, null,
+        appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.DECEMBER, 1, 0, 0), LocalDateTime.of(2024, Month.JANUARY, 31, 23, 59), null);
         Assert.assertEquals(appointments.size(), 2);
         //Check that is Monday also.
@@ -220,7 +220,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Appointment pastWeekAppointment = generateAppointment(LocalDateTime.of(2023, Month.NOVEMBER, 20, 10, 30));
         generateRecurrence(pastWeekAppointment, LocalDateTime.of(2023, Month.NOVEMBER, 20, 10, 30), LocalDateTime.of(2024, Month.JANUARY, 20, 10, 30).plusWeeks(2), RecurrenceFrequency.MONTHLY_ON_WEEK_DAY);
         //Check on December
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.DECEMBER, 1, 0, 0), LocalDateTime.of(2023, Month.DECEMBER, 31, 23, 59), null);
         Assert.assertEquals(appointments.size(), 1);
         //Check that is Monday also.
@@ -229,7 +229,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.get(0).getStartTime().get(ChronoField.ALIGNED_WEEK_OF_MONTH), 3);
 
         //Check also with January
-        appointments = appointmentProvider.findBy(null, null, null, null, null,
+        appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.of(2023, Month.DECEMBER, 1, 0, 0), LocalDateTime.of(2024, Month.JANUARY, 31, 23, 59), null);
         Assert.assertEquals(appointments.size(), 2);
         //Check that is Monday also.
@@ -244,13 +244,13 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         final Recurrence recurrence = generateRecurrence(pastWeekAppointment, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), RecurrenceFrequency.DAILY);
         recurrenceProvider.addSkipIteration(recurrence.getId(), LocalDate.now(), null);
         recurrenceProvider.addSkipIteration(recurrence.getId(), LocalDate.now().plusDays(1), null);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
         //8 days but 2 skipped.
         Assert.assertEquals(appointments.size(), 6);
 
         recurrenceProvider.removeSkipIteration(recurrence.getId(), LocalDate.now(), null);
-        appointments = appointmentProvider.findBy(null, null, null, null, null,
+        appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now(), LocalDateTime.now().plusDays(7), null);
         //8 days but 1 skipped.
         Assert.assertEquals(appointments.size(), 7);
@@ -265,7 +265,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         appointmentException.setStartTime(LocalDateTime.now().plusHours(2));
         appointmentException.setEndTime(LocalDateTime.now().plusHours(3));
         recurrenceProvider.addAppointmentException(recurrence.getId(), appointmentException, null);
-        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null,
+        List<Appointment> appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(7), null);
         //9 appointments. One is stored in a database as is the exception.
         Assert.assertEquals(appointments.size(), 9);
@@ -274,7 +274,7 @@ public class RecurrenceTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(appointments.get(1).getEndTime().truncatedTo(ChronoUnit.HOURS), LocalDateTime.now().plusHours(3).truncatedTo(ChronoUnit.HOURS));
 
 
-        appointments = appointmentProvider.findBy(null, null, null, null, null,
+        appointments = appointmentProvider.findBy(null, null, null, null, null, null,
                 LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7), null);
         //9 appointments. One is stored in a database as is the exception.
         Assert.assertEquals(appointments.size(), 15);

@@ -79,8 +79,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                               @Parameter(description = "Maximum time for the appointment", example = "2023-01-31T23:59:59.99Z")
                                               @RequestParam(value = "upperTimeBoundary", required = false) OffsetDateTime upperTimeBoundary,
-                                              HttpServletRequest request) {
-        return getController().findBy(organizationId.orElse(null), null, null,
+                                              HttpServletRequest request, Authentication authentication) {
+        return getController().findBy(organizationId.orElse(null), null, null, authentication.getName(),
                 null, appointmentStatuses.orElse(null),
                 lowerTimeBoundary != null ? LocalDateTime.ofInstant(lowerTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
                 upperTimeBoundary != null ? LocalDateTime.ofInstant(upperTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
@@ -97,6 +97,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                         @RequestParam(name = "organizer") Optional<UUID> organizer,
                                         @Parameter(description = "Id of an existing customer")
                                         @RequestParam(name = "attendeeId") Optional<UUID> attendeeId,
+                                        @Parameter(description = "Filter by who has created the appointment")
+                                        @RequestParam(name = "createdBY") Optional<String> createdBy,
                                         @Parameter(description = "Filter by different examinations types")
                                         @RequestParam(name = "examinationType") Optional<Collection<String>> examinationTypesNames,
                                         @Parameter(description = "Filter by appointment status")
@@ -111,7 +113,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                         @RequestParam(name = "deleted") Optional<Boolean> deleted,
                                         HttpServletRequest request) {
         return getController().findByWithExaminationTypeNames(organizationId.orElse(null), organizer.orElse(null), attendeeId.orElse(null),
-                examinationTypesNames.orElse(null), appointmentStatuses.orElse(null),
+                createdBy.orElse(null), examinationTypesNames.orElse(null), appointmentStatuses.orElse(null),
                 lowerTimeBoundary != null ? LocalDateTime.ofInstant(lowerTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
                 upperTimeBoundary != null ? LocalDateTime.ofInstant(upperTimeBoundary.toInstant(), ZoneId.systemDefault()) : null,
                 deleted.orElse(null));
@@ -127,6 +129,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                          @RequestParam(name = "organizer") Optional<UUID> organizer,
                          @Parameter(description = "Id of an existing customer")
                          @RequestParam(name = "attendeeId") Optional<UUID> attendeeId,
+                         @Parameter(description = "Filter by who has created the appointment")
+                         @RequestParam(name = "createdBY") Optional<String> createdBy,
                          @Parameter(description = "Filter by different examinations types")
                          @RequestParam(name = "examinationTypes") Optional<Collection<String>> examinationTypesNames,
                          @Parameter(description = "Filter by appointment status")
@@ -139,7 +143,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                          @RequestParam(name = "deleted") Optional<Boolean> deleted,
                          HttpServletRequest request) {
         return getController().countByWithExaminationTypeNames(organizationId.orElse(null), organizer.orElse(null), attendeeId.orElse(null),
-                examinationTypesNames.orElse(null), appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
+                createdBy.orElse(null), examinationTypesNames.orElse(null), appointmentStatuses.orElse(null), lowerTimeBoundary.orElse(null),
                 upperTimeBoundary.orElse(null), deleted.orElse(null));
     }
 

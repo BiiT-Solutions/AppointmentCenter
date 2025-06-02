@@ -92,8 +92,8 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
-                                                               Collection<AppointmentStatus> appointmentStatuses,
+    public List<AppointmentDTO> findByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<String>
+                                                                       examinationTypeNames, Collection<AppointmentStatus> appointmentStatuses,
                                                                LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes;
         if (examinationTypeNames == null) {
@@ -101,7 +101,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         } else {
             examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
         }
-        return findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses, lowerTimeBoundary,
+        return findBy(organizationId, organizer, attendee, createdBy, examinationTypes, appointmentStatuses, lowerTimeBoundary,
                 upperTimeBoundary, deleted);
     }
 
@@ -119,10 +119,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
-    public List<AppointmentDTO> findBy(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public List<AppointmentDTO> findBy(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<ExaminationType> examinationTypes,
                                        Collection<AppointmentStatus> appointmentStatuses,
                                        LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return convertAll(getProvider().findBy(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
+        return convertAll(getProvider().findBy(organizationId, organizer, attendee, createdBy, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted));
     }
 
@@ -140,11 +140,11 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted              the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long countByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, Collection<String> examinationTypeNames,
+    public long countByWithExaminationTypeNames(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<String> examinationTypeNames,
                                                 Collection<AppointmentStatus> appointmentStatuses,
                                                 LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
         final List<ExaminationType> examinationTypes = examinationTypeProvider.findByNameAndDeleted(examinationTypeNames, false);
-        return getProvider().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
+        return getProvider().count(organizationId, organizer, attendee, createdBy, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
@@ -162,10 +162,10 @@ public class AppointmentController extends KafkaElementController<Appointment, L
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */
-    public long count(String organizationId, UUID organizer, UUID attendee, Collection<ExaminationType> examinationTypes,
+    public long count(String organizationId, UUID organizer, UUID attendee, String createdBy, Collection<ExaminationType> examinationTypes,
                       Collection<AppointmentStatus> appointmentStatuses,
                       LocalDateTime lowerTimeBoundary, LocalDateTime upperTimeBoundary, Boolean deleted) {
-        return getProvider().count(organizationId, organizer, attendee, examinationTypes, appointmentStatuses,
+        return getProvider().count(organizationId, organizer, attendee, createdBy, examinationTypes, appointmentStatuses,
                 lowerTimeBoundary, upperTimeBoundary, deleted);
     }
 
