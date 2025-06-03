@@ -26,7 +26,9 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
         BeanUtils.copyProperties(from.getEntity(), externalCalendarCredentialsDTO);
-        externalCalendarCredentialsDTO.setCalendarProvider(calendarProviderConverter.convertElement(from.getEntity().getCalendarProvider()));
+        if (from.getEntity().getCalendarProvider() != null) {
+            externalCalendarCredentialsDTO.setCalendarProvider(calendarProviderConverter.convertElement(from.getEntity().getCalendarProvider()));
+        }
         if (from.getEntity().getUserCredentials() != null && !from.getEntity().getUserCredentials().isBlank()) {
             externalCalendarCredentialsDTO.setUserCredentials(from.getEntity().getUserCredentials());
         }
@@ -41,7 +43,9 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentials externalCalendarCredentials = new ExternalCalendarCredentials();
         BeanUtils.copyProperties(from, externalCalendarCredentials);
-        externalCalendarCredentials.setCalendarProvider(calendarProviderConverter.reverse(from.getCalendarProvider()));
+        if (from.getCalendarProvider() != null) {
+            externalCalendarCredentials.setCalendarProvider(calendarProviderConverter.reverse(from.getCalendarProvider()));
+        }
         if (from.getUserCredentials() != null && !from.getUserCredentials().isBlank()) {
             externalCalendarCredentials.setUserCredentials(from.getUserCredentials());
         }

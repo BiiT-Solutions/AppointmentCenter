@@ -11,6 +11,7 @@
                 <include name="appointmentTest"/>
                 <include name="appointmentTemplateTest"/>
                 <include name="userAvailability"/>
+                <include name="externalCredentials"/>
             </run>
         </groups>
         <classes>
@@ -18,6 +19,7 @@
             <class name="com.biit.appointment.core.test.AppointmentTests"/>
             <class name="com.biit.appointment.core.test.AppointmentTemplateTests"/>
             <class name="com.biit.appointment.core.test.UserAvailabilityTests"/>
+            <class name="com.biit.appointment.core.test.ExternalCredentialsTests"/>
         </classes>
     </test>
 </suite>
