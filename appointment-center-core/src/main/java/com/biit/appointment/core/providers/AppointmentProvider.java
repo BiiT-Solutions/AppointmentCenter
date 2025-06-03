@@ -218,15 +218,15 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
     }
 
     /**
-     * Find all appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
+     * Find all appointments that matches the search parameters. If startTime and endTime are defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the parameters (can be null for any organization).
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            who attend the meeting.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param lowerTimeBoundary   the lower limit on time for searching an appointment (can be null for no limit).
+     * @param upperTimeBoundary   the upper limit on time for searching an appointment (can be null for no limit).
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
@@ -259,15 +259,15 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
 
 
     /**
-     * Counts the total appointments that matches the search parameters. If startTime and endTime is defined, will search any appointment inside this range.
+     * Counts the total appointments that match the search parameters. If startTime and endTime are defined, will search any appointment inside this range.
      *
      * @param organizationId      the organization of the appointment (can be null for any organization).
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param attendee            who attend the meeting.
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param lowerTimeBoundary   the lower limit on time for searching an appointment (can be null for no limit).
+     * @param upperTimeBoundary   the upper limit on time for searching an appointment (can be null for no limit).
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */

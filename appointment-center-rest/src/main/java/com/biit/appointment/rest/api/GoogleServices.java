@@ -62,9 +62,9 @@ public class GoogleServices {
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
         GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
+        externalCalendarCredentialsController.deleteToken(authentication.getName(), CalendarProviderDTO.GOOGLE);
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
                 .exchangeCodeForToken(authentication.getName(), code, state);
-        externalCalendarCredentialsController.deleteToken(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
         return externalCalendarCredentialsController.create(externalCalendarCredentialsDTO, authentication.getName());
     }
 

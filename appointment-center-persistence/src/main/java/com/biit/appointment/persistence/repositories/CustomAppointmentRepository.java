@@ -19,8 +19,8 @@ public interface CustomAppointmentRepository {
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param examinationTypes    a collection of types of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status or a list).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param lowerTimeBoundary   the lower limit on time for searching an appointment (can be null for no limit).
+     * @param upperTimeBoundary   the upper limit on time for searching an appointment (can be null for no limit).
      * @param deleted             the appointment is deleted or not.
      * @return a list of appointments.
      */
@@ -43,8 +43,8 @@ public interface CustomAppointmentRepository {
      * @param organizer           who must resolve the appointment (can be null for any organizer).
      * @param examinationTypes    the type of the appointment (can be null for any type).
      * @param appointmentStatuses the status of the appointment (can be null for any status).
-     * @param lowerTimeBoundary   the lower limit on time for searching an appointment  (can be null for no limit).
-     * @param upperTimeBoundary   the upper limit on time for searching an appointment  (can be null for no limit).
+     * @param lowerTimeBoundary   the lower limit on time for searching an appointment (can be null for no limit).
+     * @param upperTimeBoundary   the upper limit on time for searching an appointment (can be null for no limit).
      * @param deleted             the appointment is deleted or not.
      * @return the total number of appointments
      */

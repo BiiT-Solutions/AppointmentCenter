@@ -21,6 +21,11 @@
             <artifactId>appointment-center-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.biit</groupId>
             <artifactId>rest-server-defaults</artifactId>
