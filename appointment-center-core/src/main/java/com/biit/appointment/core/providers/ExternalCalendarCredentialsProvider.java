@@ -147,7 +147,9 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
             AppointmentCenterLogger.severe(this.getClass(), "Authorization token for '{}' and '{}' not updated!",
                     externalCalendarCredentials.getUserId(), externalCalendarCredentials.getCalendarProvider());
             AppointmentCenterLogger.errorMessage(this.getClass(), e);
-            delete(externalCalendarCredentials);
+            if (e.getMessage() == null || !e.getMessage().contains("401 Unauthorized")) {
+                delete(externalCalendarCredentials);
+            }
         }
         return null;
     }

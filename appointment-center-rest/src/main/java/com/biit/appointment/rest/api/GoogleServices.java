@@ -37,7 +37,7 @@ public class GoogleServices {
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Request the credentials from a user from google.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/oauth/code/{code}/state/{state}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuth(@Parameter(description = "Google Auth code.", required = true)
@@ -48,13 +48,14 @@ public class GoogleServices {
                                                         HttpServletRequest request) {
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
                 .exchangeCodeForToken(authentication.getName(), code, state);
+        //Delete any previous credential.
         externalCalendarCredentialsController.deleteToken(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
         return externalCalendarCredentialsController.create(externalCalendarCredentialsDTO, authentication.getName());
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Request the credentials from a user from google.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/oauth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
@@ -62,6 +63,7 @@ public class GoogleServices {
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
         GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
+        //Delete any previous credential.
         externalCalendarCredentialsController.deleteToken(authentication.getName(), CalendarProviderDTO.GOOGLE);
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
                 .exchangeCodeForToken(authentication.getName(), code, state);
