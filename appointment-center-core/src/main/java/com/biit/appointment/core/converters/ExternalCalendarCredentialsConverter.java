@@ -26,7 +26,10 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
         BeanUtils.copyProperties(from.getEntity(), externalCalendarCredentialsDTO);
-        externalCalendarCredentialsDTO.setCalendarProvider(calendarProviderConverter.convertElement(from.getEntity().getProvider()));
+        externalCalendarCredentialsDTO.setCalendarProvider(calendarProviderConverter.convertElement(from.getEntity().getCalendarProvider()));
+        if (from.getEntity().getUserCredentials() != null && !from.getEntity().getUserCredentials().isBlank()) {
+            externalCalendarCredentialsDTO.setUserCredentials(from.getEntity().getUserCredentials());
+        }
         return externalCalendarCredentialsDTO;
     }
 
@@ -38,7 +41,10 @@ public class ExternalCalendarCredentialsConverter extends ElementConverter<Exter
         }
         final ExternalCalendarCredentials externalCalendarCredentials = new ExternalCalendarCredentials();
         BeanUtils.copyProperties(from, externalCalendarCredentials);
-        externalCalendarCredentials.setProvider(calendarProviderConverter.reverse(from.getCalendarProvider()));
+        externalCalendarCredentials.setCalendarProvider(calendarProviderConverter.reverse(from.getCalendarProvider()));
+        if (from.getUserCredentials() != null && !from.getUserCredentials().isBlank()) {
+            externalCalendarCredentials.setUserCredentials(from.getUserCredentials());
+        }
         return externalCalendarCredentials;
     }
 }
