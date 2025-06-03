@@ -22,7 +22,7 @@ public final class ObjectMapperFactory {
 
     public static ObjectMapper getNewObjectMapper() {
         final JavaTimeModule module = new JavaTimeModule();
-        final LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+        final LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         final ObjectMapper objectMapper = JsonMapper.builder()
                 .addModule(module)
