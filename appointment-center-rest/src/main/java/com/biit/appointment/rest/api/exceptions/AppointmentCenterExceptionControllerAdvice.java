@@ -145,5 +145,11 @@ public class AppointmentCenterExceptionControllerAdvice extends ServerExceptionC
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "cannot_access_to_external_calendar", ex), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidGoogleCredentialsException.class)
+    public ResponseEntity<Object> invalidGoogleCredentialsException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "google_credentials_failure", ex), HttpStatus.FORBIDDEN);
+    }
+
 
 }

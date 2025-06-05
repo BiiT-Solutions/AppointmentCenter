@@ -5,6 +5,7 @@ import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.google.client.GoogleCalendarService;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
+import com.biit.appointment.rest.api.exceptions.InvalidGoogleCredentialsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/external-calendar-credentials/google")
@@ -58,15 +61,21 @@ public class GoogleServices {
     @Operation(summary = "Request the credentials from a user from google.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/oauth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
-                                                                       @RequestParam(name = "state", required = false) String state,
+    public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code", required = false) Optional<String> code,
+                                                                       @RequestParam(name = "state", required = false) Optional<String> state,
+                                                                       @RequestParam(name = "error", required = false) Optional<String> error,
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
-        GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
+        if (error.isPresent()) {
+            throw new InvalidGoogleCredentialsException(this.getClass(), "Invalid google credentials. Error issued: " + error.get());
+        }
+        GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.",
+                code.orElse(null),
+                state.orElse(null));
         //Delete any previous credential.
         externalCalendarCredentialsController.deleteToken(authentication.getName(), CalendarProviderDTO.GOOGLE);
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarService
-                .exchangeCodeForToken(authentication.getName(), code, state);
+                .exchangeCodeForToken(authentication.getName(), code.orElse(null), state.orElse(null));
         return externalCalendarCredentialsController.create(externalCalendarCredentialsDTO, authentication.getName());
     }
 

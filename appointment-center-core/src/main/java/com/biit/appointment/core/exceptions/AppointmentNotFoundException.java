@@ -19,7 +19,7 @@ public class AppointmentNotFoundException extends NotFoundException {
     }
 
     public AppointmentNotFoundException(Class<?> clazz) {
-        this(clazz, "MyEntity not found");
+        this(clazz, "Appointment not found");
     }
 
     public AppointmentNotFoundException(Class<?> clazz, Throwable e) {
