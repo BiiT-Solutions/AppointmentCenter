@@ -8,6 +8,7 @@ import com.biit.appointment.core.models.AppointmentTemplateDTO;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
+import com.biit.server.providers.StorableObjectProvider;
 import com.biit.server.rest.ElementServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -40,7 +42,7 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     @Operation(summary = "Gets an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}/viewers", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentTemplateDTO getByViewers(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Long id,
-                                      Authentication authentication, HttpServletRequest request) {
+                                               Authentication authentication, HttpServletRequest request) {
         return getController().get(id);
     }
 
@@ -92,8 +94,11 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all, but viewers has permissions", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/viewers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<AppointmentTemplateDTO> getAllByViewers(HttpServletRequest request) {
-        return super.getAll(request);
+    public List<AppointmentTemplateDTO> getAllByViewers(
+            @RequestParam(name = "page", defaultValue = "0") Optional<Integer> page,
+            @RequestParam(name = "size", defaultValue = StorableObjectProvider.MAX_PAGE_SIZE + "") Optional<Integer> size,
+            HttpServletRequest request) {
+        return super.getAll(page, size, request);
     }
 
 
