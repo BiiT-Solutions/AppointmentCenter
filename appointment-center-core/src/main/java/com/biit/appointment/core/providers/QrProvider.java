@@ -2,11 +2,11 @@ package com.biit.appointment.core.providers;
 
 import com.biit.appointment.logger.AttendanceMonitoringLogger;
 import io.github.simonscholz.qrcode.LogoShape;
-import io.github.simonscholz.qrcode.QrCodeApi;
 import io.github.simonscholz.qrcode.QrCodeConfig;
 import io.github.simonscholz.qrcode.QrCodeDotStyler;
 import io.github.simonscholz.qrcode.QrCodeFactory;
 import io.github.simonscholz.qrcode.QrPositionalSquaresConfig;
+import io.github.simonscholz.svg.QrCodeSvgFactory;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.Transcoder;
@@ -100,7 +100,20 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
-        final QrCodeApi qrCodeApi = QrCodeFactory.createQrCodeApi();
+        return QrCodeFactory.createQrCodeApi().createQrCodeImage(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+                qrPositionalSquaresConfig, qrCodeDotStyler));
+    }
+
+
+    public BufferedImage getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
+                                    QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
+        return QrCodeSvgFactory.createQrCodeApi().createQrCodeSvg(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+                qrPositionalSquaresConfig, qrCodeDotStyler);
+    }
+
+
+    private QrCodeConfig generateQrCode(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
+                                        QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
 
         QrCodeConfig.Builder builder = new QrCodeConfig.Builder(content);
 
@@ -140,8 +153,9 @@ public class QrProvider {
                 AttendanceMonitoringLogger.errorMessage(this.getClass(), e);
             }
         }
-        return qrCodeApi.createQrCodeImage(builder.build());
+        return builder.build();
     }
+
 
     public void drawDotImage(final int x, final int y, final int dotSize, final Graphics2D graphics, final String resourceImage) {
         try (InputStream inputStream = QrProvider.class.getResourceAsStream(resourceImage)) {
