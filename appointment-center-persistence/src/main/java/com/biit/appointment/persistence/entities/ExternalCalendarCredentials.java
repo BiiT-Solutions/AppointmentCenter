@@ -47,7 +47,7 @@ public class ExternalCalendarCredentials extends Element<Long> {
     private CalendarProvider calendarProvider;
 
     @Lob
-    @Column(name = "user_credentials")
+    @Column(name = "user_credentials", columnDefinition = "TEXT")
     @Convert(converter = StringCryptoConverter.class)
     private String userCredentials;
 
