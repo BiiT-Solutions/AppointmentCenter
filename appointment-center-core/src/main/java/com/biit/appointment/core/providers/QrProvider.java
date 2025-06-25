@@ -16,6 +16,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -105,10 +106,10 @@ public class QrProvider {
     }
 
 
-    public BufferedImage getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
-                                    QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
+    public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
+                               QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
         return QrCodeSvgFactory.createQrCodeApi().createQrCodeSvg(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
-                qrPositionalSquaresConfig, qrCodeDotStyler);
+                qrPositionalSquaresConfig, qrCodeDotStyler));
     }
 
 
