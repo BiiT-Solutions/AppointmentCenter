@@ -1,6 +1,7 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class ScheduleDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
     private UUID user;
 
     private List<ScheduleRangeDTO> ranges;

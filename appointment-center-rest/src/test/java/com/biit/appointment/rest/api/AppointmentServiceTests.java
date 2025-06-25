@@ -466,4 +466,20 @@ public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
         Assert.assertTrue(createResult.getResponse().getContentAsString().isBlank());
     }
 
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void invalidUser() throws Exception {
+
+        //Has no mandatory fields.
+        final AppointmentDTO appointmentDTO = new AppointmentDTO();
+
+        this.mockMvc
+                .perform(post("/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + adminJwtToken)
+                        .content(toJson(appointmentDTO))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
 }

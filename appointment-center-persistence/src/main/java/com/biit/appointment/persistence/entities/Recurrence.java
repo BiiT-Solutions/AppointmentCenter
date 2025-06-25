@@ -67,7 +67,7 @@ public class Recurrence extends Element<Long> {
     @Enumerated(EnumType.STRING)
     private RecurrenceFrequency frequency;
 
-    @Column(name = "starts_at")
+    @Column(name = "starts_at", nullable = false)
     private LocalDateTime startsAt;
 
     @Column(name = "ends_at")

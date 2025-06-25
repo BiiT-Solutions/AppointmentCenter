@@ -1,4 +1,4 @@
-package com.biit.appointment.rest.api.models;
+package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.controllers.ScheduleRangeExclusionController;
 import com.biit.appointment.core.converters.ScheduleRangeExclusionConverter;

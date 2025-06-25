@@ -55,7 +55,7 @@ public class Appointment extends Element<Long> implements Comparable<Appointment
     private String title;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     @Convert(converter = StringCryptoConverter.class)
     private String description;
 

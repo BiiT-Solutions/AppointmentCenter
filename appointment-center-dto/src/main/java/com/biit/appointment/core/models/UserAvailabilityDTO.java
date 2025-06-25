@@ -1,14 +1,19 @@
 package com.biit.appointment.core.models;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserAvailabilityDTO {
 
+    @NotNull
     private UUID user;
 
+    @NotNull
     private LocalDateTime startTime;
 
+    @NotNull
     private LocalDateTime endTime;
 
     public UserAvailabilityDTO() {

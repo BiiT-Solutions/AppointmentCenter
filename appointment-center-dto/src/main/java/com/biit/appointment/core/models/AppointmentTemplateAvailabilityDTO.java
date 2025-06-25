@@ -1,10 +1,13 @@
 package com.biit.appointment.core.models;
 
 import com.biit.utils.date.range.LocalDateTimeRange;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 public class AppointmentTemplateAvailabilityDTO {
+
+    @NotNull
     private AppointmentTemplateDTO appointmentTemplate;
 
     private List<LocalDateTimeRange> availability;

@@ -47,7 +47,7 @@ public class AppointmentTemplate extends Element<Long> {
     private String title;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     @Convert(converter = StringCryptoConverter.class)
     private String description;
 

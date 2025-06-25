@@ -8,6 +8,8 @@ import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -20,10 +22,14 @@ public class ExternalCalendarCredentialsDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
     private UUID userId;
 
+    @Valid
+    @NotNull
     private CalendarProviderDTO calendarProvider;
 
+    @NotNull
     private String userCredentials;
 
     private LocalDateTime expiresAt;

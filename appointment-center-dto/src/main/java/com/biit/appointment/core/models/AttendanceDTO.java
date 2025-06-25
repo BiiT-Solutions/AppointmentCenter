@@ -1,6 +1,7 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
@@ -8,8 +9,10 @@ public class AttendanceDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
     private UUID attendee;
 
+    @NotNull
     private Long appointmentId;
 
     public Long getId() {

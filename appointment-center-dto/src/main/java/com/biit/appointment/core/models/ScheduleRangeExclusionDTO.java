@@ -1,6 +1,7 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -15,10 +16,13 @@ public class ScheduleRangeExclusionDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
     private UUID user;
 
+    @NotNull
     private LocalDateTime startTime;
 
+    @NotNull
     private LocalDateTime endTime;
 
     public ScheduleRangeExclusionDTO() {
