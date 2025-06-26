@@ -3,10 +3,10 @@ package com.biit.appointment.rest.api;
 import com.biit.appointment.core.controllers.AttendanceController;
 import com.biit.appointment.core.converters.AttendanceConverter;
 import com.biit.appointment.core.converters.models.AttendanceConverterRequest;
-import com.biit.appointment.core.models.AttendanceDTO;
 import com.biit.appointment.core.converters.models.AttendanceRequest;
+import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.AttendanceDTO;
 import com.biit.appointment.core.providers.AttendanceProvider;
-import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.Attendance;
 import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.server.rest.ElementServices;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,7 +45,7 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the attendance from an appointment.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/appointments", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<AttendanceDTO> findByAppointment(@RequestBody Appointment appointment) {
+    public List<AttendanceDTO> findByAppointment(@Valid @RequestBody AppointmentDTO appointment) {
         return getController().findByAppointment(appointment);
     }
 
@@ -105,7 +106,7 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void attend(@Parameter(description = "Id of the appointment to check.")
                        @PathVariable(name = "appointmentId") Long appointmentId,
-                       @RequestBody AttendanceRequest attendanceRequest,
+                       @Valid @RequestBody AttendanceRequest attendanceRequest,
                        Authentication authentication, HttpServletRequest request) {
         getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
@@ -142,7 +143,7 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void attend(@Parameter(description = "Id of the appointment to check.")
                        @PathVariable(name = "appointmentId") Long appointmentId,
-                       @RequestBody String attendanceRequest,
+                       @Valid @RequestBody String attendanceRequest,
                        Authentication authentication, HttpServletRequest request) {
         getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }

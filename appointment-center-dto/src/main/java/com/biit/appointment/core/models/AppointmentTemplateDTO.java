@@ -16,7 +16,7 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
     @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
     private String title;
 
-    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_BIG_FIELD_LENGTH)
+    @Size(max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String description;
 
     private int duration;

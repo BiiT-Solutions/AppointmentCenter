@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AvailabilitySearch {
-    private static final int MAX_SLOTS = 20;
-    private static final int MAX_SLOT_DURATION = 24 * 60;
+    public static final int MAX_SLOTS = 20;
+    public static final int MAX_SLOT_DURATION = 24 * 60;
 
-    @NotNull
     private UUID user;
 
     private LocalDateTime start;

@@ -20,9 +20,10 @@ public class AppointmentDTO extends ElementDTO<Long> {
     @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
     private String title;
 
-    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_BIG_FIELD_LENGTH)
+    @Size(max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String description;
 
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String address;
 
     private UUID organizer;
@@ -65,6 +66,17 @@ public class AppointmentDTO extends ElementDTO<Long> {
     private String externalReference;
 
     private CalendarProviderDTO calendarProvider;
+
+    public AppointmentDTO() {
+        super();
+    }
+
+    public AppointmentDTO(String title, LocalDateTime startTime, LocalDateTime endTime) {
+        this();
+        setTitle(title);
+        setStartTime(startTime);
+        setEndTime(endTime);
+    }
 
     @Override
     public Long getId() {

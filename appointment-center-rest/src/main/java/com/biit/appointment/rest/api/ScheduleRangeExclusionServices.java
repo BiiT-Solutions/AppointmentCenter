@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -61,7 +62,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add an availability exception to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void addAvailabilityExceptions(@RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
+    public void addAvailabilityExceptions(@Valid @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                           Authentication authentication,
                                           HttpServletRequest request) {
         getController().add(scheduleRangeExclusionDTOS, authentication.getName());
@@ -73,7 +74,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
     @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void addAvailabilityExceptions(@Parameter(description = "UUID of the user.", required = true)
                                           @PathVariable(name = "uuid") UUID uuid,
-                                          @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
+                                          @Valid @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                           Authentication authentication,
                                           HttpServletRequest request) {
         getController().add(scheduleRangeExclusionDTOS, uuid, authentication.getName());
@@ -84,7 +85,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
     @Operation(summary = "Sets the availability exceptions for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public void setScheduleRange(Authentication authentication,
-                                 @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
+                                 @Valid @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                  HttpServletRequest request) {
         getController().set(scheduleRangeExclusionDTOS, authentication.getName());
     }
@@ -95,7 +96,7 @@ public class ScheduleRangeExclusionServices extends ElementServices<ScheduleRang
     @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void setScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                  @PathVariable(name = "uuid") UUID uuid,
-                                 @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
+                                 @Valid @RequestBody Collection<ScheduleRangeExclusionDTO> scheduleRangeExclusionDTOS,
                                  Authentication authentication,
                                  HttpServletRequest request) {
         getController().set(scheduleRangeExclusionDTOS, uuid, authentication.getName());

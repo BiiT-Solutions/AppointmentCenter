@@ -8,6 +8,7 @@ import com.biit.database.encryption.InvalidEncryptionException;
 import com.biit.database.encryption.KeyProperty;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +17,10 @@ import java.util.UUID;
 
 public class AttendanceRequest {
 
+    @NotNull
     private Long appointmentId;
+
+    @NotNull
     private UUID attender;
 
     private static final ChaCha20CipherEngine CHA_CHA_20_CIPHER_ENGINE = new ChaCha20CipherEngine();

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -59,7 +60,7 @@ public class QrService {
     @Operation(summary = "Generates a QR code with the content.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "", produces = MediaType.IMAGE_PNG_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
-    public byte[] generateQrForAttendanceImage(@RequestBody String content,
+    public byte[] generateQrForAttendanceImage(@NotBlank @RequestBody String content,
                                                HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")

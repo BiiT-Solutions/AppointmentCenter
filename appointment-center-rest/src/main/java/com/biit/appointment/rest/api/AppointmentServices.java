@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -152,7 +153,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @Operation(summary = "Checks if the provided appointment collides with any other appointment. An appointment collides if is defined for "
             + "the same organizer at the same time.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/overlaps", produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public boolean overlaps(@RequestBody AppointmentDTO appointment, HttpServletRequest request) {
+    public boolean overlaps(@Valid @RequestBody AppointmentDTO appointment, HttpServletRequest request) {
         return getController().overlaps(appointment);
     }
 
@@ -163,7 +164,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PostMapping(value = "/speakers/{speakerUUID}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO addSpeaker(@Parameter(description = "UUID of an existing user")
                                      @PathVariable(name = "speakerUUID") UUID speakerId,
-                                     @RequestBody AppointmentDTO appointment, Authentication authentication, HttpServletRequest request) {
+                                     @Valid @RequestBody AppointmentDTO appointment, Authentication authentication, HttpServletRequest request) {
         return getController().addSpeaker(appointment, speakerId, authentication.getName());
     }
 
@@ -187,7 +188,8 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PostMapping(value = "/templates/starting-time/{startingTime}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO fromTemplate(@Parameter(description = "Starting time of the appointment (yyyy-MM-dd hh:mm)")
                                        @PathVariable(name = "startingTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startingTime,
-                                       @RequestBody AppointmentTemplateDTO appointmentTemplateDTO, Authentication authentication, HttpServletRequest request) {
+                                       @Valid @RequestBody AppointmentTemplateDTO appointmentTemplateDTO,
+                                       Authentication authentication, HttpServletRequest request) {
         final Optional<IAuthenticatedUser> user = authenticatedUserProvider.findByUsername(authentication.getName());
         if (user.isEmpty()) {
             throw new UserNotFoundException(this.getClass(), "No user exists with username '" + authentication.getName() + "'.");
@@ -428,7 +430,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PutMapping(value = "/{appointmentId}/attend", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentDTO attend(@Parameter(description = "Id of the appointment to check.")
                                  @PathVariable(name = "appointmentId") Long appointmentId,
-                                 @RequestBody AttendanceRequest attendanceRequest,
+                                 @Valid @RequestBody AttendanceRequest attendanceRequest,
                                  Authentication authentication, HttpServletRequest request) {
         return getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
@@ -464,7 +466,7 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
     @PutMapping(value = "/{appointmentId}/attend/text", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
     public AppointmentDTO attend(@Parameter(description = "Id of the appointment to check.")
                                  @PathVariable(name = "appointmentId") Long appointmentId,
-                                 @RequestBody String attendanceRequest,
+                                 @Valid @RequestBody String attendanceRequest,
                                  Authentication authentication, HttpServletRequest request) {
         return getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
