@@ -3,17 +3,26 @@ package com.biit.appointment.core.controllers;
 import com.biit.appointment.core.converters.models.AttendanceRequest;
 import com.biit.appointment.core.models.QrCodeDTO;
 import com.biit.appointment.core.providers.QrProvider;
+import com.biit.appointment.core.values.ImageFormat;
 import com.biit.server.exceptions.UnexpectedValueException;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import org.springframework.stereotype.Controller;
+import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,9 +50,26 @@ public class QrController {
             final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
+            qrCodeDTO.setImageFormat(ImageFormat.BASE64);
             qrCodeDTO.setContent(content);
             return qrCodeDTO;
         } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
+
+    public QrCodeDTO generateQrCodeAsSvg(String content) {
+        try {
+            final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final StringWriter stringWriter = new StringWriter();
+            transformer.transform(new DOMSource(qrCode), new StreamResult(stringWriter));
+            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+            qrCodeDTO.setData(stringWriter.toString().getBytes(StandardCharsets.UTF_8));
+            qrCodeDTO.setImageFormat(ImageFormat.SVG);
+            qrCodeDTO.setContent(content);
+            return qrCodeDTO;
+        } catch (TransformerException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
     }

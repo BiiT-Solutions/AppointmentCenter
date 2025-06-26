@@ -105,6 +105,22 @@ public class QrProvider {
                 qrPositionalSquaresConfig, qrCodeDotStyler));
     }
 
+    public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo) {
+        return getQrAsSvg(content, size, color, resourceLogo, true);
+    }
+
+    public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
+        return getQrAsSvg(content, size, borderColor, ink, background, resourceLogo, crateSquareConfig(false, SQUARES_BORDER_RADIUS,
+                        ink, background, ink, background),
+                null);
+    }
+
+    public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo, boolean circleShaped) {
+        return getQrAsSvg(content, size, color, color, null, resourceLogo,
+                crateSquareConfig(circleShaped, null, color, null, color, null),
+                null);
+    }
+
 
     public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {

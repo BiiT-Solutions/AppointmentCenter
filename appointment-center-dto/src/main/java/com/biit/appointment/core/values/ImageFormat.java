@@ -2,7 +2,8 @@ package com.biit.appointment.core.values;
 
 public enum ImageFormat {
     RAW,
-    BASE64;
+    BASE64,
+    SVG;
 
     public static ImageFormat getFormat(String name) {
         for (final ImageFormat format : ImageFormat.values()) {
