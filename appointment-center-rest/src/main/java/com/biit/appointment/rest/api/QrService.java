@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
+
 @RestController
 @RequestMapping("/qr")
 public class QrService {
@@ -68,5 +70,20 @@ public class QrService {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
         return qrController.generateQrCode(content).getData();
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Generates a QR as SVG image with the content.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/svg", consumes = MediaType.TEXT_PLAIN_VALUE, produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public String generateQrForAttendanceSvg(@NotBlank @RequestBody String content,
+                                               HttpServletResponse response, HttpServletRequest request) {
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename("QR.svg").build();
+        response.setHeader(HttpHeaders.CONTENT_TYPE, "image/svg+xml");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+
+        return new String(qrController.generateQrCodeAsSvg(content).getData(), StandardCharsets.UTF_8);
     }
 }

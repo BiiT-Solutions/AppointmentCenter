@@ -2,11 +2,11 @@ package com.biit.appointment.core.providers;
 
 import com.biit.appointment.logger.AttendanceMonitoringLogger;
 import io.github.simonscholz.qrcode.LogoShape;
-import io.github.simonscholz.qrcode.QrCodeApi;
 import io.github.simonscholz.qrcode.QrCodeConfig;
 import io.github.simonscholz.qrcode.QrCodeDotStyler;
 import io.github.simonscholz.qrcode.QrCodeFactory;
 import io.github.simonscholz.qrcode.QrPositionalSquaresConfig;
+import io.github.simonscholz.svg.QrCodeSvgFactory;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.Transcoder;
@@ -16,6 +16,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,7 +101,36 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
                                QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
-        final QrCodeApi qrCodeApi = QrCodeFactory.createQrCodeApi();
+        return QrCodeFactory.createQrCodeApi().createQrCodeImage(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+                qrPositionalSquaresConfig, qrCodeDotStyler));
+    }
+
+    public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo) {
+        return getQrAsSvg(content, size, color, resourceLogo, true);
+    }
+
+    public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
+        return getQrAsSvg(content, size, borderColor, ink, background, resourceLogo, crateSquareConfig(false, SQUARES_BORDER_RADIUS,
+                        ink, background, ink, background),
+                null);
+    }
+
+    public Document getQrAsSvg(String content, Integer size, Color color, String resourceLogo, boolean circleShaped) {
+        return getQrAsSvg(content, size, color, color, null, resourceLogo,
+                crateSquareConfig(circleShaped, null, color, null, color, null),
+                null);
+    }
+
+
+    public Document getQrAsSvg(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
+                               QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
+        return QrCodeSvgFactory.createQrCodeApi().createQrCodeSvg(generateQrCode(content, size, borderColor, ink, background, resourceLogo,
+                qrPositionalSquaresConfig, qrCodeDotStyler));
+    }
+
+
+    private QrCodeConfig generateQrCode(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo,
+                                        QrPositionalSquaresConfig qrPositionalSquaresConfig, QrCodeDotStyler qrCodeDotStyler) {
 
         QrCodeConfig.Builder builder = new QrCodeConfig.Builder(content);
 
@@ -140,8 +170,9 @@ public class QrProvider {
                 AttendanceMonitoringLogger.errorMessage(this.getClass(), e);
             }
         }
-        return qrCodeApi.createQrCodeImage(builder.build());
+        return builder.build();
     }
+
 
     public void drawDotImage(final int x, final int y, final int dotSize, final Graphics2D graphics, final String resourceImage) {
         try (InputStream inputStream = QrProvider.class.getResourceAsStream(resourceImage)) {
