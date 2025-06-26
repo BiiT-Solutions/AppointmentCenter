@@ -2,11 +2,18 @@ package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class ExaminationTypeDTO extends ElementDTO<String> {
 
+    @NotNull
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_SMALL_FIELD_LENGTH)
     private String name;
 
+    @Valid
+    @NotNull
     private AppointmentTypeDTO appointmentType;
 
     private String organizationId;

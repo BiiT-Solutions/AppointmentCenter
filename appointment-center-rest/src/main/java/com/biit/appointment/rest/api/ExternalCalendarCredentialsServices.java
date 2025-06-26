@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +44,8 @@ public class ExternalCalendarCredentialsServices extends ElementServices<Externa
     @Operation(summary = "Allows a user to stores its own credentials.", security = {@SecurityRequirement(name = "bearerAuth")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = {"/me"}, produces = {"application/json"})
-    public ExternalCalendarCredentialsDTO addOwn(@RequestBody ExternalCalendarCredentialsDTO dto, Authentication authentication, HttpServletRequest request) {
+    public ExternalCalendarCredentialsDTO addOwn(@Valid @RequestBody ExternalCalendarCredentialsDTO dto,
+                                                 Authentication authentication, HttpServletRequest request) {
         return this.getController().createOwn(dto, authentication.getName());
     }
 

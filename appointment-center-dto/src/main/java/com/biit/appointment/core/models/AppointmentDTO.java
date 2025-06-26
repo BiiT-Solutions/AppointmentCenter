@@ -1,6 +1,8 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -15,16 +17,21 @@ public class AppointmentDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
     private String title;
 
+    @Size(max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String description;
 
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String address;
 
     private UUID organizer;
 
+    @NotNull
     private LocalDateTime startTime;
 
+    @NotNull
     private LocalDateTime endTime;
 
     private String organizationId;
@@ -59,6 +66,17 @@ public class AppointmentDTO extends ElementDTO<Long> {
     private String externalReference;
 
     private CalendarProviderDTO calendarProvider;
+
+    public AppointmentDTO() {
+        super();
+    }
+
+    public AppointmentDTO(String title, LocalDateTime startTime, LocalDateTime endTime) {
+        this();
+        setTitle(title);
+        setStartTime(startTime);
+        setEndTime(endTime);
+    }
 
     @Override
     public Long getId() {

@@ -6,6 +6,7 @@ import com.biit.appointment.core.values.ImageFormat;
 import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import jakarta.validation.constraints.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -18,6 +19,8 @@ public class ImageDTO extends ElementDTO<Long> {
     private static final String IMAGE_JPG_BASE_64 = "data:image/jpeg;base64,";
 
     private byte[] data;
+
+    @NotNull
     private ImageFormat imageFormat;
 
     @Override

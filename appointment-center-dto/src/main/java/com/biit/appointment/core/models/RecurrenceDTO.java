@@ -1,6 +1,9 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,16 +14,23 @@ public class RecurrenceDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
     private UUID organizer;
 
+    @NotNull
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH)
     private String organizationId;
 
+    @Valid
+    @NotNull
     private ExaminationTypeDTO examinationType;
 
     private Set<AppointmentDTO> appointments;
 
+    @NotNull
     private RecurrenceFrequency frequency;
 
+    @NotNull
     private LocalDateTime startsAt;
 
     private LocalDateTime endsAt;

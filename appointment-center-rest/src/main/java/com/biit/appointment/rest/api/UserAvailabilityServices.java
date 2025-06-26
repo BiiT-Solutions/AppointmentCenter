@@ -6,6 +6,9 @@ import com.biit.appointment.rest.api.models.AvailabilitySearch;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,8 +46,10 @@ public class UserAvailabilityServices {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
             @Parameter(description = "Duration of the requested slot in minutes", required = true)
+            @Min(1) @Max(AvailabilitySearch.MAX_SLOT_DURATION)
             @PathVariable(name = "duration") int slotDuration,
             @Parameter(description = "Number of slots that will return.", required = true)
+            @Min(1) @Max(AvailabilitySearch.MAX_SLOTS)
             @PathVariable(name = "slots") int slots,
             Authentication authentication) {
         return userAvailabilityController.getAvailability(authentication.getName(), start, end, slotDuration, slots);
@@ -64,8 +69,10 @@ public class UserAvailabilityServices {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @PathVariable(name = "end") LocalDateTime end,
             @Parameter(description = "Duration of the requested slot in minutes.", required = true)
+            @Min(1) @Max(AvailabilitySearch.MAX_SLOT_DURATION)
             @PathVariable(name = "duration") int slotDuration,
             @Parameter(description = "Number of slots that will return.", required = true)
+            @Min(1) @Max(AvailabilitySearch.MAX_SLOTS)
             @PathVariable(name = "slots") int slots) {
         return userAvailabilityController.getAvailability(user, start, end, slotDuration, slots);
     }
@@ -74,7 +81,7 @@ public class UserAvailabilityServices {
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the availability from your user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserAvailabilityDTO> getOwnAvailability(@RequestBody AvailabilitySearch search, Authentication authentication) {
+    public List<UserAvailabilityDTO> getOwnAvailability(@Valid @RequestBody AvailabilitySearch search, Authentication authentication) {
         return userAvailabilityController.getAvailability(authentication.getName(), search.getStart(), search.getEnd(),
                 search.getSlotDuration(), search.getSlots());
     }
@@ -83,7 +90,7 @@ public class UserAvailabilityServices {
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the availability from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserAvailabilityDTO> getAvailability(@RequestBody AvailabilitySearch search) {
+    public List<UserAvailabilityDTO> getAvailability(@Valid @RequestBody AvailabilitySearch search) {
         return userAvailabilityController.getAvailability(search.getUser(), search.getStart(), search.getEnd(), search.getSlotDuration(), search.getSlots());
     }
 

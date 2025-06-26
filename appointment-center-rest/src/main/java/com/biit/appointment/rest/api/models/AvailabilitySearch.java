@@ -1,9 +1,15 @@
 package com.biit.appointment.rest.api.models;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AvailabilitySearch {
+    public static final int MAX_SLOTS = 20;
+    public static final int MAX_SLOT_DURATION = 24 * 60;
 
     private UUID user;
 
@@ -11,8 +17,15 @@ public class AvailabilitySearch {
 
     private LocalDateTime end;
 
+    //In minutes.
+    @NotNull
+    @Min(1)
+    @Max(MAX_SLOT_DURATION)
     private int slotDuration;
 
+    @NotNull
+    @Min(1)
+    @Max(MAX_SLOTS)
     private int slots;
 
     public AvailabilitySearch() {

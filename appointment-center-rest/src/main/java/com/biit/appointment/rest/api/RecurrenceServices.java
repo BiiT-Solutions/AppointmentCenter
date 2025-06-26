@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -65,7 +66,7 @@ public class RecurrenceServices extends ElementServices<Recurrence, Long, Recurr
     @PutMapping(value = "/{id}/appointments", produces = MediaType.APPLICATION_JSON_VALUE)
     public RecurrenceDTO addAppointmentException(@Parameter(description = "Id of the recurrence series.")
                                                  @PathVariable(name = "id") Long id,
-                                                 @RequestBody AppointmentDTO appointmentDTO,
+                                                 @Valid @RequestBody AppointmentDTO appointmentDTO,
                                                  Authentication authentication,
                                                  HttpServletRequest request) {
         return getController().addAppointmentException(id, appointmentDTO, authentication.getName());
@@ -76,7 +77,7 @@ public class RecurrenceServices extends ElementServices<Recurrence, Long, Recurr
     @PostMapping(value = "/{id}/appointments", produces = MediaType.APPLICATION_JSON_VALUE)
     public RecurrenceDTO removeAppointmentException(@Parameter(description = "Id of the recurrence series.")
                                                     @PathVariable(name = "id") Long id,
-                                                    @RequestBody AppointmentDTO appointmentDTO,
+                                                    @Valid @RequestBody AppointmentDTO appointmentDTO,
                                                     Authentication authentication,
                                                     HttpServletRequest request) {
         return getController().removeAppointmentException(id, appointmentDTO, authentication.getName());

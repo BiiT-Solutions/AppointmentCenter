@@ -1,5 +1,6 @@
 package com.biit.appointment.core.controllers;
 
+import com.biit.appointment.core.converters.AppointmentConverter;
 import com.biit.appointment.core.converters.AttendanceConverter;
 import com.biit.appointment.core.converters.models.AttendanceConverterRequest;
 import com.biit.appointment.core.converters.models.AttendanceRequest;
@@ -8,6 +9,7 @@ import com.biit.appointment.core.exceptions.AttendanceNotFoundException;
 import com.biit.appointment.core.exceptions.InvalidParameterException;
 import com.biit.appointment.core.exceptions.YouAreAlreadyOnThisAppointmentException;
 import com.biit.appointment.core.exceptions.YouAreNotOnThisAppointmentException;
+import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.AttendanceDTO;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AttendanceProvider;
@@ -33,13 +35,16 @@ public class AttendanceController extends ElementController<Attendance, Long, At
 
     private final IAuthenticatedUserProvider authenticatedUserProvider;
     private final AppointmentProvider appointmentProvider;
+    private final AppointmentConverter appointmentConverter;
 
     protected AttendanceController(AttendanceProvider provider, AttendanceConverter converter,
                                    IAuthenticatedUserProvider authenticatedUserProvider,
-                                   AppointmentProvider appointmentProvider) {
+                                   AppointmentProvider appointmentProvider,
+                                   AppointmentConverter appointmentConverter) {
         super(provider, converter);
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.appointmentProvider = appointmentProvider;
+        this.appointmentConverter = appointmentConverter;
     }
 
     @Override
@@ -53,7 +58,11 @@ public class AttendanceController extends ElementController<Attendance, Long, At
         return findByAppointment(appointment);
     }
 
-    public List<AttendanceDTO> findByAppointment(Appointment appointment) {
+    public List<AttendanceDTO> findByAppointment(AppointmentDTO appointment) {
+        return findByAppointment(appointmentConverter.reverse(appointment));
+    }
+
+    private List<AttendanceDTO> findByAppointment(Appointment appointment) {
         return convertAll(getProvider().findByAppointment(appointment));
     }
 

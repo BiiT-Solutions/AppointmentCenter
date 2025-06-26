@@ -3,6 +3,7 @@ package com.biit.appointment.core.models;
 import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.time.DayOfWeek;
@@ -13,12 +14,17 @@ public class ScheduleRangeDTO extends ElementDTO<Long> {
     @Serial
     private static final long serialVersionUID = -323630447006629107L;
 
-
     private Long id;
+
+    @NotNull
     private DayOfWeek dayOfWeek;
+
+    @NotNull
     @Schema(type = "string", pattern = "HH:mm[:ss]")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm[:ss]")
     private LocalTime startTime;
+
+    @NotNull
     @Schema(type = "string", pattern = "HH:mm[:ss]")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm[:ss]")
     private LocalTime endTime;

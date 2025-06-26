@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -63,7 +64,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege,@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Add a range to your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO addScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+    public ScheduleDTO addScheduleRange(@Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         Authentication authentication,
                                         HttpServletRequest request) {
         return getController().add(scheduleRangeDTOs, authentication.getName());
@@ -74,7 +75,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Sets the set of ranges for your schedule.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(Authentication authentication,
-                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        @Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         HttpServletRequest request) {
         return getController().set(scheduleRangeDTOs, authentication.getName());
     }
@@ -84,7 +85,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Sets a ranges for your schedule. If already exists, the range will be updated.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/users/me/ranges", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(Authentication authentication,
-                                        @RequestBody ScheduleRangeDTO scheduleRangeDTO,
+                                        @Valid @RequestBody ScheduleRangeDTO scheduleRangeDTO,
                                         HttpServletRequest request) {
         return getController().update(scheduleRangeDTO, authentication.getName());
     }
@@ -94,7 +95,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @Operation(summary = "Removes an schedule range from your user. Any existing range will be adjusted or remove to not overlap."
             + "the provided range to delete.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScheduleDTO removeScheduleRange(@RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+    public ScheduleDTO removeScheduleRange(@Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                            Authentication authentication,
                                            HttpServletRequest request) {
         return getController().remove(scheduleRangeDTOs, authentication.getName());
@@ -151,7 +152,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PostMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO addScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                         @PathVariable(name = "uuid") UUID uuid,
-                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        @Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         Authentication authentication,
                                         HttpServletRequest request) {
         return getController().add(scheduleRangeDTOs, uuid, authentication.getName());
@@ -163,7 +164,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @PutMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO setScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                         @PathVariable(name = "uuid") UUID uuid,
-                                        @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                        @Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                         Authentication authentication,
                                         HttpServletRequest request) {
         return getController().set(scheduleRangeDTOs, uuid, authentication.getName());
@@ -176,7 +177,7 @@ public class ScheduleServices extends ElementServices<Schedule, Long, ScheduleDT
     @DeleteMapping(value = "/users/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ScheduleDTO removeScheduleRange(@Parameter(description = "UUID of the user.", required = true)
                                            @PathVariable(name = "uuid") UUID uuid,
-                                           @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
+                                           @Valid @RequestBody Collection<ScheduleRangeDTO> scheduleRangeDTOs,
                                            Authentication authentication,
                                            HttpServletRequest request) {
         return getController().remove(scheduleRangeDTOs, uuid, authentication.getName());

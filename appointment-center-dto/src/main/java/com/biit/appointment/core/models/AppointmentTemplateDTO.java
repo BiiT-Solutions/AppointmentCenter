@@ -1,6 +1,9 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 import java.util.UUID;
@@ -9,8 +12,11 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private Long id;
 
+    @NotNull
+    @Size(min = ElementDTO.MIN_FIELD_LENGTH, max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
     private String title;
 
+    @Size(max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String description;
 
     private int duration;
@@ -19,6 +25,7 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
+    @NotEmpty
     private Set<UUID> speakers;
 
     private Double cost;
