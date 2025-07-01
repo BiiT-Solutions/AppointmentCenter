@@ -12,10 +12,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
+import java.time.format.ResolverStyle;
 
 public final class ObjectMapperFactory {
-    private static final int SECONDS_MAX_DECIMALS = 9;
+    private static final int DIGITS = 3;
 
     private static ObjectMapper objectMapper;
 
@@ -27,9 +27,9 @@ public final class ObjectMapperFactory {
         final JavaTimeModule module = new JavaTimeModule();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-                .appendFraction(ChronoField.MILLI_OF_SECOND, 0, SECONDS_MAX_DECIMALS, true)
-                .toFormatter();
+                .parseCaseInsensitive()
+                .appendInstant(DIGITS)
+                .toFormatter().withResolverStyle(ResolverStyle.STRICT);
 
         final LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(formatter);
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
