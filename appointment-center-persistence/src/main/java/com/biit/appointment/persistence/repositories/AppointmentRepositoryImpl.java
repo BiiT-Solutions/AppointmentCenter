@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@Transactional
 public class AppointmentRepositoryImpl implements CustomAppointmentRepository {
 
 
