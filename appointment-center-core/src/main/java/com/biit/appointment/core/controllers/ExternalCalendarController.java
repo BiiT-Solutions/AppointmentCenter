@@ -12,7 +12,7 @@ import com.biit.appointment.core.services.IExternalProviderCalendarService;
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.exceptions.ActionNotAllowedException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,14 +36,14 @@ public class ExternalCalendarController {
 
     private final List<IExternalProviderCalendarService> externalCalendarControllers;
     private final ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider;
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
     private final CalendarProviderConverter calendarProviderConverter;
 
 
     public ExternalCalendarController(List<IExternalProviderCalendarService> externalCalendarControllers,
                                       ExternalCalendarCredentialsProvider externalCalendarCredentialsProvider,
-                                      IAuthenticatedUserProvider authenticatedUserProvider,
+                                      IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider,
                                       ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter,
                                       CalendarProviderConverter calendarProviderConverter) {
         this.externalCalendarControllers = externalCalendarControllers;

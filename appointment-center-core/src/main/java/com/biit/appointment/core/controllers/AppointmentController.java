@@ -23,8 +23,10 @@ import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
@@ -49,7 +51,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
     private final ExaminationTypeProvider examinationTypeProvider;
     private final AppointmentTemplateConverter appointmentTemplateConverter;
 
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
 
     private final AttendanceProvider attendanceProvider;
 
@@ -60,10 +62,11 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                                     ExaminationTypeProvider examinationTypeProvider,
                                     AppointmentEventSender eventSender,
                                     AppointmentTemplateConverter appointmentTemplateConverter,
-                                    IAuthenticatedUserProvider authenticatedUserProvider,
+                                    IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider,
                                     AttendanceProvider attendanceProvider, AppointmentTemplateProvider appointmentTemplateProvider,
-                                    AppointmentProvider appointmentProvider) {
-        super(provider, converter, eventSender);
+                                    AppointmentProvider appointmentProvider,
+                                    List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, eventSender, userOrganizationProvider);
         this.examinationTypeProvider = examinationTypeProvider;
         this.appointmentTemplateConverter = appointmentTemplateConverter;
         this.authenticatedUserProvider = authenticatedUserProvider;

@@ -7,14 +7,19 @@ import com.biit.appointment.core.models.AppointmentTypeDTO;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.repositories.AppointmentTypeRepository;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @Controller
 public class AppointmentTypeController extends ElementController<AppointmentType, Long, AppointmentTypeDTO, AppointmentTypeRepository,
         AppointmentTypeProvider, AppointmentTypeConverterRequest, AppointmentTypeConverter> {
 
-    protected AppointmentTypeController(AppointmentTypeProvider provider, AppointmentTypeConverter converter) {
-        super(provider, converter);
+    protected AppointmentTypeController(AppointmentTypeProvider provider, AppointmentTypeConverter converter,
+                                        List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
     }
 
     @Override

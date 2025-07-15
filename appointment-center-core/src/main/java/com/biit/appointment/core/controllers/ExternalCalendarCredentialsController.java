@@ -12,8 +12,10 @@ import com.biit.appointment.persistence.entities.ExternalCalendarCredentials;
 import com.biit.appointment.persistence.repositories.ExternalCalendarCredentialsRepository;
 import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -26,13 +28,15 @@ public class ExternalCalendarCredentialsController extends ElementController<Ext
         ExternalCalendarCredentialsConverter> {
 
     private final CalendarProviderConverter calendarProviderConverter;
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
     private final ExternalCalendarCredentialsProxy externalProviderCalendarCredentials;
 
     protected ExternalCalendarCredentialsController(ExternalCalendarCredentialsProvider provider, ExternalCalendarCredentialsConverter converter,
-                                                    CalendarProviderConverter calendarProviderConverter, IAuthenticatedUserProvider authenticatedUserProvider,
-                                                    ExternalCalendarCredentialsProxy externalProviderCalendarCredentials) {
-        super(provider, converter);
+                                                    CalendarProviderConverter calendarProviderConverter,
+                                                    IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider,
+                                                    ExternalCalendarCredentialsProxy externalProviderCalendarCredentials,
+                                                    List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.calendarProviderConverter = calendarProviderConverter;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.externalProviderCalendarCredentials = externalProviderCalendarCredentials;

@@ -10,9 +10,12 @@ import com.biit.appointment.core.providers.RecurrenceProvider;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
 import com.biit.kafka.controllers.KafkaElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class RecurrenceController extends KafkaElementController<Recurrence, Long, RecurrenceDTO, RecurrenceRepository,
@@ -22,8 +25,9 @@ public class RecurrenceController extends KafkaElementController<Recurrence, Lon
 
 
     protected RecurrenceController(RecurrenceProvider provider, RecurrenceConverter converter, AppointmentConverter appointmentConverter,
-                                   RecurrenceEventSender eventSender) {
-        super(provider, converter, eventSender);
+                                   RecurrenceEventSender eventSender,
+                                   List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, eventSender, userOrganizationProvider);
         this.appointmentConverter = appointmentConverter;
     }
 

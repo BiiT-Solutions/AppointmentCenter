@@ -10,6 +10,8 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentTemplate;
 import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
 import com.biit.server.controller.ElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import com.biit.utils.date.range.LocalDateTimeRange;
 import com.biit.utils.date.range.LocalDateTimeRangeUtils;
 import org.springframework.stereotype.Controller;
@@ -29,8 +31,9 @@ public class AppointmentTemplateController extends ElementController<Appointment
 
 
     protected AppointmentTemplateController(AppointmentTemplateProvider provider, AppointmentTemplateConverter converter,
-                                            AppointmentProvider appointmentProvider) {
-        super(provider, converter);
+                                            AppointmentProvider appointmentProvider,
+                                            List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.appointmentProvider = appointmentProvider;
     }
 

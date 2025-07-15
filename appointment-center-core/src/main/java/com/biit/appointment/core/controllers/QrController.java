@@ -6,7 +6,7 @@ import com.biit.appointment.core.providers.QrProvider;
 import com.biit.appointment.core.values.ImageFormat;
 import com.biit.server.exceptions.UnexpectedValueException;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import org.springframework.stereotype.Controller;
 import org.w3c.dom.Document;

@@ -18,8 +18,10 @@ import com.biit.appointment.persistence.entities.Attendance;
 import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -33,15 +35,16 @@ import java.util.stream.Collectors;
 public class AttendanceController extends ElementController<Attendance, Long, AttendanceDTO, AttendanceRepository,
         AttendanceProvider, AttendanceConverterRequest, AttendanceConverter> {
 
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
     private final AppointmentProvider appointmentProvider;
     private final AppointmentConverter appointmentConverter;
 
     protected AttendanceController(AttendanceProvider provider, AttendanceConverter converter,
-                                   IAuthenticatedUserProvider authenticatedUserProvider,
+                                   IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider,
                                    AppointmentProvider appointmentProvider,
-                                   AppointmentConverter appointmentConverter) {
-        super(provider, converter);
+                                   AppointmentConverter appointmentConverter,
+                                   List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.appointmentProvider = appointmentProvider;
         this.appointmentConverter = appointmentConverter;

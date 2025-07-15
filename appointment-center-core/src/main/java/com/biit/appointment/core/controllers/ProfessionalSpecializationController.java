@@ -9,6 +9,8 @@ import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ProfessionalSpecialization;
 import com.biit.appointment.persistence.repositories.ProfessionalSpecializationRepository;
 import com.biit.server.controller.ElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -25,8 +27,9 @@ public class ProfessionalSpecializationController extends ElementController<Prof
     private final AppointmentTypeProvider appointmentTypeProvider;
 
     protected ProfessionalSpecializationController(ProfessionalSpecializationProvider provider, ProfessionalSpecializationConverter converter,
-                                                   AppointmentTypeProvider appointmentTypeProvider) {
-        super(provider, converter);
+                                                   AppointmentTypeProvider appointmentTypeProvider,
+                                                   List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.appointmentTypeProvider = appointmentTypeProvider;
     }
 

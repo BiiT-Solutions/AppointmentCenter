@@ -9,8 +9,10 @@ import com.biit.appointment.persistence.entities.ScheduleRangeExclusion;
 import com.biit.appointment.persistence.repositories.ScheduleRangeExclusionRepository;
 import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -21,12 +23,13 @@ import java.util.UUID;
 public class ScheduleRangeExclusionController extends ElementController<ScheduleRangeExclusion, Long, ScheduleRangeExclusionDTO,
         ScheduleRangeExclusionRepository, ScheduleRangeExclusionProvider, ScheduleRangeExclusionConverterRequest, ScheduleRangeExclusionConverter> {
 
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
 
 
     protected ScheduleRangeExclusionController(ScheduleRangeExclusionProvider provider, ScheduleRangeExclusionConverter converter,
-                                               IAuthenticatedUserProvider authenticatedUserProvider) {
-        super(provider, converter);
+                                               IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider,
+                                               List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.authenticatedUserProvider = authenticatedUserProvider;
     }
 

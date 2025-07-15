@@ -13,11 +13,14 @@ import com.biit.appointment.persistence.repositories.ScheduleRepository;
 import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.exceptions.ValidateBadRequestException;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -25,12 +28,13 @@ public class ScheduleController extends KafkaElementController<Schedule, Long, S
         ScheduleProvider, ScheduleConverterRequest, ScheduleConverter> {
 
     private final ScheduleRangeConverter scheduleRangeConverter;
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
 
     protected ScheduleController(ScheduleProvider provider, ScheduleConverter converter,
                                  ScheduleEventSender eventSender, ScheduleRangeConverter scheduleRangeConverter,
-                                 IAuthenticatedUserProvider userManagerClient) {
-        super(provider, converter, eventSender);
+                                 IAuthenticatedUserProvider<? extends IAuthenticatedUser> userManagerClient,
+                                 List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, eventSender, userOrganizationProvider);
         this.scheduleRangeConverter = scheduleRangeConverter;
         this.authenticatedUserProvider = userManagerClient;
     }

@@ -14,7 +14,7 @@ import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
 import com.biit.server.rest.SecurityService;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.ISecurityController;
 import io.swagger.v3.oas.annotations.Operation;

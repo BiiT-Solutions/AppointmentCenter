@@ -97,8 +97,8 @@ public class AppointmentTemplateServices extends ElementServices<AppointmentTemp
     public List<AppointmentTemplateDTO> getAllByViewers(
             @RequestParam(name = "page", defaultValue = "0") Optional<Integer> page,
             @RequestParam(name = "size", defaultValue = StorableObjectProvider.MAX_PAGE_SIZE + "") Optional<Integer> size,
-            HttpServletRequest request) {
-        return super.getAll(page, size, request);
+            Authentication authentication, HttpServletRequest request) {
+        return super.getAll(page, size, authentication, request);
     }
 
 

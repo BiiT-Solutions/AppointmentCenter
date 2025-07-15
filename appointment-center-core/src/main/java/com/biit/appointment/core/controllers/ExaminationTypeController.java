@@ -9,6 +9,8 @@ import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.ExaminationTypeRepository;
 import com.biit.server.controller.ElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
@@ -23,8 +25,9 @@ public class ExaminationTypeController extends ElementController<ExaminationType
     private final AppointmentTypeProvider appointmentTypeProvider;
 
     protected ExaminationTypeController(ExaminationTypeProvider provider, ExaminationTypeConverter converter,
-                                        AppointmentTypeProvider appointmentTypeProvider) {
-        super(provider, converter);
+                                        AppointmentTypeProvider appointmentTypeProvider,
+                                        List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.appointmentTypeProvider = appointmentTypeProvider;
     }
 

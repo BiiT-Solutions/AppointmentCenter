@@ -3,7 +3,7 @@ package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.models.ScheduleRangeExclusionDTO;
 import com.biit.appointment.rest.Server;
-import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
