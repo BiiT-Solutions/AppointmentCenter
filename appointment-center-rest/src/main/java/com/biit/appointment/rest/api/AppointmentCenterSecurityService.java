@@ -2,8 +2,12 @@ package com.biit.appointment.rest.api;
 
 
 import com.biit.server.rest.SecurityService;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Primary
 @Service("securityService")
@@ -18,6 +22,10 @@ public class AppointmentCenterSecurityService extends SecurityService {
     private String adminPrivilege = null;
     private String editorPrivilege = null;
     private String organizationAdminPrivilege = null;
+
+    public AppointmentCenterSecurityService(List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProviders) {
+        super(userOrganizationProviders);
+    }
 
     @Override
     public String getViewerPrivilege() {
