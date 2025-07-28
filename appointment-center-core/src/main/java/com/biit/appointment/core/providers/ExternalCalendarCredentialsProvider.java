@@ -73,7 +73,7 @@ public class ExternalCalendarCredentialsProvider extends ElementProvider<Externa
             return refreshExternalCredentials(externalCalendarCredentials);
         }
         //Has not expired yet, but will do it soon. Use the current token, but ask meanwhile for a new one.
-        if (externalCalendarCredentials.getExpiresAt() != null && externalCalendarCredentials.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (externalCalendarCredentials.getForceRefreshAt() != null && externalCalendarCredentials.getForceRefreshAt().isBefore(LocalDateTime.now())) {
             new Thread(() -> refreshExternalCredentials(externalCalendarCredentials)).start();
         }
         return externalCalendarCredentials;
