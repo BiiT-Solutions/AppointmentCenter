@@ -1,7 +1,6 @@
 package com.biit.appointment.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -25,7 +24,6 @@ public class AppointmentTemplateDTO extends ElementDTO<Long> {
 
     private ExaminationTypeDTO examinationType;
 
-    @NotEmpty
     private Set<UUID> speakers;
 
     private Double cost;
