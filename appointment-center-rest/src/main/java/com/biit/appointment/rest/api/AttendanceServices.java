@@ -162,4 +162,19 @@ public class AttendanceServices extends ElementServices<Attendance, Long, Attend
     }
 
 
+    /**
+     * For testing purposes. Returns the content from the QR code as string.
+     */
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @Operation(summary = "Remove an attendee as has been present on an appointment.", security = {@SecurityRequirement(name = "bearerAuth")},
+            hidden = true)
+    @GetMapping(value = "/appointments/{appointmentId}/attendees/{attendeeUUID}/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String getAttendanceValidationCode(@Parameter(description = "Id of the appointment.")
+                                              @PathVariable(name = "appointmentId") Long appointmentId,
+                                              @Parameter(description = "Id of an existing attendee", required = true)
+                                              @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                              Authentication authentication, HttpServletRequest request) {
+        return new AttendanceRequest(appointmentId, attendeeUUID).code();
+    }
 }

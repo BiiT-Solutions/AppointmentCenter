@@ -17,13 +17,21 @@ public class AppointmentUrlConstructor {
 
     public String getAppointmentCenterServerUrl() {
         if (appointmentCenterServerUrl == null) {
-            throw new InvalidFormatException(this.getClass(), "Value 'appointmentCenter.server.url' not set on 'application.properties'!");
+            throw new InvalidFormatException(this.getClass(), "Value 'appointments.server.url' not set on 'application.properties'!");
         }
         return appointmentCenterServerUrl;
     }
 
     public String getAppointments() {
         return "/appointments";
+    }
+
+    public String getAttendances() {
+        return "/attendances";
+    }
+
+    public String getQr() {
+        return "/qr";
     }
 
     public String getByAttendeeIdAndTemplateCurrent(Long appointmentTemplateId, UUID attendeeUUID) {
@@ -33,5 +41,21 @@ public class AppointmentUrlConstructor {
     public String getByAttendeeIdAndTemplateCurrent(String appointmentTemplateName, UUID attendeeUUID) {
         return getAppointments() + "/template/title/" + URLEncoder.encode(appointmentTemplateName, StandardCharsets.UTF_8) + "/attendee/"
                 + attendeeUUID + "/next";
+    }
+
+    public String getQrCode(Long appointmentId) {
+        return getQr() + "/appointments/" + appointmentId + "/attendance";
+    }
+
+    public String attendWithQrCode(Long appointmentId) {
+        return getAppointments() + appointmentId + "/attend/text";
+    }
+
+    public String getAttendanceRequest(UUID userUUID, Long appointmentId) {
+        return getAttendances() + "/appointments/" + appointmentId + "/attendees/" + userUUID + "/code";
+    }
+
+    public String putAttendanceRequest(Long appointmentId) {
+        return getAttendances() + "/appointments/" + appointmentId + "/attend";
     }
 }

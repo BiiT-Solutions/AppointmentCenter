@@ -3,6 +3,7 @@ package com.biit.appointment.rest.client;
 
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.IAppointmentCenterRestClient;
+import com.biit.appointment.core.models.QrCodeDTO;
 import com.biit.appointment.logger.AppointmentCenterClientLogger;
 import com.biit.rest.exceptions.InvalidResponseException;
 import com.biit.server.client.SecurityClient;
@@ -75,6 +76,78 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
             }
         } catch (JsonProcessingException e) {
             throw new InvalidResponseException(e);
+        }
+    }
+
+    /**
+     * Gets an QR Code object. For integration testing.
+     */
+    public Optional<QrCodeDTO> getQrCode(Long appointmentId) {
+        try {
+            try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                    appointmentUrlConstructor.getQrCode(appointmentId))) {
+                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                                + appointmentUrlConstructor.getQrCode(appointmentId),
+                        response.getStatus());
+                if (response.getLength() == 0) {
+                    return Optional.empty();
+                }
+                return Optional.of(mapper.readValue(response.readEntity(String.class), QrCodeDTO.class));
+            }
+        } catch (JsonProcessingException e) {
+            throw new InvalidResponseException(e);
+        }
+    }
+
+    /**
+     * Put a QR Code object. For integration testing.
+     */
+    public Optional<AppointmentDTO> attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO) {
+        try {
+            try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                    appointmentUrlConstructor.attendWithQrCode(appointmentId), qrCodeDTO.getContent())) {
+                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                                + appointmentUrlConstructor.attendWithQrCode(appointmentId),
+                        response.getStatus());
+                if (response.getLength() == 0) {
+                    return Optional.empty();
+                }
+                return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
+            }
+        } catch (JsonProcessingException e) {
+            throw new InvalidResponseException(e);
+        }
+    }
+
+    /**
+     * Gets an Attendance Request. For integration testing.
+     */
+    public Optional<String> getAttendanceRequest(UUID userUUID, Long appointmentId) {
+        try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                appointmentUrlConstructor.getAttendanceRequest(userUUID, appointmentId))) {
+            AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                    appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                            + appointmentUrlConstructor.getAttendanceRequest(userUUID, appointmentId),
+                    response.getStatus());
+            if (response.getLength() == 0) {
+                return Optional.empty();
+            }
+            return Optional.of(response.readEntity(String.class));
+        }
+    }
+
+    /**
+     * Attends from a encrypted attendanceRequest. For integration testing.
+     */
+    public void putAttendance(String attendanceRequest, Long appointmentId) {
+        try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                appointmentUrlConstructor.putAttendanceRequest(appointmentId), attendanceRequest)) {
+            AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                    appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                            + appointmentUrlConstructor.putAttendanceRequest(appointmentId),
+                    response.getStatus());
         }
     }
 }

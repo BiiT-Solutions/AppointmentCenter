@@ -54,11 +54,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"appointmentServiceTests"})
 public class AppointmentServiceTests extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String GUEST_NAME = "guest";
-    private final static String USER_PASSWORD = "password";
-    private final static String JWT_SALT = "4567";
-    private final static String ORGANIZATION_ID = "The Organization";
+    private static final String USER_NAME = "user";
+    private static final String GUEST_NAME = "guest";
+    private static final String USER_PASSWORD = "password";
+    private static final String JWT_SALT = "4567";
+    private static final String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
     private static final String APPOINTMENT_TITLE = "The Appointment";
     private static final String APPOINTMENT_2_TITLE = "The Appointment 2";

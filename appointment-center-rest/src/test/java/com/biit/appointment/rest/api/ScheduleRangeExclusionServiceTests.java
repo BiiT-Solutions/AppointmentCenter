@@ -50,9 +50,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"scheduleRangeExclusionServiceTests"})
 public class ScheduleRangeExclusionServiceTests extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String USER_PASSWORD = "password";
-    private final static String JWT_SALT = "4567";
+    private static final String USER_NAME = "user";
+    private static final String USER_PASSWORD = "password";
+    private static final String JWT_SALT = "4567";
 
     @Autowired
     private AuthenticatedUserProvider authenticatedUserProvider;

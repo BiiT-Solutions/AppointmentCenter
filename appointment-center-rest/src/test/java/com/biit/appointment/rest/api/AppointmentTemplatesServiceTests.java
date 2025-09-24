@@ -60,15 +60,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = {"appointmentTemplatesServiceTests"})
 public class AppointmentTemplatesServiceTests extends AbstractTestNGSpringContextTests {
 
-    private final static String USER_NAME = "user";
-    private final static String USER_PASSWORD = "password";
-    private final static String JWT_SALT = "4567";
+    private static final String USER_NAME = "user";
+    private static final String USER_PASSWORD = "password";
+    private static final String JWT_SALT = "4567";
 
-    private final static String ORGANIZATION_ID = "The Organization";
+    private static final String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
 
-    private final static int TEMPLATE_DURATION = 90;
-    private final static double TEMPLATE_COST = 100D;
+    private static final int TEMPLATE_DURATION = 90;
+    private static final double TEMPLATE_COST = 100D;
     private static final String APPOINTMENT_TITLE = "The Template";
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final String APPOINTMENT_DESCRIPTION = "Template Description";

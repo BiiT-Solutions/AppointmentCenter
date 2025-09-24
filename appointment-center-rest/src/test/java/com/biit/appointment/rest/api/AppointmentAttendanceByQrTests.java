@@ -53,11 +53,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"appointmentAttendanceByQrTests"})
 public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String GUEST_NAME = "guest";
-    private final static String USER_PASSWORD = "password";
-    private final static String JWT_SALT = "4567";
-    private final static String ORGANIZATION_ID = "The Organization";
+    private static final String USER_NAME = "user";
+    private static final String GUEST_NAME = "guest";
+    private static final String USER_PASSWORD = "password";
+    private static final String JWT_SALT = "4567";
+    private static final String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
     private static final String APPOINTMENT_TITLE = "The Appointment";
     private static final String APPOINTMENT_SPECIALTY = "Physical";

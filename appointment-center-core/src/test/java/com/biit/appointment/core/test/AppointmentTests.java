@@ -28,10 +28,10 @@ import java.util.UUID;
 @Test(groups = {"appointmentTest"})
 public class AppointmentTests extends AbstractTestNGSpringContextTests {
 
-    private final static UUID ORGANIZER_ID = UUID.randomUUID();
-    private final static String ORGANIZATION_ID = "THE ORGANIZATION";
-    private final static UUID PRACTITIONER_ID = UUID.randomUUID();
-    private final static UUID OTHER_PRACTITIONER_ID = UUID.randomUUID();
+    private static final UUID ORGANIZER_ID = UUID.randomUUID();
+    private static final String ORGANIZATION_ID = "THE ORGANIZATION";
+    private static final UUID PRACTITIONER_ID = UUID.randomUUID();
+    private static final UUID OTHER_PRACTITIONER_ID = UUID.randomUUID();
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final String OTHER_APPOINTMENT_SPECIALTY = "TaiChi";

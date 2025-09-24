@@ -34,7 +34,7 @@ import java.util.UUID;
 @Test(groups = {"userAvailability"})
 public class UserAvailabilityTests extends AbstractTestNGSpringContextTests {
 
-    private final static String ORGANIZATION_ID = "THE ORGANIZATION";
+    private static final String ORGANIZATION_ID = "THE ORGANIZATION";
 
     @Autowired
     private AppointmentProvider appointmentProvider;

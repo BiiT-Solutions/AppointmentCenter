@@ -35,7 +35,7 @@ public class QrService {
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access to a workshop.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/appointment/{appointmentId}/attendance", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/appointments/{appointmentId}/attendance", produces = MediaType.APPLICATION_JSON_VALUE)
     public QrCodeDTO generateQrForAttendance(@Parameter(description = "Id of an existing appointment", required = true)
                                              @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
                                              HttpServletResponse response, HttpServletRequest request) {
@@ -46,7 +46,7 @@ public class QrService {
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access to a workshop.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/appointment/{appointmentId}/attendance/image", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/appointments/{appointmentId}/attendance/image", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateQrForAttendanceImage(@Parameter(description = "Id of an existing appointment", required = true)
                                                @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
                                                HttpServletResponse response, HttpServletRequest request) {
