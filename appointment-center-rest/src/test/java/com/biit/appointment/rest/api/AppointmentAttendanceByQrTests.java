@@ -215,7 +215,7 @@ public class AppointmentAttendanceByQrTests extends AbstractTestNGSpringContextT
     @Test(dependsOnMethods = "subscribeToAppointment")
     public void generateQrAttendanceCode() throws Exception {
         final MvcResult qrCode = this.mockMvc
-                .perform(get("/qr/appointment/" + appointment.getId() + "/attendance")
+                .perform(get("/qr/appointments/" + appointment.getId() + "/attendance")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + guestJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
