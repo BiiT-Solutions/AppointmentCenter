@@ -52,7 +52,7 @@ public class AppointmentUrlConstructor {
     }
 
     public String attendWithQrCode(Long appointmentId) {
-        return getAppointments() + appointmentId + "/attend/text";
+        return getAppointments() + "/" + appointmentId + "/attend/text";
     }
 
     public String getAttendanceRequest(UUID userUUID, Long appointmentId) {
