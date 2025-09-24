@@ -1,5 +1,6 @@
 package com.biit.appointment.core.test;
 
+import com.biit.appointment.core.exceptions.AppointmentTemplateAlreadyExistsException;
 import com.biit.appointment.core.providers.AppointmentProvider;
 import com.biit.appointment.core.providers.AppointmentTemplateProvider;
 import com.biit.appointment.core.providers.AppointmentTypeProvider;
@@ -21,7 +22,6 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,11 +29,11 @@ import java.util.UUID;
 @SpringBootTest
 @Test(groups = {"appointmentTemplateTest"})
 public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
-    private final static String ORGANIZATION_ID = "The Organization";
-    private final static UUID ORGANIZER = UUID.randomUUID();
-    private final static UUID ATTENDER = UUID.randomUUID();
-    private final static int TEMPLATE_DURATION = 90;
-    private final static double TEMPLATE_COST = 100D;
+    private static final String ORGANIZATION_ID = "The Organization";
+    private static final UUID ORGANIZER = UUID.randomUUID();
+    private static final UUID ATTENDER = UUID.randomUUID();
+    private static final int TEMPLATE_DURATION = 90;
+    private static final double TEMPLATE_COST = 100D;
 
     private static final String APPOINTMENT_SPECIALTY = "Physical";
     private static final String APPOINTMENT_TITLE = "The Template";
@@ -76,24 +76,36 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
         type = examinationTypeProvider.save(type);
     }
 
+
     @BeforeClass
     public void generateProfessionalSpecialization() {
         professionalSpecializationProvider.save(new ProfessionalSpecialization(type.getAppointmentType().getName(), type.getAppointmentType(), ORGANIZATION_ID, ORGANIZER));
     }
 
+
     @Test
     public void generateAppointmentTemplate() {
-        AppointmentTemplate appointmentTemplate = new AppointmentTemplate();
-        appointmentTemplate.setCost(TEMPLATE_COST);
-        appointmentTemplate.setDuration(TEMPLATE_DURATION);
-        appointmentTemplate.setOrganizationId(ORGANIZATION_ID);
-        appointmentTemplate.setTitle(APPOINTMENT_TITLE);
-        appointmentTemplate.setDescription(APPOINTMENT_DESCRIPTION);
-        appointmentTemplate.setExaminationType(type);
-        appointmentTemplate.setSpeakers(SPEAKERS);
+        final AppointmentTemplate generatedAppointmentTemplate = new AppointmentTemplate();
+        generatedAppointmentTemplate.setCost(TEMPLATE_COST);
+        generatedAppointmentTemplate.setDuration(TEMPLATE_DURATION);
+        generatedAppointmentTemplate.setOrganizationId(ORGANIZATION_ID);
+        generatedAppointmentTemplate.setTitle(APPOINTMENT_TITLE);
+        generatedAppointmentTemplate.setDescription(APPOINTMENT_DESCRIPTION);
+        generatedAppointmentTemplate.setExaminationType(type);
+        generatedAppointmentTemplate.setSpeakers(SPEAKERS);
 
-        this.appointmentTemplate = appointmentTemplateProvider.save(appointmentTemplate);
+        this.appointmentTemplate = appointmentTemplateProvider.save(generatedAppointmentTemplate);
     }
+
+
+    @Test(dependsOnMethods = "generateAppointmentTemplate", expectedExceptions = AppointmentTemplateAlreadyExistsException.class)
+    public void generateDuplicatedAppointmentTemplate() {
+        final AppointmentTemplate generatedAppointmentTemplate = new AppointmentTemplate();
+        generatedAppointmentTemplate.setOrganizationId(ORGANIZATION_ID);
+        generatedAppointmentTemplate.setTitle(APPOINTMENT_TITLE);
+        this.appointmentTemplate = appointmentTemplateProvider.save(generatedAppointmentTemplate);
+    }
+
 
     @Test(dependsOnMethods = "generateAppointmentTemplate")
     public void generateAppointmentFromTemplate() {
@@ -109,6 +121,7 @@ public class AppointmentTemplateTests extends AbstractTestNGSpringContextTests {
         appointment.addAttendee(ATTENDER);
         appointmentProvider.save(appointment);
     }
+
 
     @Test(dependsOnMethods = "generateAppointmentFromTemplate")
     public void findTemplatesByAttendees() {

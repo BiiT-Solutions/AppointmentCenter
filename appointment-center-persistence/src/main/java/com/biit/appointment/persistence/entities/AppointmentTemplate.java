@@ -2,6 +2,7 @@ package com.biit.appointment.persistence.entities;
 
 import com.biit.database.encryption.DoubleCryptoConverter;
 import com.biit.database.encryption.IntegerCryptoConverter;
+import com.biit.database.encryption.SHA512HashGenerator;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
@@ -45,6 +46,10 @@ public class AppointmentTemplate extends Element<Long> {
     @Column(name = "title")
     @Convert(converter = StringCryptoConverter.class)
     private String title;
+
+    @Column(name = "title_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String titleHash;
 
     @Lob
     @Column(name = "description", columnDefinition = "TEXT")
@@ -99,9 +104,18 @@ public class AppointmentTemplate extends Element<Long> {
 
     public void setTitle(String title) {
         this.title = title;
+        setTitleHash(title);
         if (infographicTemplate == null) {
             setInfographicTemplate(infographicTemplate);
         }
+    }
+
+    public String getTitleHash() {
+        return titleHash;
+    }
+
+    public void setTitleHash(String title) {
+        this.titleHash = title;
     }
 
     public String getDescription() {
@@ -166,5 +180,11 @@ public class AppointmentTemplate extends Element<Long> {
 
     public void setInfographicTemplate(String infographicTemplate) {
         this.infographicTemplate = infographicTemplate;
+    }
+
+    @Override
+    public void populateHash() {
+        super.populateHash();
+        setTitleHash(getTitle());
     }
 }

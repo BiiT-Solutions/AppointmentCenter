@@ -26,12 +26,18 @@ public interface AppointmentTemplateRepository extends ElementRepository<Appoint
 
     Optional<AppointmentTemplate> findByTitleAndOrganizationId(String title, String organizationId);
 
-    List<AppointmentTemplate> findByTitleIn(Collection<String> title);
+    Optional<AppointmentTemplate> findByTitleHashAndOrganizationId(String titleHash, String organizationId);
+
+    Optional<AppointmentTemplate> findByTitleHash(String titleHash);
+
+    List<AppointmentTemplate> findByTitleIn(Collection<String> titles);
+
+    List<AppointmentTemplate> findByTitleHashIn(Collection<String> titleHashes);
 
     @Query("""
             SELECT t FROM AppointmentTemplate t WHERE EXISTS
                 (SELECT a.id FROM Appointment a WHERE a.appointmentTemplate = t AND :attendeeUUID MEMBER OF a.attendees)
-             """)
+            """)
     List<AppointmentTemplate> findDistinctByAttendeeIn(UUID attendeeUUID);
 
     @Query("""
