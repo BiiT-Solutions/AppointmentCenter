@@ -34,6 +34,10 @@ public class AppointmentUrlConstructor {
         return "/qr";
     }
 
+    public String getAllAppointments() {
+        return getAppointments();
+    }
+
     public String getByAttendeeIdAndTemplateCurrent(Long appointmentTemplateId, UUID attendeeUUID) {
         return getAppointments() + "/template/" + appointmentTemplateId + "/attendee/" + attendeeUUID + "/next";
     }

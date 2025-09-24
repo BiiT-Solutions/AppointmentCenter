@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"appointmentClient"})
-public class AttendanceServiceTests extends AbstractTestNGSpringContextTests {
+public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
     private static final String GUEST_NAME = "guest";
     private static final String USER_PASSWORD = "password";
@@ -161,6 +161,11 @@ public class AttendanceServiceTests extends AbstractTestNGSpringContextTests {
 
         final String adminJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertNotNull(adminJwtToken);
+    }
+
+    @Test
+    public void readAppointments() {
+        Assert.assertEquals(appointmentCenterClient.findAll().size(), 1);
     }
 
 

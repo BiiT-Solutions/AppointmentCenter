@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,6 +76,27 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
                     return Optional.empty();
                 }
                 return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
+            }
+        } catch (JsonProcessingException e) {
+            throw new InvalidResponseException(e);
+        }
+    }
+
+    /**
+     * Gets all appointments. For integration testing.
+     */
+    public List<AppointmentDTO> findAll() {
+        try {
+            try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                    appointmentUrlConstructor.getAllAppointments())) {
+                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                                + appointmentUrlConstructor.getAllAppointments(),
+                        response.getStatus());
+                if (response.getLength() == 0) {
+                    return new ArrayList<>();
+                }
+                return Arrays.asList(mapper.readValue(response.readEntity(String.class), AppointmentDTO[].class));
             }
         } catch (JsonProcessingException e) {
             throw new InvalidResponseException(e);
