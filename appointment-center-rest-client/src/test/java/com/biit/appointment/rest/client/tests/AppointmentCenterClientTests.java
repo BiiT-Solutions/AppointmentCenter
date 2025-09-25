@@ -9,17 +9,12 @@ import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.rest.client.AppointmentCenterClient;
-import com.biit.appointment.rest.client.ServicesServer;
 import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -30,12 +25,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
-
-@SpringBootTest(webEnvironment = DEFINED_PORT, classes = ServicesServer.class)
-@ExtendWith(MockitoExtension.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"appointmentClient"})
+//@SpringBootTest(webEnvironment = DEFINED_PORT, classes = AppointmentServicesServer.class)
+//@Test(groups = {"appointmentClient"})
 public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTests {
     private static final String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";

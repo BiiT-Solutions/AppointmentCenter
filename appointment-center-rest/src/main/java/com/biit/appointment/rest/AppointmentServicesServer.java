@@ -1,4 +1,4 @@
-package com.biit.appointment.rest.client;
+package com.biit.appointment.rest;
 
 import com.biit.appointment.logger.AppointmentCenterLogger;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -16,26 +16,28 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.DispatcherServlet;
 
+//Avoid Swagger redirecting https to http
+@OpenAPIDefinition(servers = {@Server(url = "${server.servlet.context-path}", description = "Default Server URL")})
 @SpringBootApplication
 @PropertySources({
-        @PropertySource("classpath:application.properties")
+        @PropertySource("classpath:application.properties"),
+        @PropertySource(value = "file:${EXTERNAL_CONFIG_FILE}", ignoreResourceNotFound = true)
 })
 @ComponentScan({"com.biit.appointment", "com.biit.server.security", "com.biit.server", "com.biit.messagebird.client", "com.biit.usermanager.client",
-        "com.biit.database.encryption"})
+        "com.biit.kafka", "com.biit.database.encryption"})
 @ConfigurationPropertiesScan({"com.biit.appointment.rest", "com.biit.server.time"})
 @EntityScan({"com.biit.appointment.persistence.entities", "com.biit.server"})
 @EnableScheduling
-public class ServicesServer {
+public class AppointmentServicesServer {
     private static final int POOL_SIZE = 20;
     private static final int MAX_POOL_SIZE = 100;
 
     public static void main(String[] args) {
-        SpringApplication.run(ServicesServer.class, args);
+        SpringApplication.run(AppointmentServicesServer.class, args);
     }
 
     @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
@@ -61,6 +63,6 @@ public class ServicesServer {
 
     @Bean
     public ApplicationListener<ContextRefreshedEvent> startupLoggingListener() {
-        return event -> AppointmentCenterLogger.info(ServicesServer.class, "### Server started ###");
+        return event -> AppointmentCenterLogger.info(AppointmentServicesServer.class, "### Server started ###");
     }
 }
