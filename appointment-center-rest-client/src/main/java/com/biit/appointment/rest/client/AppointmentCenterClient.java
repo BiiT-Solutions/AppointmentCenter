@@ -9,6 +9,7 @@ import com.biit.rest.exceptions.InvalidResponseException;
 import com.biit.server.client.SecurityClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
@@ -130,7 +131,8 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
     public Optional<AppointmentDTO> attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO) {
         try {
             try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
-                    appointmentUrlConstructor.attendWithQrCode(appointmentId), qrCodeDTO.getContent())) {
+                    appointmentUrlConstructor.attendWithQrCode(appointmentId), qrCodeDTO.getContent(),
+                    MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)) {
                 AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
                         appointmentUrlConstructor.getAppointmentCenterServerUrl()
                                 + appointmentUrlConstructor.attendWithQrCode(appointmentId),

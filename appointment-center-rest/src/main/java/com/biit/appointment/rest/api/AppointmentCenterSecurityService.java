@@ -13,10 +13,10 @@ import java.util.List;
 @Service("securityService")
 public class AppointmentCenterSecurityService extends SecurityService {
 
-    private static final String VIEWER = "AppointmentCenter_VIEWER";
-    private static final String ADMIN = "AppointmentCenter_ADMIN";
-    private static final String EDITOR = "AppointmentCenter_EDITOR";
-    private static final String ORGANIZATION_ADMIN = "AppointmentCenter_ORGANIZATION_ADMIN";
+    private static final String VIEWER = "APPOINTMENTCENTER_VIEWER";
+    private static final String ADMIN = "APPOINTMENTCENTER_ADMIN";
+    private static final String EDITOR = "APPOINTMENTCENTER_EDITOR";
+    private static final String ORGANIZATION_ADMIN = "APPOINTMENTCENTER_ORGANIZATION_ADMIN";
 
     private String viewerPrivilege = null;
     private String adminPrivilege = null;

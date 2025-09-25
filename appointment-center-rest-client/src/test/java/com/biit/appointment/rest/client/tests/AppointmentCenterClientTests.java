@@ -8,29 +8,19 @@ import com.biit.appointment.core.providers.ExaminationTypeProvider;
 import com.biit.appointment.persistence.entities.Appointment;
 import com.biit.appointment.persistence.entities.AppointmentType;
 import com.biit.appointment.persistence.entities.ExaminationType;
+import com.biit.appointment.rest.ServicesServer;
 import com.biit.appointment.rest.client.AppointmentCenterClient;
-import com.biit.appointment.rest.client.Server;
-import com.biit.server.security.model.AuthRequest;
 import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -41,17 +31,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(webEnvironment = DEFINED_PORT, classes = Server.class)
+@SpringBootTest(webEnvironment = DEFINED_PORT, classes = ServicesServer.class)
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"appointmentClient"})
 public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTests {
-    private static final String USER_NAME = "user";
-    private static final String GUEST_NAME = "guest";
-    private static final String USER_PASSWORD = "password";
     private static final String ORGANIZATION_ID = "The Organization";
     private static final String TEST_TYPE_NAME = "basic";
     private static final String APPOINTMENT_TITLE = "The Appointment";
@@ -64,9 +49,6 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private WebApplicationContext context;
 
     @Autowired
     private AppointmentTypeProvider appointmentTypeProvider;
@@ -83,21 +65,15 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
     @Autowired
     private AttendanceProvider attendanceProvider;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Value("${jwt.user:null}")
+    private String jwtUser;
 
-    private MockMvc mockMvc;
-
-    private ExaminationType type;
+    @Value("${jwt.password:null}")
+    private String jwtPassword;
 
     private Appointment appointment;
 
     private IAuthenticatedUser admin;
-    private IAuthenticatedUser guest;
-
-    private <T> String toJson(T object) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(object);
-    }
 
     public static ExaminationType generateExaminationType(String name, AppointmentType appointmentType) {
         return new ExaminationType(name, ORGANIZATION_ID, appointmentType);
@@ -107,24 +83,15 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
     public void generateExaminationType() {
         AppointmentType appointmentType = new AppointmentType(APPOINTMENT_SPECIALTY, ORGANIZATION_ID);
         appointmentType = appointmentTypeProvider.save(appointmentType);
-        type = generateExaminationType(TEST_TYPE_NAME, appointmentType);
-        type = examinationTypeProvider.save(type);
-    }
-
-    @BeforeClass
-    public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
+        ExaminationType type = generateExaminationType(TEST_TYPE_NAME, appointmentType);
+        examinationTypeProvider.save(type);
     }
 
 
     @BeforeClass
     public void addUser() {
         //Create the admin user
-        admin = authenticatedUserProvider.createUser(USER_NAME, USER_NAME, USER_PASSWORD);
-        guest = authenticatedUserProvider.createUser(GUEST_NAME, GUEST_NAME, USER_PASSWORD);
-        authenticatedUserProvider.setRoles(guest, Collections.singleton("GUEST"));
+        admin = authenticatedUserProvider.createUser(jwtUser, jwtUser, jwtPassword);
     }
 
 
@@ -135,32 +102,14 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
         newAppointment.setStartTime(LocalDateTime.of(2024, 3, 27, 16, 38, 3));
         newAppointment.setEndTime(LocalDateTime.of(2024, 3, 27, 18, 38, 3));
         newAppointment.setOrganizer(UUID.fromString(admin.getUID()));
+        newAppointment.setAttendees(Collections.singleton(UUID.fromString(admin.getUID())));
         this.appointment = appointmentProvider.save(newAppointment);
     }
 
     @Test
     public void checkAuthentication() {
         //Check the admin user
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, JWT_SALT + USER_PASSWORD));
-    }
-
-    @Test
-    public void setAdminAuthentication() throws Exception {
-        AuthRequest request = new AuthRequest();
-        request.setUsername(USER_NAME);
-        request.setPassword(USER_PASSWORD);
-
-        final MvcResult createResult = this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-
-        final String adminJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(adminJwtToken);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtUser, JWT_SALT + jwtPassword));
     }
 
     @Test
@@ -176,6 +125,6 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
         appointmentCenterClient.attendByQrCode(appointment.getId(), qrCode.get());
 
         //Check user is marked as attending the process.
-        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(guest.getUID())).size(), 1);
+        Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 1);
     }
 }

@@ -63,13 +63,13 @@ public class QrService {
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "", produces = MediaType.IMAGE_PNG_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
     public byte[] generateQrForAttendanceImage(@NotBlank @RequestBody String content,
-                                               HttpServletResponse response, HttpServletRequest request) {
+                                               HttpServletResponse response, Authentication authentication) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateQrCode(content).getData();
+        return qrController.generateQrCode(content, authentication.getName()).getData();
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
@@ -77,7 +77,7 @@ public class QrService {
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/svg", consumes = MediaType.TEXT_PLAIN_VALUE, produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String generateQrForAttendanceSvg(@NotBlank @RequestBody String content,
-                                               HttpServletResponse response, HttpServletRequest request) {
+                                             HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("QR.svg").build();
