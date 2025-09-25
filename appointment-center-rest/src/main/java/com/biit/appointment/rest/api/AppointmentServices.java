@@ -14,9 +14,9 @@ import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.server.exceptions.UserNotFoundException;
 import com.biit.server.rest.ElementServices;
 import com.biit.server.rest.SecurityService;
-import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.ISecurityController;
+import com.biit.server.security.model.IAuthenticatedUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -468,6 +468,19 @@ public class AppointmentServices extends ElementServices<Appointment, Long, Appo
                                  @PathVariable(name = "appointmentId") Long appointmentId,
                                  @Valid @RequestBody String attendanceRequest,
                                  Authentication authentication, HttpServletRequest request) {
+        return getController().attend(appointmentId, attendanceRequest, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Mark an attendee as has been present on an appointment. Using the codified information from the QR.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = "/{appointmentId}/attend/{attendeeUUID}/text", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
+    public AppointmentDTO attendUser(@Parameter(description = "Id of the appointment to check.")
+                                     @PathVariable(name = "appointmentId") Long appointmentId,
+                                     @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                     @Valid @RequestBody String attendanceRequest,
+                                     Authentication authentication, HttpServletRequest request) {
         return getController().attend(appointmentId, attendanceRequest, authentication.getName());
     }
 

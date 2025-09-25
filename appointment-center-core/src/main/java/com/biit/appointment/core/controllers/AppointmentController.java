@@ -23,9 +23,9 @@ import com.biit.appointment.persistence.entities.ExaminationType;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.server.exceptions.UserNotFoundException;
+import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.IUserOrganizationProvider;
 import com.biit.server.security.model.IAuthenticatedUser;
-import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
@@ -423,6 +423,12 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
         appointment.getAttendees().remove(UUID.fromString(user.getUID()));
         return convert(getProvider().save(appointment));
+    }
+
+    public AppointmentDTO attend(Long appointmentId, String attendanceRequest, UUID userUUID) {
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUID(userUUID.toString()).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found with UUID '" + userUUID + "'."));
+        return attend(appointmentId, AttendanceRequest.decode(attendanceRequest), user.getUsername());
     }
 
 
