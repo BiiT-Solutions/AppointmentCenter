@@ -147,6 +147,30 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
         }
     }
 
+
+    /**
+     * Put a QR Code object. For integration testing.
+     */
+    public Optional<AppointmentDTO> attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO, UUID userUUID) {
+        try {
+            try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                    appointmentUrlConstructor.attendWithQrCode(appointmentId, userUUID), qrCodeDTO.getContent(),
+                    MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)) {
+                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                                + appointmentUrlConstructor.attendWithQrCode(appointmentId, userUUID),
+                        response.getStatus());
+                if (response.getLength() == 0) {
+                    return Optional.empty();
+                }
+                return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
+            }
+        } catch (JsonProcessingException e) {
+            throw new InvalidResponseException(e);
+        }
+    }
+
+
     /**
      * Gets an Attendance Request. For integration testing.
      */
