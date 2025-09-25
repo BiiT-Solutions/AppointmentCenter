@@ -18,9 +18,9 @@ import com.biit.appointment.persistence.entities.Attendance;
 import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.server.controller.ElementController;
 import com.biit.server.exceptions.UserNotFoundException;
+import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.IUserOrganizationProvider;
 import com.biit.server.security.model.IAuthenticatedUser;
-import com.biit.server.security.IAuthenticatedUserProvider;
 import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
@@ -151,7 +151,8 @@ public class AttendanceController extends ElementController<Attendance, Long, At
                 new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentId + "'."));
 
         if (getProvider().findBy(UUID.fromString(user.getUID()), appointment).isEmpty()) {
-            throw new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code.");
+            throw new AttendanceNotFoundException(this.getClass(), "User '" + user + "' with UUID '" + user.getUID() + "' has not passed the QR code on '"
+                    + appointmentId + "'.");
         }
     }
 

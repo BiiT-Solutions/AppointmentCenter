@@ -113,7 +113,7 @@ public class AppointmentCenterClientTests extends AbstractTestNGSpringContextTes
     public void attend() {
         final Optional<QrCodeDTO> qrCode = appointmentCenterClient.getQrCode(appointment.getId());
         Assert.assertTrue(qrCode.isPresent());
-        appointmentCenterClient.attendByQrCode(appointment.getId(), qrCode.get(), UUID.fromString(admin.getUID()));
+        appointmentCenterClient.attendByQrCode(appointment.getId(), qrCode.get());
 
         //Check user is marked as attending the process.
         Assert.assertEquals(attendanceProvider.findByAttendee(UUID.fromString(admin.getUID())).size(), 1);
