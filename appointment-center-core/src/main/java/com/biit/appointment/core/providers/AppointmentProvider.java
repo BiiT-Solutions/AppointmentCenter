@@ -11,6 +11,7 @@ import com.biit.appointment.persistence.entities.ProfessionalSpecialization;
 import com.biit.appointment.persistence.entities.Recurrence;
 import com.biit.appointment.persistence.repositories.AppointmentRepository;
 import com.biit.appointment.persistence.repositories.AppointmentTemplateRepository;
+import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -36,14 +38,17 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
 
     private final AppointmentTemplateRepository appointmentTemplateRepository;
 
+    private final AttendanceRepository attendanceRepository;
+
 
     public AppointmentProvider(AppointmentRepository repository, RecurrenceRepository recurrenceRepository,
                                ProfessionalSpecializationProvider professionalSpecializationProvider,
-                               AppointmentTemplateRepository appointmentTemplateRepository) {
+                               AppointmentTemplateRepository appointmentTemplateRepository, AttendanceRepository attendanceRepository) {
         super(repository);
         this.recurrenceRepository = recurrenceRepository;
         this.professionalSpecializationProvider = professionalSpecializationProvider;
         this.appointmentTemplateRepository = appointmentTemplateRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
 
@@ -371,6 +376,34 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         }
 
         return getRepository().save(appointment);
+    }
+
+    @Override
+    public void delete(Appointment appointment) {
+        attendanceRepository.deleteByAppointment(appointment);
+        super.delete(appointment);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        final Optional<Appointment> optional = get(id);
+        if (optional.isPresent()) {
+            attendanceRepository.deleteByAppointment(optional.get());
+            super.deleteById(id);
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        attendanceRepository.deleteAll();
+        super.deleteAll();
+    }
+
+    @Override
+    public void deleteAll(Collection<Appointment> entities) {
+        final Collection<Appointment> appointments = findByIdIn(entities.stream().map(Appointment::getId).collect(Collectors.toSet()));
+        attendanceRepository.deleteByAppointmentIn(appointments);
+        super.deleteAll(entities);
     }
 
 }
