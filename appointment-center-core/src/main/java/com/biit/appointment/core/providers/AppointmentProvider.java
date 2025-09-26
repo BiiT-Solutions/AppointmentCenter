@@ -14,6 +14,7 @@ import com.biit.appointment.persistence.repositories.AppointmentTemplateReposito
 import com.biit.appointment.persistence.repositories.AttendanceRepository;
 import com.biit.appointment.persistence.repositories.RecurrenceRepository;
 import com.biit.server.providers.ElementProvider;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -378,12 +379,14 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         return getRepository().save(appointment);
     }
 
+    @Transactional
     @Override
     public void delete(Appointment appointment) {
         attendanceRepository.deleteByAppointment(appointment);
         super.delete(appointment);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         final Optional<Appointment> optional = get(id);
@@ -393,12 +396,14 @@ public class AppointmentProvider extends ElementProvider<Appointment, Long, Appo
         }
     }
 
+    @Transactional
     @Override
     public void deleteAll() {
         attendanceRepository.deleteAll();
         super.deleteAll();
     }
 
+    @Transactional
     @Override
     public void deleteAll(Collection<Appointment> entities) {
         final Collection<Appointment> appointments = findByIdIn(entities.stream().map(Appointment::getId).collect(Collectors.toSet()));
