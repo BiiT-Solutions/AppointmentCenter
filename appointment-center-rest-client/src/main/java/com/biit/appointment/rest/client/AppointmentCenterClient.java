@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -107,13 +108,13 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
     /**
      * Gets an QR Code object. For integration testing.
      */
-    public Optional<QrCodeDTO> getQrCode(Long appointmentId) {
+    public Optional<QrCodeDTO> getQrCode(Long appointmentId, UUID attendeeUUID) {
         try {
             try (Response response = securityClient.get(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
-                    appointmentUrlConstructor.getQrCode(appointmentId))) {
+                    appointmentUrlConstructor.getQrCode(appointmentId, attendeeUUID))) {
                 AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
                         appointmentUrlConstructor.getAppointmentCenterServerUrl()
-                                + appointmentUrlConstructor.getQrCode(appointmentId),
+                                + appointmentUrlConstructor.getQrCode(appointmentId, attendeeUUID),
                         response.getStatus());
                 if (response.getLength() == 0) {
                     return Optional.empty();
@@ -128,45 +129,17 @@ public class AppointmentCenterClient implements IAppointmentCenterRestClient {
     /**
      * Put a QR Code object. For integration testing.
      */
-    public Optional<AppointmentDTO> attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO) {
-        try {
-            try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
-                    appointmentUrlConstructor.attendWithQrCode(appointmentId), qrCodeDTO.getContent(),
-                    MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)) {
-                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
-                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
-                                + appointmentUrlConstructor.attendWithQrCode(appointmentId),
-                        response.getStatus());
-                if (response.getLength() == 0) {
-                    return Optional.empty();
-                }
-                return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
+    public void attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO) {
+        try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
+                appointmentUrlConstructor.attendWithQrCode(appointmentId), qrCodeDTO.getContent(),
+                MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)) {
+            AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
+                    appointmentUrlConstructor.getAppointmentCenterServerUrl()
+                            + appointmentUrlConstructor.attendWithQrCode(appointmentId),
+                    response.getStatus());
+            if (response.getStatus() != HttpStatus.NO_CONTENT.value()) {
+                throw new InvalidResponseException("Action failed");
             }
-        } catch (JsonProcessingException e) {
-            throw new InvalidResponseException(e);
-        }
-    }
-
-
-    /**
-     * Put a QR Code object. For integration testing.
-     */
-    public Optional<AppointmentDTO> attendByQrCode(Long appointmentId, QrCodeDTO qrCodeDTO, UUID userUUID) {
-        try {
-            try (Response response = securityClient.put(appointmentUrlConstructor.getAppointmentCenterServerUrl(),
-                    appointmentUrlConstructor.attendWithQrCode(appointmentId, userUUID), qrCodeDTO.getContent(),
-                    MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)) {
-                AppointmentCenterClientLogger.debug(this.getClass(), "Response obtained from '{}' is '{}'.",
-                        appointmentUrlConstructor.getAppointmentCenterServerUrl()
-                                + appointmentUrlConstructor.attendWithQrCode(appointmentId, userUUID),
-                        response.getStatus());
-                if (response.getLength() == 0) {
-                    return Optional.empty();
-                }
-                return Optional.of(mapper.readValue(response.readEntity(String.class), AppointmentDTO.class));
-            }
-        } catch (JsonProcessingException e) {
-            throw new InvalidResponseException(e);
         }
     }
 

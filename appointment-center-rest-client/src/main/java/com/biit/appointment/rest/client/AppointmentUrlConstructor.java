@@ -51,6 +51,10 @@ public class AppointmentUrlConstructor {
         return getQr() + "/appointments/" + appointmentId + "/attendance";
     }
 
+    public String getQrCode(Long appointmentId, UUID attendeeUUID) {
+        return getQr() + "/appointments/" + appointmentId + "/attendance/" + attendeeUUID;
+    }
+
     public String attendWithQrCode(Long appointmentId) {
         return getAttendances() + "/appointments/" + appointmentId + "/attend/text";
     }

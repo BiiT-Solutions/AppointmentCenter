@@ -6,8 +6,8 @@ import com.biit.appointment.core.providers.QrProvider;
 import com.biit.appointment.core.values.ImageFormat;
 import com.biit.server.exceptions.UnexpectedValueException;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.model.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import org.springframework.stereotype.Controller;
 import org.w3c.dom.Document;
 
@@ -78,13 +78,21 @@ public class QrController {
     public QrCodeDTO generateUserAppointmentAttendanceCode(String username, Long appointmentId) {
         final Optional<IAuthenticatedUser> user = this.authenticatedUserProvider.findByUsername(username);
         if (user.isPresent()) {
-            return generateUserAppointmentAttendanceCode(user.get(), appointmentId);
+            return generateUserAppointmentAttendanceCode(user.get(), appointmentId, username);
         }
         throw new UserNotFoundException(this.getClass(), "No user found with username '" + username + "'.");
     }
 
-    public QrCodeDTO generateUserAppointmentAttendanceCode(IAuthenticatedUser user, Long appointmentId) {
-        return generateQrCode(generateAttendanceRequest(user, appointmentId), user.getUsername());
+    public QrCodeDTO generateUserAppointmentAttendanceCode(UUID userUUID, Long appointmentId, String createdBy) {
+        final Optional<IAuthenticatedUser> user = this.authenticatedUserProvider.findByUID(userUUID.toString());
+        if (user.isPresent()) {
+            return generateUserAppointmentAttendanceCode(user.get(), appointmentId, createdBy);
+        }
+        throw new UserNotFoundException(this.getClass(), "No user found with uuid '" + userUUID + "'.");
+    }
+
+    public QrCodeDTO generateUserAppointmentAttendanceCode(IAuthenticatedUser user, Long appointmentId, String createdBy) {
+        return generateQrCode(generateAttendanceRequest(user, appointmentId), createdBy);
     }
 
     /**

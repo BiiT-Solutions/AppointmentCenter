@@ -443,7 +443,6 @@ public class AppointmentController extends KafkaElementController<Appointment, L
 
 
     public AppointmentDTO attend(Long currentAppointmentId, Long appointmentToAttendId, UUID userUUID, String createdBy) {
-
         if (!Objects.equals(currentAppointmentId, appointmentToAttendId)) {
             throw new InvalidParameterException(this.getClass(), "The QR obtained (" + appointmentToAttendId + ") is not valid for the selected appointment ("
                     + currentAppointmentId + ")!");
@@ -456,7 +455,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
                 new AppointmentNotFoundException(this.getClass(), "No appointment found with id '" + appointmentToAttendId + "'."));
 
         if (!appointment.getAttendees().contains(userUUID)) {
-            throw new YouAreNotOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' is not on the attendees list!");
+            throw new YouAreNotOnThisAppointmentException(this.getClass(), "User '" + user.getUsername() + "' is not on the attendees list!");
         }
 
         final Set<Attendance> attendances = attendanceProvider.findByAppointment(appointment);
@@ -464,7 +463,7 @@ public class AppointmentController extends KafkaElementController<Appointment, L
         final Optional<Attendance> currenAttendance = attendances.stream().filter(attendance ->
                 !Objects.equals(attendance.getAttendee(), userUUID)).findFirst();
         if (currenAttendance.isPresent()) {
-            throw new YouAreAlreadyOnThisAppointmentException(this.getClass(), "User '" + user.getName() + "' has already attended this appointment!");
+            throw new YouAreAlreadyOnThisAppointmentException(this.getClass(), "User '" + user.getUsername() + "' has already attended this appointment!");
         }
         Attendance attendance = new Attendance(userUUID, appointment);
         attendance.setCreatedBy(createdBy);

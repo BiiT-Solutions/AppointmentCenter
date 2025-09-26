@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/qr")
@@ -40,6 +41,19 @@ public class QrService {
                                              @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
                                              HttpServletResponse response, HttpServletRequest request) {
         return qrController.generateUserAppointmentAttendanceCode(authentication.getName(), appointmentId);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @Operation(summary = "Generates a QR code with the credentials to access to a workshop.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/appointments/{appointmentId}/attendance/{attendeeUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateQrForAttendance(@Parameter(description = "Id of an existing appointment", required = true)
+                                             @PathVariable("appointmentId") Long appointmentId, Authentication authentication,
+                                             @Parameter(description = "Id of an existing attendee", required = true)
+                                             @PathVariable("attendeeUUID") UUID attendeeUUID,
+                                             HttpServletResponse response, HttpServletRequest request) {
+        return qrController.generateUserAppointmentAttendanceCode(attendeeUUID, appointmentId, authentication.getName());
     }
 
 
