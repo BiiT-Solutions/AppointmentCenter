@@ -7,7 +7,7 @@
 
     <parent>
         <artifactId>appointment-center</artifactId>
-        <groupId>com.biit.appointment</groupId>
+        <groupId>com.biit-solutions.appointment</groupId>
         <version>1.6.158-SNAPSHOT</version>
     </parent>
 
@@ -17,26 +17,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-dto</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-definitions</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-rest-client</artifactId>
         </dependency>
         <!-- Kafka -->
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions.kafka</groupId>
             <artifactId>kafka-client-dto</artifactId>
         </dependency>
         <!-- QR reader -->
@@ -75,7 +75,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-test</artifactId>
             <scope>test</scope>
         </dependency>

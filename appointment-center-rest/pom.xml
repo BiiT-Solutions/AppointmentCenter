@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>appointment-center-rest</artifactId>
@@ -7,7 +8,7 @@
 
     <parent>
         <artifactId>appointment-center</artifactId>
-        <groupId>com.biit.appointment</groupId>
+        <groupId>com.biit-solutions.appointment</groupId>
         <version>1.6.158-SNAPSHOT</version>
     </parent>
 
@@ -17,7 +18,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -27,7 +28,7 @@
             <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-defaults</artifactId>
         </dependency>
         <dependency>
@@ -35,27 +36,27 @@
             <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-rest-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>messagebird-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-rest</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>google-calendar</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>ms-calendar</artifactId>
         </dependency>
         <dependency>
@@ -91,7 +92,7 @@
 
         <!--Testing-->
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-test</artifactId>
             <scope>test</scope>
         </dependency>

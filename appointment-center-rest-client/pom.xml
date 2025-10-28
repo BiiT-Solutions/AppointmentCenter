@@ -7,7 +7,7 @@
 
     <parent>
         <artifactId>appointment-center</artifactId>
-        <groupId>com.biit.appointment</groupId>
+        <groupId>com.biit-solutions.appointment</groupId>
         <version>1.6.158-SNAPSHOT</version>
     </parent>
 
@@ -17,17 +17,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-logger</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-dto</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-security-client</artifactId>
         </dependency>
         <dependency>
@@ -45,7 +45,7 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>user-manager-system-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -83,19 +83,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-persistence</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.biit.appointment</groupId>
+            <groupId>com.biit-solutions.appointment</groupId>
             <artifactId>appointment-center-rest</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
