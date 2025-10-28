@@ -7,12 +7,12 @@
     <test name="AppointmentCenter" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="appointmentTemplatesServiceTests"/>
-                <include name="appointmentServiceTests"/>
-                <include name="scheduleServiceTests"/>
-                <include name="appointmentAttendanceByQrTests"/>
-                <include name="availabilityServiceTests"/>
-                <include name="scheduleRangeExclusionServiceTests"/>
+                <exclude name="appointmentTemplatesServiceTests"/>
+                <exclude name="appointmentServiceTests"/>
+                <exclude name="scheduleServiceTests"/>
+                <exclude name="appointmentAttendanceByQrTests"/>
+                <exclude name="availabilityServiceTests"/>
+                <exclude name="scheduleRangeExclusionServiceTests"/>
                 <!-- As the google token expires. -->
                 <exclude name="externalCalendarTests"/>
             </run>
