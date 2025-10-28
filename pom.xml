@@ -4,7 +4,7 @@
     <artifactId>appointment-center</artifactId>
     <name>AppointmentCenter</name>
     <groupId>com.biit-solutions.appointment</groupId>
-    <version>1.6.158</version>
+    <version>1.6.159-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -40,7 +40,7 @@
         <connection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenter.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenter.git</developerConnection>
         <url>https://github.com/BiiT-Solutions/AppointmentCenter.git</url>
-        <tag>appointment-center-1.6.158</tag>
+        <tag>Appointment Center</tag>
     </scm>
 
     <distributionManagement>

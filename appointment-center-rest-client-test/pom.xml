@@ -6,7 +6,7 @@
     <parent>
         <artifactId>appointment-center</artifactId>
         <groupId>com.biit-solutions.appointment</groupId>
-        <version>1.6.158</version>
+        <version>1.6.159-SNAPSHOT</version>
     </parent>
 
     <properties>
